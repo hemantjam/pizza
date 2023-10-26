@@ -5,6 +5,7 @@ import 'package:pizza/module/home/home_page.dart';
 import 'package:pizza/module/home/home_provider.dart';
 import 'package:pizza/module/login/login_page.dart';
 import 'package:pizza/module/login/login_provider.dart';
+import 'package:pizza/module/menu/menu_provider.dart';
 import 'package:pizza/module/splash/splash_page.dart';
 import 'package:provider/provider.dart';
 
@@ -16,8 +17,15 @@ class RouteGenerator {
 
       case RouteNames.homePage:
         return CupertinoPageRoute(
-          builder: (_) => ChangeNotifierProvider<HomeProvider>(
-              create: (context) => HomeProvider(), child: HomePage()),
+          builder: (_) => MultiProvider(
+            providers: [
+              ChangeNotifierProvider<HomeProvider>(
+                  create: (context) => HomeProvider()),
+              ChangeNotifierProvider<MenuProvider>(
+                  create: (context) => MenuProvider()),
+            ],
+            child: HomePage(),
+          ),
         );
       case RouteNames.login:
         return CupertinoPageRoute(
