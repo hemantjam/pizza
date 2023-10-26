@@ -4,7 +4,7 @@ import 'dart:developer';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 
-import 'api.dart';
+import 'api_client.dart';
 
 class SignUp extends StatefulWidget {
   const SignUp({super.key});

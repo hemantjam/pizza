@@ -1,4 +1,4 @@
-/*class MenuModel {
+class MenuModel {
   String? message;
   bool? status;
   List<MenuListModel>? data;
@@ -28,7 +28,7 @@
       'data': data?.map((item) => item.toJson()).toList(),
     };
   }
-}*/
+}
 
 class MenuListModel {
   int? id;
