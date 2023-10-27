@@ -3,7 +3,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:pizza/module/menu/menu_provider.dart';
 import 'package:provider/provider.dart';
 
-import '../../api/api_client.dart';
+import '../../api/api_services.dart';
 import '../../api/api_response.dart';
 import 'menu_model.dart';
 
@@ -19,6 +19,7 @@ class _MenusState extends State<Menus> {
   @override
   void initState() {
     super.initState();
+    Provider.of<MenuProvider>(context,listen: false).getMenu();
   }
 
   @override

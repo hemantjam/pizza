@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 
-import '../../api/api_client.dart';
+import '../../api/api_services.dart';
 import '../../api/api_response.dart';
 
 class LoginProvider extends ChangeNotifier {
@@ -9,7 +9,7 @@ class LoginProvider extends ChangeNotifier {
   final FocusNode emailFocus=FocusNode();
   final FocusNode passFocus=FocusNode();
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
-  ApiClient apiClient = ApiClient();
+  ApiServices apiClient = ApiServices();
 
   login() async {
     String email = "ssinroja@harvices.com";

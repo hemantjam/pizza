@@ -1,11 +1,11 @@
-import 'package:pizza/api/api_client.dart';
+import 'package:pizza/api/api_services.dart';
 import 'package:pizza/api/end_point.dart';
 
 import '../../api/api_response.dart';
 import 'menu_model.dart';
 
 class MenuRepository {
-  ApiClient apiClient = ApiClient();
+  ApiServices apiClient = ApiServices();
   List<MenuListModel> menuList = [];
 
   Future<List<MenuListModel>> getMenu() async {
@@ -19,6 +19,5 @@ class MenuRepository {
         item.name!.contains("Build") ||
         item.name!.contains("Additional"));
     return menuList;
-    // notifyListeners();
   }
 }

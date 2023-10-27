@@ -16,4 +16,17 @@ class ApiResponse<T> {
       data: json['data'],
     );
   }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = {
+      'message': message,
+      'status': status,
+    };
+
+    if (data != null) {
+      data['data'] = data;
+    }
+
+    return data;
+  }
 }
