@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get_navigation/src/root/get_material_app.dart';
 import 'package:pizza/constants/route_names.dart';
 import 'package:pizza/module/splash/splash_page.dart';
 import 'package:pizza/routes.dart';
@@ -12,9 +13,10 @@ class PizzaApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Sizer(builder: (context, orientation, deviceType) {
-      return const MaterialApp(
+      return  GetMaterialApp(
+        getPages: RouteGenerator.routes,
         initialRoute: RouteNames.initial,
-        onGenerateRoute: RouteGenerator.generateRoute,
+       // onGenerateRoute: RouteGenerator.generateRoute,
         debugShowCheckedModeBanner: false,
       );
     });

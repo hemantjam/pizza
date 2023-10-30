@@ -18,7 +18,7 @@ class ApiServices {
     _dio.interceptors.add(PrettyDioLogger());
   }
 
-  Future<ApiResponse?> getRequest<T>(String endpoint,
+   getRequest<T>(String endpoint,
       {Map<String, dynamic>? queryParameters}) async {
     try {
       _dio.options.headers['Authorization'] =
@@ -26,8 +26,10 @@ class ApiServices {
       final response =
           await _dio.get(endpoint, queryParameters: queryParameters);
       if (response.statusCode == 200) {
-        ApiResponse apiResponse = ApiResponse<T>.fromJson(response.data);
-        return apiResponse;
+        log("---->returning${response.toString()}");
+       // ApiResponse apiResponse = ApiResponse<T>.fromJson(response.data);
+        //return apiResponse;
+        return response;
       } else {
         log("something went wrong");
       }

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:pizza/module/login/login_provider.dart';
-import 'package:provider/provider.dart';
 
 class LogInPage extends StatefulWidget {
   const LogInPage({super.key});
@@ -19,7 +18,7 @@ class _LogInPageState extends State<LogInPage> {
       body: Container(
         alignment: Alignment.center,
         padding: const EdgeInsets.all(10),
-        child: Consumer<LoginProvider>(
+       /* child: Consumer<LoginProvider>(
           builder: (context, LoginProvider provider, child) {
             return Form(
               key: provider.formKey,
@@ -94,10 +93,10 @@ class _LogInPageState extends State<LogInPage> {
                           const Text("don't have account ? "),
                           GestureDetector(
                               onTap: () {
-                                /* Navigator.push(
+                                *//* Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) => const SignUp()));*/
+                                    builder: (context) => const SignUp()));*//*
                               },
                               child: const Text(
                                 " Sign Up",
@@ -111,7 +110,7 @@ class _LogInPageState extends State<LogInPage> {
               ),
             );
           },
-        ),
+        ),*/
       ),
     );
   }

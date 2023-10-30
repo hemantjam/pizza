@@ -14,10 +14,10 @@ class MenuRepository {
     List<dynamic> data = res!.data as List<dynamic>;
 
     menuList = data.map((item) => MenuListModel.fromJson(item)).toList();
-    menuList.removeWhere((item) =>
+    /*menuList.removeWhere((item) =>
         item.name!.contains("OFFER") ||
         item.name!.contains("Build") ||
-        item.name!.contains("Additional"));
+        item.name!.contains("Additional"));*/
     return menuList;
   }
 }
