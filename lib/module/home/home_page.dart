@@ -1,4 +1,6 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_blurhash/flutter_blurhash.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:pizza/constants/app_colors.dart';
@@ -10,34 +12,35 @@ import 'package:pizza/module/offers/offer_info_page.dart';
 import 'package:sizer/sizer.dart';
 
 import '../../widgets/header.dart';
-import '../menu/menu.dart';
+import '../menu/menu_page.dart';
 import '../offers/offer_item.dart';
+import '../order_type/order_type.dart';
 
 class HomePage extends GetView<HomeController> {
-   HomePage({super.key});
-OfferController offerController=Get.find<OfferController>();
+  HomePage({super.key});
+
+  OfferController offerController = Get.find<OfferController>();
+
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(2.0),
       child: SingleChildScrollView(
           primary: true,
-          child: Obx(() => Column(
-                children: [
-                  Header(controller: controller),
-                  Visibility(
+          child: Column(
+            children: [
+              Header(),
+              /* Visibility(
                       visible: controller.showHeader.value,
-                      child: const HeaderOptions()),
-                  const Banner(),
-                  SizedBox(height: 10.sp),
-                  const Menus(),
-                  SizedBox(height: 10.sp),
-
-                  SizedBox(height: 10.sp),
-                  OfferInfoPage()
-
-                ],
-              ))),
+                      child: const HeaderOptions()),*/
+              const Banner(),
+              SizedBox(height: 10.sp),
+              const MenusPage(),
+              SizedBox(height: 10.sp),
+              SizedBox(height: 10.sp),
+              OfferInfoPage()
+            ],
+          )),
     );
   }
 }
@@ -48,140 +51,27 @@ class Banner extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 16.h,
+      height: 22.h,
       child: Stack(
         children: [
-          Image.network(
-            "https://tomcat.harvices.com/pizza_portal_v2_demo/static/media/banner.7c1966eb.jpg",
+          CachedNetworkImage(
             fit: BoxFit.cover,
-            height: 12.h,
+            height: 18.h,
+            imageUrl: Assets.homeBanner,
+            placeholder: (context, url) => SizedBox(
+                height: 20.h,
+                width: 100.w,
+                child: const BlurHash(hash: Assets.homeBannerBlur)),
+            errorWidget: (context, url, error) => const Icon(Icons.error),
           ),
-          const DeliveryOptions()
+          const OrderTYpe()
         ],
       ),
     );
   }
 }
 
-class DeliveryOptions extends StatelessWidget {
-  const DeliveryOptions({
-    super.key,
-  });
 
-  @override
-  Widget build(BuildContext context) {
-    return Positioned(
-      left: 0,
-      right: 0,
-      bottom: 0,
-      child: Container(
-        margin: EdgeInsets.symmetric(horizontal: 8.w),
-
-        child: IntrinsicHeight(
-          child: Card(
-            child: Row(
-              children: <Widget>[
-                Expanded(
-                  child: GestureDetector(
-                    onTap: () {},
-                    child: Container(
-                      padding: const EdgeInsets.all(10.0),
-                      decoration: const BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(10.0),
-                          bottomLeft: Radius.circular(10.0),
-                        ),
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          Image.asset(
-                            Assets.orderDeliveryPng,
-                            height: 24.sp,
-                            width: 24.sp,
-                          ),
-                          SizedBox(width: 8.0),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Text(
-                                "ORDER",
-                                style: TextStyle(
-                                    color: Colors.black,
-                                    fontSize: 12.sp,
-                                    fontWeight: FontWeight.w400),
-                              ),
-                              Text(
-                                "DELIVERY",
-                                style: TextStyle(
-                                    color: Colors.black,
-                                    fontSize: 14.sp,
-                                    fontWeight: FontWeight.w700),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-                const VerticalDivider(color: Colors.black, width: 1),
-                Expanded(
-                  child: GestureDetector(
-                    onTap: () {},
-                    child: Container(
-                      padding: const EdgeInsets.all(10.0),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.only(
-                          topRight: Radius.circular(8.sp),
-                          bottomRight: Radius.circular(8.sp),
-                        ),
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          Image.asset(
-                            Assets.orderPickupPng,
-                            height: 24.sp,
-                            width: 24.sp,
-                          ),
-                          SizedBox(width: 8.0),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Text(
-                                "ORDER",
-                                style: TextStyle(
-                                    color: Colors.black,
-                                    fontSize: 12.sp,
-                                    fontWeight: FontWeight.w400),
-                              ),
-                              Text(
-                                "PICK-UP",
-                                style: TextStyle(
-                                    color: Colors.black,
-                                    fontSize: 14.sp,
-                                    fontWeight: FontWeight.w700),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
 
 class HeaderOptions extends StatelessWidget {
   const HeaderOptions({super.key});

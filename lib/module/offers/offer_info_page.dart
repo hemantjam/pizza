@@ -15,7 +15,8 @@ class OfferInfoPage extends GetView<OfferController> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(mainAxisSize: MainAxisSize.min,
+    return Column(
+      mainAxisSize: MainAxisSize.min,
       children: [
         Padding(
           padding: EdgeInsets.all(8.0),
@@ -26,35 +27,40 @@ class OfferInfoPage extends GetView<OfferController> {
                 "OFFERS",
                 style: TextStyle(fontSize: 18.sp),
               ),
-              GestureDetector(
-                onTap: (){
-                  Get.toNamed(RouteNames.offerList);
-                },
-                child: Text(
-                  "View All (${controller.offerInfoModel.value.data?.totalRows})",
-                  style: TextStyle(
-                    fontSize: 12.sp,
-                    color: AppColors.lightOrange,
-                    decoration: TextDecoration.underline,
+              Obx(
+                () => GestureDetector(
+                  onTap: () {
+                    Get.toNamed(RouteNames.offerList);
+                  },
+                  child: Text(
+                    "View All (${controller.offerInfoModel.value.totalRows})",
+                    style: TextStyle(
+                      fontSize: 12.sp,
+                      color: AppColors.lightOrange,
+                      decoration: TextDecoration.underline,
+                    ),
                   ),
                 ),
               ),
             ],
           ),
         ),
-        SizedBox(
-          height: 60.h,
-          child: ListView.builder(
-              shrinkWrap: true,
-              scrollDirection: Axis.horizontal,
-             itemCount: controller.offerInfoModel.value.data?.offers?.length,
-             // itemCount: controller.offerInfoModel.value.offerListModel?.data?.length??0,
-              itemBuilder: (context, int index) {
-               // SingleOfferModel? offerr=controller.offerInfoModel.value.offerListModel?.data?[index];
-              // log(offerr!.id!.toString());
-                return OfferItem();
-              }),
-        ),
+        Obx(
+          () => SizedBox(
+            height: 30.h,
+            child: ListView.builder(
+                shrinkWrap: true,
+                scrollDirection: Axis.horizontal,
+                itemCount: controller.offerInfoModel.value.offers?.length,
+                itemBuilder: (context, int index) {
+                  SingleOfferInfoModel? offer =
+                      controller.offerInfoModel.value.offers?[index];
+                  return OfferItem(
+                    offer: offer,
+                  );
+                }),
+          ),
+        )
       ],
     );
   }

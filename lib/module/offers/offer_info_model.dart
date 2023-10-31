@@ -1,6 +1,6 @@
 import 'dart:developer';
 
-class OfferInfoModel {
+/*class OfferInfoModel {
   String? message;
   bool? status;
   Data? data;
@@ -18,45 +18,45 @@ class OfferInfoModel {
       data: Data.fromJson(json['data'] as Map<String, dynamic>?),
     );
   }
-}
+}*/
 
-class Data {
-  List<Offer>? offers;
+class OfferInfoModel {
+  List<SingleOfferInfoModel>? offers;
   int? totalRows;
 
-  Data({
+  OfferInfoModel({
     this.offers,
     this.totalRows,
   });
 
-  factory Data.fromJson(Map<String, dynamic>? json) {
-Map<String,dynamic>d=json?["data"];
-log("------>${d["data"].toString()}");
+  factory OfferInfoModel.fromJson(Map<String, dynamic>? json) {
+//Map<String,dynamic>d=json?["data"];
+//log("------>${d["data"].toString()}");
     List<dynamic>? offersList = json?['data'] ;
 
-    List<Offer>? offers = offersList?.map((e) => Offer.fromJson(e as Map<String, dynamic>)).toList();
+    List<SingleOfferInfoModel>? offers = offersList?.map((e) => SingleOfferInfoModel.fromJson(e as Map<String, dynamic>)).toList();
 
-    return Data(
+    return OfferInfoModel(
       offers: offers,
       totalRows: json?['totalRows'] as int?,
     );
   }
 }
 
-class Offer {
+class SingleOfferInfoModel {
   int? id;
   String? offerName;
   String? offerCode;
   String? description; // Corrected the field name
   String? image;
   double? price;
-  int? tax;
+  double? tax;
   double? priceWithTax;
   bool? inStock;
   dynamic recipeMap;
   dynamic itemResponseList;
 
-  Offer({
+  SingleOfferInfoModel({
     this.id,
     this.offerName,
     this.offerCode,
@@ -70,15 +70,16 @@ class Offer {
     this.itemResponseList,
   });
 
-  factory Offer.fromJson(Map<String, dynamic> json) {
-    return Offer(
+  factory SingleOfferInfoModel.fromJson(Map<String, dynamic> json) {
+    return SingleOfferInfoModel(
       id: json['id'] as int?,
       offerName: json['offerName'] as String?,
       offerCode: json['offerCode'] as String?,
-      description: json['descripation'] as String?, // Corrected the field name
+      description: json['descripation'] as String?,
+      // Corrected the field name
       image: json['image'] as String?,
       price: (json['price'] as num?)?.toDouble(),
-      tax: json['tax'] as int?,
+      tax: json['tax'] as double?,
       priceWithTax: (json['priceWithTax'] as num?)?.toDouble(),
       inStock: json['inStock'] as bool?,
       recipeMap: json['recipeMap'],

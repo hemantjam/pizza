@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:pizza/module/offers/offer_controller.dart';
+import 'package:pizza/module/offers/offer_info_model.dart';
 import 'package:sizer/sizer.dart';
 
 import 'offer_item.dart';
@@ -20,7 +21,8 @@ class OfferList extends GetView<OfferController> {
               // scrollDirection: Axis.horizontal,
               itemCount: 5,
               itemBuilder: (context, int index) {
-                return OfferItem();
+                SingleOfferInfoModel offer=SingleOfferInfoModel();
+                return OfferItem(offer: offer,);
               }),
         ));
   }

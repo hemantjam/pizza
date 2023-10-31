@@ -1,7 +1,10 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_blurhash/flutter_blurhash.dart';
 import 'package:get/get.dart';
 import 'package:pizza/constants/app_colors.dart';
+import 'package:pizza/constants/assets.dart';
 import 'package:pizza/module/offers/offer_controller.dart';
 import 'package:pizza/module/offers/offer_info_model.dart';
 import 'package:sizer/sizer.dart';
@@ -35,8 +38,9 @@ class _OffersItemState extends State<OffersItem> {
 }*/
 
 class OfferItem extends StatelessWidget {
+  final SingleOfferInfoModel? offer;
 
-  const OfferItem({super.key});
+  const OfferItem({super.key, required this.offer});
 
   @override
   Widget build(BuildContext context) {
@@ -44,15 +48,21 @@ class OfferItem extends StatelessWidget {
       width: 261.sp,
       height: 190.sp,
       child: Card(
+        color: Colors.grey.shade400,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
           children: [
-            Image.network(
-              offer,
+            CachedNetworkImage(
               fit: BoxFit.cover,
               height: 118.sp,
               width: 100.w,
+              imageUrl: offer?.image ?? Assets.offerImagePlaceHolder,
+              placeholder: (context, url) => SizedBox(
+                  height: 118.sp,
+                  width: 100.w,
+                  child: const BlurHash(hash: Assets.offerImageBlurHash)),
+              errorWidget: (context, url, error) => const Icon(Icons.error),
             ),
             Padding(
               padding: EdgeInsets.all(8.sp),
@@ -60,12 +70,13 @@ class OfferItem extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    "OFFER 1",
+                    offer?.offerName ?? "",
                     style: TextStyle(fontSize: 16.sp),
                   ),
                   Text(
-                    r'34$',
-                    style: TextStyle(fontSize: 16.sp,color: AppColors.lightOrange),
+                    "\$${offer?.price?.toStringAsFixed(2) ?? '0.00'}",
+                    style: TextStyle(
+                        fontSize: 16.sp, color: AppColors.lightOrange),
                   ),
                 ],
               ),
@@ -73,7 +84,7 @@ class OfferItem extends StatelessWidget {
             Padding(
               padding: EdgeInsets.all(8.sp),
               child: Text(
-                "description in form of long text as wellllllllllllll",
+                offer?.description ?? "",
                 style:
                     TextStyle(fontSize: 12.sp, overflow: TextOverflow.ellipsis),
               ),
@@ -84,6 +95,3 @@ class OfferItem extends StatelessWidget {
     );
   }
 }
-
-String offer =
-    "https://apis.pineapplepizza.com.au/POSLocalAPI/uploads/images/ahaTc_offer1.jpg";

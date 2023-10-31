@@ -4,7 +4,7 @@ class ApiEndPoints {
   static String authToken = "";
 
   /// end-points
-  static const String getMenu = "homeController/menus/";
+  static const String getMenu = "homeController/menus";
   static const String loginByIp = "userMST/login/byIp/";
 
   //static const String addToken = "addIntoToken/system";

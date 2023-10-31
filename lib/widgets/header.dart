@@ -1,17 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:get/get.dart';
 import 'package:sizer/sizer.dart';
 
 import '../constants/assets.dart';
 import '../module/home/home_controller.dart';
 
-class Header extends StatelessWidget {
+class Header extends GetView<HomeController> {
   const Header({
     super.key,
-    required this.controller,
+   // required this.controller,
   });
 
-  final HomeController controller;
+  //final HomeController controller;
 
   @override
   Widget build(BuildContext context) {
@@ -32,7 +33,7 @@ class Header extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   GestureDetector(
-                    onTap: controller.toggleHeaderOptions,
+                    onTap: controller.openDrawer,
                     child: Center(
                       child: SvgPicture.asset(
                         Assets.menu,

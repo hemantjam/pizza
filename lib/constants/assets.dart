@@ -19,4 +19,12 @@ class Assets {
   static const String orderPickup = "assets/icons/order_pickup.svg";
   static const String orderPickupPng = "assets/icons/order_pickup_png.png";
 
+  static const String offerImagePlaceHolder =
+      "https://apis.pineapplepizza.com.au/POSLocalAPI/uploads/images/ahaTc_offer1.jpg";
+  static const String offerImageBlurHash =
+      "|JLz4?9ucbs:SjkXnh\$eNenfPD,T-UItRjtQWBR.-;T2S*fmadSOnhxZaxSjenSiRjwss8jYaefjM|xYxoxUs+nhNMIrf+tRozi_oII[IrIqX8ofa~RkRjNGNISiaKxCxtnjs,bIR*xFsoxt%1t6ayt7o2WCoeoJt7X7o0";
+  static const String homeBanner =
+      "https://tomcat.harvices.com/pizza_portal_v2_demo/static/media/banner.7c1966eb.jpg";
+  static const String homeBannerBlur =
+      "|8KckELg.R=H+I5ORiKRPWw|?ZFfZ*#j5=\$~-OI]7%=z5[N1FZ+FxXXox_m+S6tkxasoxGJWV@oHt,kYJBwHT1i^Se\$%-8jcf+kVR,t6-UShNHV?xaS5Orogr]E4NZ\$jxWSiV@tPShV[t6SLjKxZX9bct6ozxVkDt5adNI";
 }

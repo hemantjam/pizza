@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:developer';
 
 import 'package:get/get.dart';
@@ -17,10 +18,10 @@ class OfferController extends GetxController {
     super.onInit();
   }
   getOffers() async {
-   var res = await apiClient.getRequest(ApiEndPoints.offerInfo);
-   log("====>${res.toString()}");
-   // offerInfoModel.value= OfferInfoModel.fromJson(res as Map<String ,dynamic>);
-    log("---------->${offerInfoModel.value.toString()}");
+    ApiResponse<dynamic>? res = await apiClient.getRequest(ApiEndPoints.offerInfo);
+   log("====>${res?.data.toString()}");
+    offerInfoModel.value= OfferInfoModel.fromJson(res?.data as Map<String,dynamic>);
+    log("---------->${offerInfoModel.toString()}");
     update();
   }
 }

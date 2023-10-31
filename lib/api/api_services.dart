@@ -1,15 +1,13 @@
 import 'dart:developer';
-
 import 'package:dio/dio.dart';
+import 'package:get/get.dart';
 import 'package:pizza/api/end_point.dart';
 import 'package:pretty_dio_logger/pretty_dio_logger.dart';
-
+import '../widgets/common_dialog.dart';
 import 'api_response.dart';
 
 class ApiServices {
   final Dio _dio = Dio();
-
-  ///final _authorizationKey = "Bearer ${ApiEndPoints.authToken}";
 
   ApiServices() {
     _dio.options.baseUrl = ApiEndPoints.baseUrl;
@@ -18,24 +16,21 @@ class ApiServices {
     _dio.interceptors.add(PrettyDioLogger());
   }
 
-   getRequest<T>(String endpoint,
+  Future<ApiResponse?> getRequest<T>(String endpoint,
       {Map<String, dynamic>? queryParameters}) async {
     try {
       _dio.options.headers['Authorization'] =
-      'Bearer ${ApiEndPoints.authToken}';
+          'Bearer ${ApiEndPoints.authToken}';
       final response =
           await _dio.get(endpoint, queryParameters: queryParameters);
+
       if (response.statusCode == 200) {
-        log("---->returning${response.toString()}");
-       // ApiResponse apiResponse = ApiResponse<T>.fromJson(response.data);
-        //return apiResponse;
-        return response;
-      } else {
-        log("something went wrong");
+        log("----> ${response}");
+        ApiResponse apiResponse = ApiResponse<T>.fromJson(response.data);
+        return apiResponse;
       }
     } catch (e) {
-      log("error in catch");
-      log(e.toString());
+      handleError(e);
     }
     return null;
   }
@@ -52,15 +47,37 @@ class ApiServices {
       final response = await _dio.post(endpoint,
           data: data, queryParameters: queryParameters);
       if (response.statusCode == 200) {
+        log("----> ${response}");
         ApiResponse apiResponse = ApiResponse<T>.fromJson(response.data);
         return apiResponse;
-      } else {
-        log('HTTP Error: ${response.statusCode}');
       }
     } catch (e) {
-      log('Error: $e');
+      handleError(e);
     }
     return null;
+  }
+
+  void handleError(dynamic e) {
+    if (e is DioError) {
+      if (e.type == DioExceptionType.connectionTimeout ||
+          e.type == DioExceptionType.sendTimeout ||
+          e.type == DioExceptionType.receiveTimeout) {
+        showErrorDialog(
+          title: "Network Error",
+          message: "Check your internet connection and try again.",
+        );
+      } else {
+        showErrorDialog(
+          title: "API Error",
+          message: "An error occurred while making the API call.",
+        );
+      }
+    } else {
+      showErrorDialog(
+        title: "Error",
+        message: e.toString(),
+      );
+    }
   }
 
   void close() {
