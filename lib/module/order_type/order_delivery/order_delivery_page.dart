@@ -122,14 +122,8 @@ class _DeliveryDetailsState extends State<DeliveryDetails>
                 return IndexedStack(
                   index: deliveryController.index.value,
                   children: [
-                    Container(
-                      alignment: Alignment.center,
-                      child: DeliveryNowPage(),
-                    ),
-                    Container(
-                      alignment: Alignment.center,
-                      child: OderDeliveryLaterPage(),
-                    ),
+                    DeliveryNowPage(),
+                    OderDeliveryLaterPage(),
                   ],
                 );
               }),

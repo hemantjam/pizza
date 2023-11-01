@@ -17,11 +17,13 @@ class OfferController extends GetxController {
     getOffers();
     super.onInit();
   }
+
   getOffers() async {
-    ApiResponse<dynamic>? res = await apiClient.getRequest(ApiEndPoints.offerInfo);
-   log("====>${res?.data.toString()}");
-    offerInfoModel.value= OfferInfoModel.fromJson(res?.data as Map<String,dynamic>);
-    log("---------->${offerInfoModel.toString()}");
+    ApiResponse<dynamic>? res =
+        await apiClient.getRequest(ApiEndPoints.offerInfo);
+    offerInfoModel.value =
+        OfferInfoModel.fromJson(res?.data as Map<String, dynamic>);
+
     update();
   }
 }

@@ -13,29 +13,32 @@ class ApiServices {
     _dio.options.baseUrl = ApiEndPoints.baseUrl;
     _dio.options.headers['Content-Type'] = 'application/json';
     _dio.options.headers['Accept'] = 'application/json';
-    _dio.interceptors.add(PrettyDioLogger());
+   /// _dio.interceptors.add(PrettyDioLogger());
   }
 
-  Future<ApiResponse?> getRequest<T>(String endpoint,
-      {Map<String, dynamic>? queryParameters}) async {
+  ApiResponse apiResponse =
+      ApiResponse(message: "Data Not Found", status: false, data: {});
+
+  Future<ApiResponse> getRequest<T>(String endpoint,
+      {Map<String, dynamic>? queryParameters,String data=""}) async {
     try {
       _dio.options.headers['Authorization'] =
           'Bearer ${ApiEndPoints.authToken}';
       final response =
-          await _dio.get(endpoint, queryParameters: queryParameters);
+          await _dio.get(endpoint+data, queryParameters: queryParameters,data: data);
 
       if (response.statusCode == 200) {
-        log("----> ${response}");
-        ApiResponse apiResponse = ApiResponse<T>.fromJson(response.data);
+        apiResponse = ApiResponse<T>.fromJson(response.data);
         return apiResponse;
       }
     } catch (e) {
+      log("error--->${e}");
       handleError(e);
     }
-    return null;
+    return apiResponse;
   }
 
-  Future<ApiResponse?> postRequest<T>(
+  Future<ApiResponse> postRequest<T>(
     String endpoint, {
     dynamic data,
     Map<String, dynamic>? queryParameters,
@@ -47,18 +50,18 @@ class ApiServices {
       final response = await _dio.post(endpoint,
           data: data, queryParameters: queryParameters);
       if (response.statusCode == 200) {
-        log("----> ${response}");
-        ApiResponse apiResponse = ApiResponse<T>.fromJson(response.data);
+        apiResponse = ApiResponse<T>.fromJson(response.data);
         return apiResponse;
       }
     } catch (e) {
+      log("error--->${e}");
       handleError(e);
     }
-    return null;
+    return apiResponse;
   }
 
   void handleError(dynamic e) {
-    if (e is DioError) {
+    if (e is DioException) {
       if (e.type == DioExceptionType.connectionTimeout ||
           e.type == DioExceptionType.sendTimeout ||
           e.type == DioExceptionType.receiveTimeout) {

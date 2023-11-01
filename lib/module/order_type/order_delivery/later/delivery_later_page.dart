@@ -5,10 +5,7 @@ import 'package:sizer/sizer.dart';
 import 'delivery_later_controller.dart';
 
 class OderDeliveryLaterPage extends GetView<DeliveryLaterController> {
-  OderDeliveryLaterPage({super.key});
-
-  String selectedOption = 'Select an option';
-  List<String> options = ['Option 1', 'Option 2', 'Option 3', 'Option 4'];
+  const OderDeliveryLaterPage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -29,33 +26,55 @@ class OderDeliveryLaterPage extends GetView<DeliveryLaterController> {
                     fontSize: 18.sp,
                     fontWeight: FontWeight.bold),
               ),
-
-              PopupMenuButton<String>(
-                onSelected: (String value) {
-                  controller.dateController.text=value;
-                },
-                itemBuilder: (BuildContext context) {
-                  return options.map((String option) {
-                    return PopupMenuItem<String>(
-                      value: option,
-                      child: Text(option),
-                    );
-                  }).toList();
-                },
-                child: IgnorePointer(
-                  ignoring: true,
-                  child: TextFormField(
-                    controller: controller.dateController,
-                    readOnly: true,
-                    decoration: const InputDecoration(
-                        hintText: "Select Date",
-                        suffix: Icon(
-                          Icons.keyboard_arrow_down_sharp,
-                          color: Colors.black,
-                        )),
-                  ),
-                ),
-              ),
+              Obx(() {
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    ListTile(
+                      onTap: () {
+                        controller.toggleDateExpand();
+                      },
+                      contentPadding: EdgeInsets.only(bottom: 4.0),
+                      title: Text(
+                        controller.date.value,
+                        style: TextStyle(
+                            color: controller.date.value == "Date"
+                                ? Colors.grey.shade600
+                                : Colors.black),
+                      ),
+                      trailing: Icon(controller.isDataExpand.value
+                          ? Icons.arrow_drop_up
+                          : Icons.keyboard_arrow_down),
+                      shape: Border(
+                        bottom: BorderSide(
+                          color: Colors.grey.shade800,
+                        ),
+                      ),
+                    ),
+                    Visibility(
+                      visible: controller.isDataExpand.value,
+                      child: Card(
+                        child: SizedBox(
+                          height: 200,
+                          child: ListView.builder(
+                            shrinkWrap: true,
+                            itemCount: 5,
+                            itemBuilder: (context, int index) {
+                              return ListTile(
+                                onTap: () {
+                                  controller.date.value = index.toString();
+                                  controller.toggleDateExpand();
+                                },
+                                title: Text("index->$index"),
+                              );
+                            },
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                );
+              }),
               const SizedBox(
                 height: 15,
               ),
@@ -66,32 +85,62 @@ class OderDeliveryLaterPage extends GetView<DeliveryLaterController> {
                     fontSize: 18.sp,
                     fontWeight: FontWeight.bold),
               ),
+              Obx(() {
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    ListTile(
+                      onTap: () {
+                        controller.toggleTimeExpand();
+                      },
+                      contentPadding: EdgeInsets.only(bottom: 4.0),
+                      title: Text(
+                        controller.time.value,
+                        style: TextStyle(
+                          color: controller.time.value == "Time"
+                              ? Colors.grey.shade600
+                              : Colors.black,
+                        ),
+                      ),
+                      trailing: Icon(
+                        controller.isTimeExpand.value
+                            ? Icons.arrow_drop_up
+                            : Icons.keyboard_arrow_down,
+                      ),
+                      shape: Border(
+                        bottom: BorderSide(
+                          color: Colors.grey.shade800,
+                        ),
+                      ),
+                    ),
+                    Visibility(
+                      visible: controller.isTimeExpand.value,
+                      child: Card(
+                        child: SizedBox(
+                            height: 200,
+                            child: controller
+                                  .getTime(controller.shiftListDetailsModel!
+                                      .values.last!.regular!.first!)
 
-              PopupMenuButton<String>(
-                onSelected: (String value) {
-                  controller.timeController.text=value;
-                },
-                itemBuilder: (BuildContext context) {
-                  return options.map((String option) {
-                    return PopupMenuItem<String>(
-                      value: option,
-                      child: Text(option),
-                    );
-                  }).toList();
-                },
-                child: IgnorePointer(
-                  child: TextFormField(
-                    controller: controller.timeController,
-                    readOnly: true,
-                    decoration: const InputDecoration(
-                        hintText: "Select Time",
-                        suffix: Icon(
-                          Icons.keyboard_arrow_down_sharp,
-                          color: Colors.black,
-                        )),
-                  ),
-                ),
-              ),
+                             /*ListView.builder(
+                            shrinkWrap: true,
+                            itemCount: ,
+                            itemBuilder: (context, int index) {
+                              return ListTile(
+                                onTap: () {
+                                  controller.time.value = index.toString();
+                                  controller.toggleTimeExpand();
+                                },
+                                title: Text("index->$index"),
+                              );
+                            },
+                          ),*/
+                            ),
+                      ),
+                    ),
+                  ],
+                );
+              }),
               const SizedBox(
                 height: 15,
               ),
@@ -106,7 +155,8 @@ class OderDeliveryLaterPage extends GetView<DeliveryLaterController> {
                 child: TextFormField(
                   controller: controller.unitController,
                   focusNode: controller.unitFocus,
-                  decoration: const InputDecoration(hintText: "Enter Unit Number"),
+                  decoration:
+                      const InputDecoration(hintText: "Enter Unit Number"),
                 ),
               ),
               const SizedBox(height: 10),
@@ -114,17 +164,61 @@ class OderDeliveryLaterPage extends GetView<DeliveryLaterController> {
                 child: TextFormField(
                   controller: controller.streetNumberController,
                   focusNode: controller.streetNumberFocus,
-                  decoration: const InputDecoration(hintText: "Enter Street Number"),
+                  decoration:
+                      const InputDecoration(hintText: "Enter Street Number"),
                 ),
               ),
               const SizedBox(height: 10),
-              Card(
-                child: TextFormField(
-                  controller: controller.streetNameController,
-                  focusNode: controller.streetNameFocus,
-                  decoration: const InputDecoration(hintText: "Street Name"),
-                ),
-              ),
+              Obx(() {
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    ListTile(
+                      onTap: () {
+                        controller.toggleStreet();
+                      },
+                      contentPadding: EdgeInsets.only(bottom: 4.0),
+                      title: Text(
+                        controller.streetName.value,
+                        style: TextStyle(
+                            color: controller.streetName.value == "Street Name"
+                                ? Colors.grey.shade600
+                                : Colors.black),
+                      ),
+                      trailing: Icon(controller.isDataExpand.value
+                          ? Icons.arrow_drop_up
+                          : Icons.keyboard_arrow_down),
+                      shape: Border(
+                        bottom: BorderSide(
+                          color: Colors.grey.shade800,
+                        ),
+                      ),
+                    ),
+                    Visibility(
+                      visible: controller.isStreetExpand.value,
+                      child: Card(
+                        child: SizedBox(
+                          height: 200,
+                          child: ListView.builder(
+                            shrinkWrap: true,
+                            itemCount: 5,
+                            itemBuilder: (context, int index) {
+                              return ListTile(
+                                onTap: () {
+                                  controller.streetName.value =
+                                      index.toString();
+                                  controller.toggleStreet();
+                                },
+                                title: Text("index->$index"),
+                              );
+                            },
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                );
+              }),
               const SizedBox(height: 10),
               Card(
                 child: TextFormField(
@@ -149,23 +243,22 @@ class OderDeliveryLaterPage extends GetView<DeliveryLaterController> {
                   const Text("Remember Delivery Details")
                 ],
               ),
-              Positioned(
-                bottom: 0,
-                left: 0,
-                right: 0,
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: ElevatedButton(
-                        style: ButtonStyle(
-                          backgroundColor:  MaterialStateProperty.all<Color>(Colors.black),
-                        ),
-                        onPressed: () {},
-                        child: Text("Continue with the order",style:TextStyle(color: Colors.white),),
+              Row(
+                children: [
+                  Expanded(
+                    child: ElevatedButton(
+                      style: ButtonStyle(
+                        backgroundColor:
+                            MaterialStateProperty.all<Color>(Colors.black),
+                      ),
+                      onPressed: () {},
+                      child: Text(
+                        "Continue with the order",
+                        style: TextStyle(color: Colors.white),
                       ),
                     ),
-                  ],
-                ),
+                  ),
+                ],
               )
             ],
           ),

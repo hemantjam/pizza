@@ -13,6 +13,9 @@ class ApiEndPoints {
 
   static const String offerList = "homeController/offers";
   static const String offerInfo = "homeController/offersinfo/";
+  static const String outletShiftDetails = "outletShiftDTL/byOutletSystem/";
+  static const String allActiveOutlet = "geographyMST/allActive/";
+  static const String geoghraphyByTypeCode = "geographyMST/byTypeCode/";
 }
 
 /* https://tomcat.harvices.com/POSLocalAPI/userMST/addIntoToken/outlet

@@ -3,14 +3,13 @@ import 'package:get/get.dart';
 import 'package:pizza/constants/app_colors.dart';
 import 'package:sizer/sizer.dart';
 
+import '../../../home/geoghyaphy/byType/by_type_model.dart';
 import '../order_delivery_controller.dart';
 import 'delivery_now_controller.dart';
 
 class DeliveryNowPage extends GetView<DeliveryNowController> {
-  DeliveryNowPage({super.key});
+  const DeliveryNowPage({super.key});
 
-  String selectedOption = 'Select an option';
-  List<String> options = ['Option 1', 'Option 2', 'Option 3', 'Option 4'];
 
   @override
   Widget build(BuildContext context) {
@@ -22,10 +21,9 @@ class DeliveryNowPage extends GetView<DeliveryNowController> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.max,
             children: [
               Text(
-                "Store is close currently",
+                "Store is closed currently",
                 style: TextStyle(color: Colors.red),
               ),
               SizedBox(
@@ -34,9 +32,10 @@ class DeliveryNowPage extends GetView<DeliveryNowController> {
               Text(
                 "Enter Full Address",
                 style: TextStyle(
-                    color: Colors.black,
-                    fontSize: 18.sp,
-                    fontWeight: FontWeight.bold),
+                  color: Colors.black,
+                  fontSize: 18.sp,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
               Card(
                 child: TextFormField(
@@ -54,42 +53,72 @@ class DeliveryNowPage extends GetView<DeliveryNowController> {
                 ),
               ),
               SizedBox(height: 10),
-              PopupMenuButton<String>(
-                onSelected: (String value) {
-                  controller.streetNameController.text = value;
-                },
-                itemBuilder: (BuildContext context) {
-                  return options.map((String option) {
-                    return PopupMenuItem<String>(
-                      value: option,
-                      child: Row(
-                        children: [
-                          Expanded(child: Card(child: Text(option))),
-                        ],
+              Obx(() {
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    ListTile(
+                      onTap: () {
+                        controller.toggleExpand();
+                      },
+                      contentPadding: EdgeInsets.only(bottom: 4.0),
+                      title: Text(
+                        controller.streetName.value,
+                        style: TextStyle(
+                            color: controller.streetName == "Street Name"
+                                ? Colors.grey.shade600
+                                : Colors.black),
                       ),
-                    );
-                  }).toList();
-                },
-                child: IgnorePointer(
-                  ignoring: true,
-                  child: TextFormField(
-                    controller: controller.streetNameController,
-                    readOnly: true,
-                    decoration: const InputDecoration(
-                        hintText: "Street Name",
-                        suffix: Icon(
-                          Icons.keyboard_arrow_down_sharp,
-                          color: Colors.black,
-                        )),
-                  ),
-                ),
-              ),
+                      trailing: Icon(controller.isExpand.value
+                          ? Icons.arrow_drop_up
+                          : Icons.keyboard_arrow_down),
+                      shape: Border(
+                        bottom: BorderSide(
+                          color: Colors.grey.shade800,
+                        ),
+                      ),
+                    ),
+                    Visibility(
+                      visible: controller.isExpand.value,
+                      child: Card(
+                        child: SizedBox(
+                          height: 200,
+                          child: controller.streetList == null ||
+                                  controller.streetList!.isEmpty
+                              ? Center(child: Text("No Data Found !"))
+                              : ListView.builder(
+                                  shrinkWrap: true,
+                                  itemCount: controller.streetList?.length,
+                                  itemBuilder: (context, int index) {
+                                    SingleGeoghraphyModel item =
+                                        controller.streetList![index];
+                                    return ListTile(
+                                      onTap: () {
+                                        controller.streetName.value =
+                                            item.geographyName ?? "";
+                                        controller.toggleExpand();
+                                        //controller.postCode.value=item.
+                                      },
+                                      title: Text(
+                                        item.geographyName ?? "",
+                                      ),
+                                    );
+                                  },
+                                ),
+                        ),
+                      ),
+                    ),
+                  ],
+                );
+              }),
               SizedBox(height: 10),
               Card(
                 child: TextFormField(
+                  readOnly: true,
                   controller: controller.postCodeController,
                   focusNode: controller.postCodeFocus,
-                  decoration: InputDecoration(hintText: "Post Code"),
+                  decoration:
+                      InputDecoration(hintText: controller.postCode.value),
                 ),
               ),
               SizedBox(height: 10),
@@ -99,32 +128,32 @@ class DeliveryNowPage extends GetView<DeliveryNowController> {
                 children: [
                   Obx(() {
                     return Checkbox(
-                        value: controller.rememberAddress.value,
-                        onChanged: (value) {
-                          controller.rememberAdd(value!);
-                        });
+                      value: controller.rememberAddress.value,
+                      onChanged: (value) {
+                        controller.rememberAdd(value!);
+                      },
+                    );
                   }),
                   SizedBox(width: 5),
-                  Text("Remember Delivery Details")
+                  Text("Remember Delivery Details"),
                 ],
               ),
-              Positioned(
-                bottom: 0,
-                left: 0,
-                right: 0,
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: ElevatedButton(
-                        style: ButtonStyle(
-                               backgroundColor:  MaterialStateProperty.all<Color>(Colors.black),
-                            ),
-                        onPressed: () {},
-                        child: Text("Continue with the order",style:TextStyle(color: Colors.white),),
+              Row(
+                children: [
+                  Expanded(
+                    child: ElevatedButton(
+                      style: ButtonStyle(
+                        backgroundColor:
+                            MaterialStateProperty.all<Color>(Colors.black),
+                      ),
+                      onPressed: () {},
+                      child: Text(
+                        "Continue with the order",
+                        style: TextStyle(color: Colors.white),
                       ),
                     ),
-                  ],
-                ),
+                  ),
+                ],
               )
             ],
           ),
