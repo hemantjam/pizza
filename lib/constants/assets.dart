@@ -1,8 +1,4 @@
 class Assets {
-  //static const String logo="assets/svg/images/splash_logo.svg";
-  //static const String logoo="assets/svg/images/image.png";
-  //static const String splash="assets/svg/images/Splash.svg";
-  // static const String splashh="assets/svg/images/Splashh.png";
   static const String logo = "assets/images/logo.svg";
   static const String logoPng = "assets/images/logo_png.png";
 
@@ -27,4 +23,5 @@ class Assets {
       "https://tomcat.harvices.com/pizza_portal_v2_demo/static/media/banner.7c1966eb.jpg";
   static const String homeBannerBlur =
       "|8KckELg.R=H+I5ORiKRPWw|?ZFfZ*#j5=\$~-OI]7%=z5[N1FZ+FxXXox_m+S6tkxasoxGJWV@oHt,kYJBwHT1i^Se\$%-8jcf+kVR,t6-UShNHV?xaS5Orogr]E4NZ\$jxWSiV@tPShV[t6SLjKxZX9bct6ozxVkDt5adNI";
+  static const String mapPlaceHolder = "assets/images/map_placeholder.png";
 }

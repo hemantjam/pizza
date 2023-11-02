@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:get/get.dart';
 import 'package:pizza/api/end_point.dart';
 import 'package:pizza/constants/route_names.dart';
@@ -27,7 +25,7 @@ class SplashController extends GetxController {
   getToken() async {
     loading.value = true;
     var res = await apiServices.getRequest(ApiEndPoints.loginByIp);
-    if (res != null && res.status) {
+    if (res.status) {
       ApiEndPoints.authToken = res.data["jwtToken"];
       getPizzaPortalToken(ApiEndPoints.authToken);
     }
@@ -35,31 +33,31 @@ class SplashController extends GetxController {
 
   getPizzaPortalToken(String token) async {
     ApiResponse<dynamic>? res = await apiServices.postRequest(
-        ApiEndPoints.addIntoPizza,
+        ApiEndPoints.addIntoSystem,
         token: token,
         queryParameters: {},
-        data: {});
-    if (res != null && res.status) {
+        data: "pizzaportal");
+    if (res.status) {
       ApiEndPoints.authToken = res.data.toString();
       getSystemToken(ApiEndPoints.authToken);
     }
-    // notifyListeners();
+
   }
 
   getSystemToken(String token) async {
     ApiResponse<dynamic>? res = await apiServices.postRequest(
-        ApiEndPoints.rjt01,
+        ApiEndPoints.addIntoOutlet,
         token: token,
         queryParameters: {},
-        data: {});
+        data: "rjt01");
     String systemToken = "systemToken";
-    if (res != null && res.status) {
+    if (res.status) {
       systemToken = res.data.toString();
       ApiEndPoints.authToken = res.data.toString();
     }
     if (ApiEndPoints.authToken == systemToken) {
       loading.value = false;
     }
-    // notifyListeners();
+
   }
 }

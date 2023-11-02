@@ -1,53 +1,36 @@
-import 'dart:convert';
-
 class LoginByIpModel {
   String? message;
   bool? status;
   Data? data;
 
-  LoginByIpModel({
-    this.message,
-    this.status,
-    this.data,
-  });
+  LoginByIpModel({this.message, this.status, this.data});
 
-  LoginByIpModel copyWith({
-    String? message,
-    bool? status,
-    Data? data,
-  }) =>
-      LoginByIpModel(
-        message: message ?? this.message,
-        status: status ?? this.status,
-        data: data ?? this.data,
-      );
+  factory LoginByIpModel.fromJson(Map<String, dynamic> json) {
+    return LoginByIpModel(
+      message: json['message'],
+      status: json['status'],
+      data: json['data'] != null ? Data.fromJson(json['data']) : null,
+    );
+  }
 
-  factory LoginByIpModel.fromRawJson(String str) => LoginByIpModel.fromJson(json.decode(str));
-
-  String toRawJson() => json.encode(toJson());
-
-  factory LoginByIpModel.fromJson(Map<String, dynamic> json) => LoginByIpModel(
-    message: json["message"],
-    status: json["status"],
-    data: json["data"] == null ? null : Data.fromJson(json["data"]),
-  );
-
-  Map<String, dynamic> toJson() => {
-    "message": message,
-    "status": status,
-    "data": data?.toJson(),
-  };
+  Map<String, dynamic> toJson() {
+    return {
+      'message': message,
+      'status': status,
+      'data': data?.toJson(),
+    };
+  }
 }
 
 class Data {
   String? id;
   String? userName;
-  dynamic firstName;
-  dynamic lastName;
-  dynamic emailId;
-  dynamic mobileNumber;
+  String? firstName;
+  String? lastName;
+  String? emailId;
+  String? mobileNumber;
   String? jwtToken;
-  UserMst? userMst;
+  UserMST? userMST;
 
   Data({
     this.id,
@@ -57,107 +40,81 @@ class Data {
     this.emailId,
     this.mobileNumber,
     this.jwtToken,
-    this.userMst,
+    this.userMST,
   });
 
-  Data copyWith({
-    String? id,
-    String? userName,
-    dynamic firstName,
-    dynamic lastName,
-    dynamic emailId,
-    dynamic mobileNumber,
-    String? jwtToken,
-    UserMst? userMst,
-  }) =>
-      Data(
-        id: id ?? this.id,
-        userName: userName ?? this.userName,
-        firstName: firstName ?? this.firstName,
-        lastName: lastName ?? this.lastName,
-        emailId: emailId ?? this.emailId,
-        mobileNumber: mobileNumber ?? this.mobileNumber,
-        jwtToken: jwtToken ?? this.jwtToken,
-        userMst: userMst ?? this.userMst,
-      );
+  factory Data.fromJson(Map<String, dynamic> json) {
+    return Data(
+      id: json['id'],
+      userName: json['userName'],
+      firstName: json['firstName'],
+      lastName: json['lastName'],
+      emailId: json['emailId'],
+      mobileNumber: json['mobileNumber'],
+      jwtToken: json['jwtToken'],
+      userMST: json['userMST'] != null ? UserMST.fromJson(json['userMST']) : null,
+    );
+  }
 
-  factory Data.fromRawJson(String str) => Data.fromJson(json.decode(str));
-
-  String toRawJson() => json.encode(toJson());
-
-  factory Data.fromJson(Map<String, dynamic> json) => Data(
-    id: json["id"],
-    userName: json["userName"],
-    firstName: json["firstName"],
-    lastName: json["lastName"],
-    emailId: json["emailId"],
-    mobileNumber: json["mobileNumber"],
-    jwtToken: json["jwtToken"],
-    userMst: json["userMST"] == null ? null : UserMst.fromJson(json["userMST"]),
-  );
-
-  Map<String, dynamic> toJson() => {
-    "id": id,
-    "userName": userName,
-    "firstName": firstName,
-    "lastName": lastName,
-    "emailId": emailId,
-    "mobileNumber": mobileNumber,
-    "jwtToken": jwtToken,
-    "userMST": userMst?.toJson(),
-  };
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'userName': userName,
+      'firstName': firstName,
+      'lastName': lastName,
+      'emailId': emailId,
+      'mobileNumber': mobileNumber,
+      'jwtToken': jwtToken,
+      'userMST': userMST?.toJson(),
+    };
+  }
 }
 
-class UserMst {
-  DateTime? createdOn;
-  DateTime? modifiedOn;
-  dynamic createdBy;
-  dynamic modifiedBy;
-  String? userMstId;
+class UserMST {
+  String? createdOn;
+  String? modifiedOn;
+  String? createdBy;
+  String? modifiedBy;
+  String? userMSTId;
   String? userCode;
   String? userName;
-  dynamic userExternalCode;
-  String? userGroupMstId;
-  UserGroupMMst? userGroupMst;
-  String? userRoleMstId;
-  UserRoleMst? userRoleMst;
-  String? userGroupManagerMstId;
-  UserGroupMMst? userGroupManagerMst;
-  dynamic gender;
-  dynamic primaryContactNumber;
-  dynamic secondaryContactNumber;
-  dynamic primaryEmailId;
-  dynamic secondaryEmailId;
-  dynamic profileImage;
+  String? userExternalCode;
+  String? userGroupMSTId;
+  UserGroupMST? userGroupMST;
+  String? userRoleMSTId;
+  UserRoleMST? userRoleMST;
+  String? userGroupManagerMSTId;
+  UserGroupManagerMST? userGroupManagerMST;
+  String? gender;
+  String? primaryContactNumber;
+  String? secondaryContactNumber;
+  String? primaryEmailId;
+  String? secondaryEmailId;
+  String? profileImage;
   String? password;
-  dynamic invoiceDiscountLimit;
-  dynamic dueBalance;
   String? ipAddress;
-  dynamic forgotPasswordOtp;
-  dynamic forgotPasswordOtpExpiry;
-  List<dynamic>? userOutletAccessDtlList;
-  List<dynamic>? userAddressMstList;
-  dynamic lock;
+  String? forgotPasswordOTP;
+  String? forgotPasswordOTPExpiry;
   bool? ipUser;
   bool? deliveryPerson;
   bool? signUp;
   bool? active;
 
-  UserMst({
+  UserMST({
     this.createdOn,
     this.modifiedOn,
     this.createdBy,
     this.modifiedBy,
-    this.userMstId,
+    this.userMSTId,
     this.userCode,
     this.userName,
     this.userExternalCode,
-    this.userGroupMstId,
-    this.userGroupMst,
-    this.userRoleMstId,
-    this.userRoleMst,
-    this.userGroupManagerMstId,
-    this.userGroupManagerMst,
+    this.userGroupMSTId,
+    this.userGroupMST,
+    this.userRoleMSTId,
+    this.userRoleMST,
+    this.userGroupManagerMSTId,
+    this.userGroupManagerMST,
     this.gender,
     this.primaryContactNumber,
     this.secondaryContactNumber,
@@ -165,186 +122,102 @@ class UserMst {
     this.secondaryEmailId,
     this.profileImage,
     this.password,
-    this.invoiceDiscountLimit,
-    this.dueBalance,
     this.ipAddress,
-    this.forgotPasswordOtp,
-    this.forgotPasswordOtpExpiry,
-    this.userOutletAccessDtlList,
-    this.userAddressMstList,
-    this.lock,
+    this.forgotPasswordOTP,
+    this.forgotPasswordOTPExpiry,
     this.ipUser,
     this.deliveryPerson,
     this.signUp,
     this.active,
   });
 
-  UserMst copyWith({
-    DateTime? createdOn,
-    DateTime? modifiedOn,
-    dynamic createdBy,
-    dynamic modifiedBy,
-    String? userMstId,
-    String? userCode,
-    String? userName,
-    dynamic userExternalCode,
-    String? userGroupMstId,
-    UserGroupMMst? userGroupMst,
-    String? userRoleMstId,
-    UserRoleMst? userRoleMst,
-    String? userGroupManagerMstId,
-    UserGroupMMst? userGroupManagerMst,
-    dynamic gender,
-    dynamic primaryContactNumber,
-    dynamic secondaryContactNumber,
-    dynamic primaryEmailId,
-    dynamic secondaryEmailId,
-    dynamic profileImage,
-    String? password,
-    dynamic invoiceDiscountLimit,
-    dynamic dueBalance,
-    String? ipAddress,
-    dynamic forgotPasswordOtp,
-    dynamic forgotPasswordOtpExpiry,
-    List<dynamic>? userOutletAccessDtlList,
-    List<dynamic>? userAddressMstList,
-    dynamic lock,
-    bool? ipUser,
-    bool? deliveryPerson,
-    bool? signUp,
-    bool? active,
-  }) =>
-      UserMst(
-        createdOn: createdOn ?? this.createdOn,
-        modifiedOn: modifiedOn ?? this.modifiedOn,
-        createdBy: createdBy ?? this.createdBy,
-        modifiedBy: modifiedBy ?? this.modifiedBy,
-        userMstId: userMstId ?? this.userMstId,
-        userCode: userCode ?? this.userCode,
-        userName: userName ?? this.userName,
-        userExternalCode: userExternalCode ?? this.userExternalCode,
-        userGroupMstId: userGroupMstId ?? this.userGroupMstId,
-        userGroupMst: userGroupMst ?? this.userGroupMst,
-        userRoleMstId: userRoleMstId ?? this.userRoleMstId,
-        userRoleMst: userRoleMst ?? this.userRoleMst,
-        userGroupManagerMstId: userGroupManagerMstId ?? this.userGroupManagerMstId,
-        userGroupManagerMst: userGroupManagerMst ?? this.userGroupManagerMst,
-        gender: gender ?? this.gender,
-        primaryContactNumber: primaryContactNumber ?? this.primaryContactNumber,
-        secondaryContactNumber: secondaryContactNumber ?? this.secondaryContactNumber,
-        primaryEmailId: primaryEmailId ?? this.primaryEmailId,
-        secondaryEmailId: secondaryEmailId ?? this.secondaryEmailId,
-        profileImage: profileImage ?? this.profileImage,
-        password: password ?? this.password,
-        invoiceDiscountLimit: invoiceDiscountLimit ?? this.invoiceDiscountLimit,
-        dueBalance: dueBalance ?? this.dueBalance,
-        ipAddress: ipAddress ?? this.ipAddress,
-        forgotPasswordOtp: forgotPasswordOtp ?? this.forgotPasswordOtp,
-        forgotPasswordOtpExpiry: forgotPasswordOtpExpiry ?? this.forgotPasswordOtpExpiry,
-        userOutletAccessDtlList: userOutletAccessDtlList ?? this.userOutletAccessDtlList,
-        userAddressMstList: userAddressMstList ?? this.userAddressMstList,
-        lock: lock ?? this.lock,
-        ipUser: ipUser ?? this.ipUser,
-        deliveryPerson: deliveryPerson ?? this.deliveryPerson,
-        signUp: signUp ?? this.signUp,
-        active: active ?? this.active,
-      );
+  factory UserMST.fromJson(Map<String, dynamic> json) {
+    return UserMST(
+      createdOn: json['createdOn'],
+      modifiedOn: json['modifiedOn'],
+      createdBy: json['createdBy'],
+      modifiedBy: json['modifiedBy'],
+      userMSTId: json['userMSTId'],
+      userCode: json['userCode'],
+      userName: json['userName'],
+      userExternalCode: json['userExternalCode'],
+      userGroupMSTId: json['userGroupMSTId'],
+      userGroupMST: json['userGroupMST'] != null ? UserGroupMST.fromJson(json['userGroupMST']) : null,
+      userRoleMSTId: json['userRoleMSTId'],
+      userRoleMST: json['userRoleMST'] != null ? UserRoleMST.fromJson(json['userRoleMST']) : null,
+      userGroupManagerMSTId: json['userGroupManagerMSTId'],
+      userGroupManagerMST: json['userGroupManagerMST'] != null
+          ? UserGroupManagerMST.fromJson(json['userGroupManagerMST'])
+          : null,
+      gender: json['gender'],
+      primaryContactNumber: json['primaryContactNumber'],
+      secondaryContactNumber: json['secondaryContactNumber'],
+      primaryEmailId: json['primaryEmailId'],
+      secondaryEmailId: json['secondaryEmailId'],
+      profileImage: json['profileImage'],
+      password: json['password'],
+      ipAddress: json['ipAddress'],
+      forgotPasswordOTP: json['forgotPasswordOTP'],
+      forgotPasswordOTPExpiry: json['forgotPasswordOTPExpiry'],
+      ipUser: json['ipUser'],
+      deliveryPerson: json['deliveryPerson'],
+      signUp: json['signUp'],
+      active: json['active'],
+    );
+  }
 
-  factory UserMst.fromRawJson(String str) => UserMst.fromJson(json.decode(str));
-
-  String toRawJson() => json.encode(toJson());
-
-  factory UserMst.fromJson(Map<String, dynamic> json) => UserMst(
-    createdOn: json["createdOn"] == null ? null : DateTime.parse(json["createdOn"]),
-    modifiedOn: json["modifiedOn"] == null ? null : DateTime.parse(json["modifiedOn"]),
-    createdBy: json["createdBy"],
-    modifiedBy: json["modifiedBy"],
-    userMstId: json["userMSTId"],
-    userCode: json["userCode"],
-    userName: json["userName"],
-    userExternalCode: json["userExternalCode"],
-    userGroupMstId: json["userGroupMSTId"],
-    userGroupMst: json["userGroupMST"] == null ? null : UserGroupMMst.fromJson(json["userGroupMST"]),
-    userRoleMstId: json["userRoleMSTId"],
-    userRoleMst: json["userRoleMST"] == null ? null : UserRoleMst.fromJson(json["userRoleMST"]),
-    userGroupManagerMstId: json["userGroupManagerMSTId"],
-    userGroupManagerMst: json["userGroupManagerMST"] == null ? null : UserGroupMMst.fromJson(json["userGroupManagerMST"]),
-    gender: json["gender"],
-    primaryContactNumber: json["primaryContactNumber"],
-    secondaryContactNumber: json["secondaryContactNumber"],
-    primaryEmailId: json["primaryEmailId"],
-    secondaryEmailId: json["secondaryEmailId"],
-    profileImage: json["profileImage"],
-    password: json["password"],
-    invoiceDiscountLimit: json["invoiceDiscountLimit"],
-    dueBalance: json["dueBalance"],
-    ipAddress: json["ipAddress"],
-    forgotPasswordOtp: json["forgotPasswordOTP"],
-    forgotPasswordOtpExpiry: json["forgotPasswordOTPExpiry"],
-    userOutletAccessDtlList: json["userOutletAccessDTLList"] == null ? [] : List<dynamic>.from(json["userOutletAccessDTLList"]!.map((x) => x)),
-    userAddressMstList: json["userAddressMSTList"] == null ? [] : List<dynamic>.from(json["userAddressMSTList"]!.map((x) => x)),
-    lock: json["lock"],
-    ipUser: json["ipUser"],
-    deliveryPerson: json["deliveryPerson"],
-    signUp: json["signUp"],
-    active: json["active"],
-  );
-
-  Map<String, dynamic> toJson() => {
-    "createdOn": createdOn?.toIso8601String(),
-    "modifiedOn": modifiedOn?.toIso8601String(),
-    "createdBy": createdBy,
-    "modifiedBy": modifiedBy,
-    "userMSTId": userMstId,
-    "userCode": userCode,
-    "userName": userName,
-    "userExternalCode": userExternalCode,
-    "userGroupMSTId": userGroupMstId,
-    "userGroupMST": userGroupMst?.toJson(),
-    "userRoleMSTId": userRoleMstId,
-    "userRoleMST": userRoleMst?.toJson(),
-    "userGroupManagerMSTId": userGroupManagerMstId,
-    "userGroupManagerMST": userGroupManagerMst?.toJson(),
-    "gender": gender,
-    "primaryContactNumber": primaryContactNumber,
-    "secondaryContactNumber": secondaryContactNumber,
-    "primaryEmailId": primaryEmailId,
-    "secondaryEmailId": secondaryEmailId,
-    "profileImage": profileImage,
-    "password": password,
-    "invoiceDiscountLimit": invoiceDiscountLimit,
-    "dueBalance": dueBalance,
-    "ipAddress": ipAddress,
-    "forgotPasswordOTP": forgotPasswordOtp,
-    "forgotPasswordOTPExpiry": forgotPasswordOtpExpiry,
-    "userOutletAccessDTLList": userOutletAccessDtlList == null ? [] : List<dynamic>.from(userOutletAccessDtlList!.map((x) => x)),
-    "userAddressMSTList": userAddressMstList == null ? [] : List<dynamic>.from(userAddressMstList!.map((x) => x)),
-    "lock": lock,
-    "ipUser": ipUser,
-    "deliveryPerson": deliveryPerson,
-    "signUp": signUp,
-    "active": active,
-  };
+  Map<String, dynamic> toJson() {
+    return {
+      'createdOn': createdOn,
+      'modifiedOn': modifiedOn,
+      'createdBy': createdBy,
+      'modifiedBy': modifiedBy,
+      'userMSTId': userMSTId,
+      'userCode': userCode,
+      'userName': userName,
+      'userExternalCode': userExternalCode,
+      'userGroupMSTId': userGroupMSTId,
+      'userGroupMST': userGroupMST?.toJson(),
+      'userRoleMSTId': userRoleMSTId,
+      'userRoleMST': userRoleMST?.toJson(),
+      'userGroupManagerMSTId': userGroupManagerMSTId,
+      'userGroupManagerMST': userGroupManagerMST?.toJson(),
+      'gender': gender,
+      'primaryContactNumber': primaryContactNumber,
+      'secondaryContactNumber': secondaryContactNumber,
+      'primaryEmailId': primaryEmailId,
+      'secondaryEmailId': secondaryEmailId,
+      'profileImage': profileImage,
+      'password': password,
+      'ipAddress': ipAddress,
+      'forgotPasswordOTP': forgotPasswordOTP,
+      'forgotPasswordOTPExpiry': forgotPasswordOTPExpiry,
+      'ipUser': ipUser,
+      'deliveryPerson': deliveryPerson,
+      'signUp': signUp,
+      'active': active,
+    };
+  }
 }
 
-class UserGroupMMst {
-  DateTime? createdOn;
-  DateTime? modifiedOn;
-  dynamic createdBy;
-  dynamic modifiedBy;
-  String? userGroupMstId;
+class UserGroupMST {
+  String? createdOn;
+  String? modifiedOn;
+  String? createdBy;
+  String? modifiedBy;
+  String? userGroupMSTId;
   String? groupCode;
   String? groupName;
-  dynamic sortOrder;
+  String? sortOrder;
   bool? systemData;
   bool? active;
 
-  UserGroupMMst({
+  UserGroupMST({
     this.createdOn,
     this.modifiedOn,
     this.createdBy,
     this.modifiedBy,
-    this.userGroupMstId,
+    this.userGroupMSTId,
     this.groupCode,
     this.groupName,
     this.sortOrder,
@@ -352,80 +225,55 @@ class UserGroupMMst {
     this.active,
   });
 
-  UserGroupMMst copyWith({
-    DateTime? createdOn,
-    DateTime? modifiedOn,
-    dynamic createdBy,
-    dynamic modifiedBy,
-    String? userGroupMstId,
-    String? groupCode,
-    String? groupName,
-    dynamic sortOrder,
-    bool? systemData,
-    bool? active,
-  }) =>
-      UserGroupMMst(
-        createdOn: createdOn ?? this.createdOn,
-        modifiedOn: modifiedOn ?? this.modifiedOn,
-        createdBy: createdBy ?? this.createdBy,
-        modifiedBy: modifiedBy ?? this.modifiedBy,
-        userGroupMstId: userGroupMstId ?? this.userGroupMstId,
-        groupCode: groupCode ?? this.groupCode,
-        groupName: groupName ?? this.groupName,
-        sortOrder: sortOrder ?? this.sortOrder,
-        systemData: systemData ?? this.systemData,
-        active: active ?? this.active,
-      );
+  factory UserGroupMST.fromJson(Map<String, dynamic> json) {
+    return UserGroupMST(
+      createdOn: json['createdOn'],
+      modifiedOn: json['modifiedOn'],
+      createdBy: json['createdBy'],
+      modifiedBy: json['modifiedBy'],
+      userGroupMSTId: json['userGroupMSTId'],
+      groupCode: json['groupCode'],
+      groupName: json['groupName'],
+      sortOrder: json['sortOrder'],
+      systemData: json['systemData'],
+      active: json['active'],
+    );
+  }
 
-  factory UserGroupMMst.fromRawJson(String str) => UserGroupMMst.fromJson(json.decode(str));
-
-  String toRawJson() => json.encode(toJson());
-
-  factory UserGroupMMst.fromJson(Map<String, dynamic> json) => UserGroupMMst(
-    createdOn: json["createdOn"] == null ? null : DateTime.parse(json["createdOn"]),
-    modifiedOn: json["modifiedOn"] == null ? null : DateTime.parse(json["modifiedOn"]),
-    createdBy: json["createdBy"],
-    modifiedBy: json["modifiedBy"],
-    userGroupMstId: json["userGroupMSTId"],
-    groupCode: json["groupCode"],
-    groupName: json["groupName"],
-    sortOrder: json["sortOrder"],
-    systemData: json["systemData"],
-    active: json["active"],
-  );
-
-  Map<String, dynamic> toJson() => {
-    "createdOn": createdOn?.toIso8601String(),
-    "modifiedOn": modifiedOn?.toIso8601String(),
-    "createdBy": createdBy,
-    "modifiedBy": modifiedBy,
-    "userGroupMSTId": userGroupMstId,
-    "groupCode": groupCode,
-    "groupName": groupName,
-    "sortOrder": sortOrder,
-    "systemData": systemData,
-    "active": active,
-  };
+  Map<String, dynamic> toJson() {
+    return {
+      'createdOn': createdOn,
+      'modifiedOn': modifiedOn,
+      'createdBy': createdBy,
+      'modifiedBy': modifiedBy,
+      'userGroupMSTId': userGroupMSTId,
+      'groupCode': groupCode,
+      'groupName': groupName,
+      'sortOrder': sortOrder,
+      'systemData': systemData,
+      'active': active,
+    };
+  }
 }
 
-class UserRoleMst {
-  DateTime? createdOn;
-  DateTime? modifiedOn;
-  dynamic createdBy;
-  dynamic modifiedBy;
-  String? userRoleMstId;
+class UserRoleMST {
+  String? createdOn;
+  String? modifiedOn;
+  String? createdBy;
+  String? modifiedBy;
+  String? userRoleMSTId;
   String? roleCode;
   String? roleName;
-  int? sortOrder;
+  String? sortOrder;
   bool? systemData;
   bool? active;
 
-  UserRoleMst({
+  UserRoleMST({
     this.createdOn,
     this.modifiedOn,
     this.createdBy,
     this.modifiedBy,
-    this.userRoleMstId,
+    this.userRoleMSTId,
     this.roleCode,
     this.roleName,
     this.sortOrder,
@@ -433,58 +281,89 @@ class UserRoleMst {
     this.active,
   });
 
-  UserRoleMst copyWith({
-    DateTime? createdOn,
-    DateTime? modifiedOn,
-    dynamic createdBy,
-    dynamic modifiedBy,
-    String? userRoleMstId,
-    String? roleCode,
-    String? roleName,
-    int? sortOrder,
-    bool? systemData,
-    bool? active,
-  }) =>
-      UserRoleMst(
-        createdOn: createdOn ?? this.createdOn,
-        modifiedOn: modifiedOn ?? this.modifiedOn,
-        createdBy: createdBy ?? this.createdBy,
-        modifiedBy: modifiedBy ?? this.modifiedBy,
-        userRoleMstId: userRoleMstId ?? this.userRoleMstId,
-        roleCode: roleCode ?? this.roleCode,
-        roleName: roleName ?? this.roleName,
-        sortOrder: sortOrder ?? this.sortOrder,
-        systemData: systemData ?? this.systemData,
-        active: active ?? this.active,
-      );
+  factory UserRoleMST.fromJson(Map<String, dynamic> json) {
+    return UserRoleMST(
+      createdOn: json['createdOn'],
+      modifiedOn: json['modifiedOn'],
+      createdBy: json['createdBy'],
+      modifiedBy: json['modifiedBy'],
+      userRoleMSTId: json['userRoleMSTId'],
+      roleCode: json['roleCode'],
+      roleName: json['roleName'],
+      sortOrder: json['sortOrder'],
+      systemData: json['systemData'],
+      active: json['active'],
+    );
+  }
 
-  factory UserRoleMst.fromRawJson(String str) => UserRoleMst.fromJson(json.decode(str));
+  Map<String, dynamic> toJson() {
+    return {
+      'createdOn': createdOn,
+      'modifiedOn': modifiedOn,
+      'createdBy': createdBy,
+      'modifiedBy': modifiedBy,
+      'userRoleMSTId': userRoleMSTId,
+      'roleCode': roleCode,
+      'roleName': roleName,
+      'sortOrder': sortOrder,
+      'systemData': systemData,
+      'active': active,
+    };
+  }
+}
 
-  String toRawJson() => json.encode(toJson());
+class UserGroupManagerMST {
+  String? createdOn;
+  String? modifiedOn;
+  String? createdBy;
+  String? modifiedBy;
+  String? userGroupMSTId;
+  String? groupCode;
+  String? groupName;
+  String? sortOrder;
+  bool? systemData;
+  bool? active;
 
-  factory UserRoleMst.fromJson(Map<String, dynamic> json) => UserRoleMst(
-    createdOn: json["createdOn"] == null ? null : DateTime.parse(json["createdOn"]),
-    modifiedOn: json["modifiedOn"] == null ? null : DateTime.parse(json["modifiedOn"]),
-    createdBy: json["createdBy"],
-    modifiedBy: json["modifiedBy"],
-    userRoleMstId: json["userRoleMSTId"],
-    roleCode: json["roleCode"],
-    roleName: json["roleName"],
-    sortOrder: json["sortOrder"],
-    systemData: json["systemData"],
-    active: json["active"],
-  );
+  UserGroupManagerMST({
+    this.createdOn,
+    this.modifiedOn,
+    this.createdBy,
+    this.modifiedBy,
+    this.userGroupMSTId,
+    this.groupCode,
+    this.groupName,
+    this.sortOrder,
+    this.systemData,
+    this.active,
+  });
 
-  Map<String, dynamic> toJson() => {
-    "createdOn": createdOn?.toIso8601String(),
-    "modifiedOn": modifiedOn?.toIso8601String(),
-    "createdBy": createdBy,
-    "modifiedBy": modifiedBy,
-    "userRoleMSTId": userRoleMstId,
-    "roleCode": roleCode,
-    "roleName": roleName,
-    "sortOrder": sortOrder,
-    "systemData": systemData,
-    "active": active,
-  };
+  factory UserGroupManagerMST.fromJson(Map<String, dynamic> json) {
+    return UserGroupManagerMST(
+      createdOn: json['createdOn'],
+      modifiedOn: json['modifiedOn'],
+      createdBy: json['createdBy'],
+      modifiedBy: json['modifiedBy'],
+      userGroupMSTId: json['userGroupMSTId'],
+      groupCode: json['groupCode'],
+      groupName: json['groupName'],
+      sortOrder: json['sortOrder'],
+      systemData: json['systemData'],
+      active: json['active'],
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'createdOn': createdOn,
+      'modifiedOn': modifiedOn,
+      'createdBy': createdBy,
+      'modifiedBy': modifiedBy,
+      'userGroupMSTId': userGroupMSTId,
+      'groupCode': groupCode,
+      'groupName': groupName,
+      'sortOrder': sortOrder,
+      'systemData': systemData,
+      'active': active,
+    };
+  }
 }

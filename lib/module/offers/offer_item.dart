@@ -1,11 +1,8 @@
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_blurhash/flutter_blurhash.dart';
-import 'package:get/get.dart';
 import 'package:pizza/constants/app_colors.dart';
 import 'package:pizza/constants/assets.dart';
-import 'package:pizza/module/offers/offer_controller.dart';
 import 'package:pizza/module/offers/offer_info_model.dart';
 import 'package:sizer/sizer.dart';
 /*class OfferPage extends GetView<OfferController> {
@@ -48,7 +45,7 @@ class OfferItem extends StatelessWidget {
       width: 261.sp,
       height: 190.sp,
       child: Card(
-        color: Colors.grey.shade400,
+        color: AppColors.grey400,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,

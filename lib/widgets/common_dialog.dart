@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../constants/app_colors.dart';
+
 void showErrorDialog({required String title, required String message}) {
   Get.dialog(
       CommonErrorDialog(
@@ -14,7 +16,8 @@ class CommonErrorDialog extends StatelessWidget {
   final String title;
   final String message;
 
-  CommonErrorDialog({required this.title, required this.message});
+  const CommonErrorDialog(
+      {super.key, required this.title, required this.message});
 
   @override
   Widget build(BuildContext context) {
@@ -29,32 +32,33 @@ class CommonErrorDialog extends StatelessWidget {
           children: [
             Text(
               title,
-              style: TextStyle(
+              style:  TextStyle(
                 fontWeight: FontWeight.bold,
-                color: Colors.black,
+                color: AppColors.black,
                 fontSize: 18.0,
               ),
             ),
-            SizedBox(height: 10.0),
+            const SizedBox(height: 10.0),
             Text(
               message,
-              style: TextStyle(
-                color: Colors.black,
+              style:  TextStyle(
+                color: AppColors.black,
                 fontSize: 16.0,
               ),
             ),
-            SizedBox(height: 20.0),
+            const SizedBox(height: 20.0),
             ElevatedButton(
               onPressed: () {
                 Get.back();
               },
               style: ButtonStyle(
-                backgroundColor: MaterialStateProperty.all(Color(0xFFFDAF17)),
+                backgroundColor:
+                    MaterialStateProperty.all(AppColors.lightOrange),
               ),
-              child: Text(
+              child:  Text(
                 'OK',
                 style: TextStyle(
-                  color: Colors.white,
+                  color: AppColors.white,
                   fontSize: 16.0,
                 ),
               ),

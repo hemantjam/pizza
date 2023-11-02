@@ -11,7 +11,7 @@ class MenuRepository {
   Future<List<MenuListModel>> getMenu() async {
     ApiResponse? res = await apiClient.getRequest(ApiEndPoints.getMenu);
 
-    List<dynamic> data = res!.data as List<dynamic>;
+    List<dynamic> data = res.data as List<dynamic>;
 
     menuList = data.map((item) => MenuListModel.fromJson(item)).toList();
     /*menuList.removeWhere((item) =>

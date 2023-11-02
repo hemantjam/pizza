@@ -4,5 +4,6 @@ class RouteNames {
   static const String login = "/login";
   static const String register = "/register";
   static const String offerList = "/offerList";
-  static const String deliveryType = "/deliveryType";
+  static const String orderDeliveryOptions = "/orderDeliveryOptions";
+  static const String orderPickUpOptions = "/orderPickUpOptions";
 }

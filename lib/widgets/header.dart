@@ -3,20 +3,16 @@ import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:sizer/sizer.dart';
 
+import '../constants/app_colors.dart';
 import '../constants/assets.dart';
 import '../module/home/home_controller.dart';
 
 class Header extends GetView<HomeController> {
-  const Header({
-    super.key,
-   // required this.controller,
-  });
-
-  //final HomeController controller;
+  const Header({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return SizedBox(
       height: 60.sp,
       child: Stack(
         children: [
@@ -27,7 +23,7 @@ class Header extends GetView<HomeController> {
               alignment: Alignment.center,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(8.sp),
-                color: Colors.black,
+                color: AppColors.black,
               ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,

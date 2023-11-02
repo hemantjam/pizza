@@ -6,6 +6,7 @@ import 'package:get/get.dart';
 import 'package:pizza/module/menu/menu_controller.dart';
 import 'package:sizer/sizer.dart';
 
+import '../../constants/app_colors.dart';
 import '../../constants/assets.dart';
 import 'menu_model.dart';
 
@@ -14,40 +15,38 @@ class MenusPage extends GetView<OutletMenuController> {
 
   @override
   Widget build(BuildContext context) {
-    return Obx(() => Container(
-          child: Wrap(
-            alignment: WrapAlignment.center,
-            runAlignment: WrapAlignment.start,
-            children:controller.menuListModel.isEmpty?
-
-               [
-                 menuFallBack(),
-                 menuFallBack(),
-                 menuFallBack(),
-                 menuFallBack(),
-                 menuFallBack()
-               ]
-                : controller.menuListModel.map((item) {
-              return menuItem(item);
-            }).toList(),
-          ),
+    return Obx(() => Wrap(
+          alignment: WrapAlignment.center,
+          runAlignment: WrapAlignment.start,
+          children: controller.menuListModel.isEmpty
+              ? [
+                  menuFallBack(),
+                  menuFallBack(),
+                  menuFallBack(),
+                  menuFallBack(),
+                  menuFallBack()
+                ]
+              : controller.menuListModel.map((item) {
+                  return menuItem(item);
+                }).toList(),
         ));
   }
-menuFallBack(){
+
+  menuFallBack() {
     return Container(
       alignment: Alignment.center,
       width: 46.w,
-      padding: EdgeInsets.all(6.0),
+      padding: const EdgeInsets.all(6.0),
       decoration: BoxDecoration(
-        border: Border.all(color: Colors.grey, width: 0.5), // Border style
+        border: Border.all(color: AppColors.grey, width: 0.5), // Border style
       ),
-      child:  SizedBox(
+      child: SizedBox(
           height: 48.sp,
           width: 48.sp,
-          child:
-          const BlurHash(hash: Assets.homeBannerBlur)),
+          child: const BlurHash(hash: Assets.homeBannerBlur)),
     );
-}
+  }
+
   Widget menuItem(MenuListModel item) {
     return item.webDisplay != null && item.webDisplay!
         ? Card(
@@ -55,10 +54,10 @@ menuFallBack(){
             child: Container(
               alignment: Alignment.center,
               width: 46.w,
-              padding: EdgeInsets.all(6.0),
+              padding: const EdgeInsets.all(6.0),
               decoration: BoxDecoration(
                 border:
-                    Border.all(color: Colors.grey, width: 0.0), // Border style
+                    Border.all(color: AppColors.grey, width: 0.0), // Border style
               ),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,

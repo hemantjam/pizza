@@ -2,11 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get_navigation/src/root/get_material_app.dart';
 import 'package:pizza/constants/app_colors.dart';
 import 'package:pizza/constants/route_names.dart';
-import 'package:pizza/module/splash/splash_page.dart';
 import 'package:pizza/routes.dart';
 import 'package:sizer/sizer.dart';
-
-import 'module/home/home_page.dart';
 
 class PizzaApp extends StatelessWidget {
   const PizzaApp({super.key});
@@ -17,9 +14,8 @@ class PizzaApp extends StatelessWidget {
       return GetMaterialApp(
         theme: ThemeData(
             primarySwatch: AppColors.primaryColor,
-            appBarTheme: AppBarTheme(backgroundColor: Colors.white),
-            scaffoldBackgroundColor: Colors.white
-        ),
+            appBarTheme:  AppBarTheme(backgroundColor: AppColors.white),
+            scaffoldBackgroundColor: AppColors.white),
         getPages: RouteGenerator.routes,
         initialRoute: RouteNames.initial,
         debugShowCheckedModeBanner: false,

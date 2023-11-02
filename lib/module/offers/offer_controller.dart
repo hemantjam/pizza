@@ -1,6 +1,3 @@
-import 'dart:convert';
-import 'dart:developer';
-
 import 'package:get/get.dart';
 import 'package:pizza/module/offers/offer_info_model.dart';
 
@@ -22,7 +19,7 @@ class OfferController extends GetxController {
     ApiResponse<dynamic>? res =
         await apiClient.getRequest(ApiEndPoints.offerInfo);
     offerInfoModel.value =
-        OfferInfoModel.fromJson(res?.data as Map<String, dynamic>);
+        OfferInfoModel.fromJson(res.data as Map<String, dynamic>);
 
     update();
   }

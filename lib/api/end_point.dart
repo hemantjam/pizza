@@ -8,8 +8,8 @@ class ApiEndPoints {
   static const String loginByIp = "userMST/login/byIp/";
 
   //static const String addToken = "addIntoToken/system";
-  static const String addIntoPizza = "/userMST/addIntoToken/pizzaportal";
-  static const String rjt01 = "/userMST/addIntoToken/rjt01";
+  static const String addIntoSystem = "/userMST/addIntoToken/system";
+  static const String addIntoOutlet = "/userMST/addIntoToken/outlet";
 
   static const String offerList = "homeController/offers";
   static const String offerInfo = "homeController/offersinfo/";

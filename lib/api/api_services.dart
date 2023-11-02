@@ -1,8 +1,8 @@
 import 'dart:developer';
+
 import 'package:dio/dio.dart';
-import 'package:get/get.dart';
 import 'package:pizza/api/end_point.dart';
-import 'package:pretty_dio_logger/pretty_dio_logger.dart';
+
 import '../widgets/common_dialog.dart';
 import 'api_response.dart';
 
@@ -13,26 +13,27 @@ class ApiServices {
     _dio.options.baseUrl = ApiEndPoints.baseUrl;
     _dio.options.headers['Content-Type'] = 'application/json';
     _dio.options.headers['Accept'] = 'application/json';
-   /// _dio.interceptors.add(PrettyDioLogger());
+
+    //_dio.interceptors.add(PrettyDioLogger());
   }
 
   ApiResponse apiResponse =
       ApiResponse(message: "Data Not Found", status: false, data: {});
 
   Future<ApiResponse> getRequest<T>(String endpoint,
-      {Map<String, dynamic>? queryParameters,String data=""}) async {
+      {Map<String, dynamic>? queryParameters, String data = ""}) async {
     try {
       _dio.options.headers['Authorization'] =
           'Bearer ${ApiEndPoints.authToken}';
-      final response =
-          await _dio.get(endpoint+data, queryParameters: queryParameters,data: data);
-
+      final response = await _dio.get(endpoint + data,
+          queryParameters: queryParameters, data: data);
+      log("response-->${response}");
       if (response.statusCode == 200) {
         apiResponse = ApiResponse<T>.fromJson(response.data);
         return apiResponse;
       }
     } catch (e) {
-      log("error--->${e}");
+
       handleError(e);
     }
     return apiResponse;
@@ -40,21 +41,23 @@ class ApiServices {
 
   Future<ApiResponse> postRequest<T>(
     String endpoint, {
-    dynamic data,
+    String? data,
     Map<String, dynamic>? queryParameters,
     String? token,
   }) async {
     try {
       _dio.options.headers['Authorization'] =
           'Bearer ${ApiEndPoints.authToken}';
+
       final response = await _dio.post(endpoint,
-          data: data, queryParameters: queryParameters);
+          data: '"' + data.toString() + '"', queryParameters: queryParameters);
+      log("response-of ${endpoint}->${response}");
+
       if (response.statusCode == 200) {
         apiResponse = ApiResponse<T>.fromJson(response.data);
         return apiResponse;
       }
     } catch (e) {
-      log("error--->${e}");
       handleError(e);
     }
     return apiResponse;
