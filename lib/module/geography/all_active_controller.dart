@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:get/get.dart';
 import 'package:pizza/api/api_response.dart';
 import 'package:pizza/api/api_services.dart';
@@ -10,7 +8,8 @@ import 'byType/street_name_model.dart';
 
 class AllActiveController extends GetxController {
   ApiServices apiServices = ApiServices();
-  Rx<AllActiveOutletModel> model = AllActiveOutletModel().obs;
+  Rx<AllActiveOutletGeographyModel> allActiveOutletGeographyModel =
+      AllActiveOutletGeographyModel().obs;
   Rx<GeographyByTypeModel> streetNameList = GeographyByTypeModel().obs;
   Rx<GeographyByTypeModel> postCodeList = GeographyByTypeModel().obs;
 
@@ -19,14 +18,15 @@ class AllActiveController extends GetxController {
     super.onReady();
     getAllActiveOutlet();
     getStreetName();
+    getPostCode();
   }
 
   void getAllActiveOutlet() async {
     ApiResponse res =
         await apiServices.getRequest(ApiEndPoints.allActiveOutlet);
     if (res.status) {
-      model.value = AllActiveOutletModel.fromJson(res.toJson());
-      log("active outler--->${model.value.data?.length}");
+      allActiveOutletGeographyModel.value =
+          AllActiveOutletGeographyModel.fromJson(res.toJson());
     }
     update();
   }
@@ -37,7 +37,6 @@ class AllActiveController extends GetxController {
     if (res.status) {
       streetNameList.value = GeographyByTypeModel.fromJson(res.toJson());
     }
-
     update();
   }
 
@@ -47,11 +46,6 @@ class AllActiveController extends GetxController {
     if (res.status) {
       postCodeList.value = GeographyByTypeModel.fromJson(res.toJson());
     }
-
     update();
-  }
-
-  void filterData() {
-    // model.value.d
   }
 }

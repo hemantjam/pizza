@@ -27,11 +27,11 @@ class SplashController extends GetxController {
     var res = await apiServices.getRequest(ApiEndPoints.loginByIp);
     if (res.status) {
       ApiEndPoints.authToken = res.data["jwtToken"];
-      getPizzaPortalToken(ApiEndPoints.authToken);
+      getSystemToken(ApiEndPoints.authToken);
     }
   }
 
-  getPizzaPortalToken(String token) async {
+  getSystemToken(String token) async {
     ApiResponse<dynamic>? res = await apiServices.postRequest(
         ApiEndPoints.addIntoSystem,
         token: token,
@@ -39,12 +39,12 @@ class SplashController extends GetxController {
         data: "pizzaportal");
     if (res.status) {
       ApiEndPoints.authToken = res.data.toString();
-      getSystemToken(ApiEndPoints.authToken);
+      getOutletToken(ApiEndPoints.authToken);
     }
 
   }
 
-  getSystemToken(String token) async {
+  getOutletToken(String token) async {
     ApiResponse<dynamic>? res = await apiServices.postRequest(
         ApiEndPoints.addIntoOutlet,
         token: token,

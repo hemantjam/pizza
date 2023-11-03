@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import 'package:sizer/sizer.dart';
 
 import '../../../../constants/app_colors.dart';
+import '../../../geography/byType/street_name_model.dart';
 import 'delivery_later_controller.dart';
 
 class DeliveryLaterPage extends GetView<DeliveryLaterController> {
@@ -21,6 +23,18 @@ class DeliveryLaterPage extends GetView<DeliveryLaterController> {
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.max,
               children: [
+                const SizedBox(
+                  height: 15,
+                ),
+                Obx(() => controller.isStoreOff.value
+                    ? Text(
+                        "Store is close please select another date",
+                        style: TextStyle(color: AppColors.red),
+                      )
+                    : const SizedBox()),
+                const SizedBox(
+                  height: 15,
+                ),
                 Text(
                   "Date",
                   style: TextStyle(
@@ -28,6 +42,8 @@ class DeliveryLaterPage extends GetView<DeliveryLaterController> {
                       fontSize: 18.sp,
                       fontWeight: FontWeight.bold),
                 ),
+
+                /// date
                 Obx(() {
                   return Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -44,7 +60,7 @@ class DeliveryLaterPage extends GetView<DeliveryLaterController> {
                                   ? Colors.grey.shade600
                                   : AppColors.black),
                         ),
-                        trailing: Icon(controller.isDataExpand.value
+                        trailing: Icon(controller.isDateExpand.value
                             ? Icons.arrow_drop_up
                             : Icons.keyboard_arrow_down),
                         shape: Border(
@@ -54,11 +70,37 @@ class DeliveryLaterPage extends GetView<DeliveryLaterController> {
                         ),
                       ),
                       Visibility(
-                        visible: controller.isDataExpand.value,
+                        visible: controller.isDateExpand.value,
                         child: Card(
                           child: SizedBox(
                             height: 200,
-                            child: ListView.builder(
+                            child: ListView(
+                              children: controller
+                                  .getNext15DaysWithWeekdays()
+                                  .map((dateModel) {
+                                String formattedDate =
+                                    DateFormat('d MMMM yyyy, EEEE')
+                                        .format(dateModel.dateTime);
+                                return GestureDetector(
+                                  onTap: () {
+                                    controller.date.value = formattedDate;
+                                    controller.weekDay.value =
+                                        dateModel.weekday;
+                                    controller
+                                        .getTimerInterval(dateModel.dateTime);
+                                    controller.toggleDateExpand();
+                                  },
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Center(
+                                      child: Text(formattedDate),
+                                    ),
+                                  ),
+                                );
+                              }).toList(),
+                            ),
+
+                            /*ListView.builder(
                               shrinkWrap: true,
                               itemCount: 5,
                               itemBuilder: (context, int index) {
@@ -70,7 +112,7 @@ class DeliveryLaterPage extends GetView<DeliveryLaterController> {
                                   title: Text("index->$index"),
                                 );
                               },
-                            ),
+                            ),*/
                           ),
                         ),
                       ),
@@ -80,6 +122,8 @@ class DeliveryLaterPage extends GetView<DeliveryLaterController> {
                 const SizedBox(
                   height: 15,
                 ),
+
+                /// time
                 Text(
                   "Time",
                   style: TextStyle(
@@ -120,26 +164,42 @@ class DeliveryLaterPage extends GetView<DeliveryLaterController> {
                         child: Card(
                           child: SizedBox(
                             height: 200,
-                            child: /*controller.getTime(controller
-                                  .shiftListDetailsModel!
-                                  .values
-                                  .last!
-                                  .regular!
-                                  .first!)*/
+                            child: controller.timeIntervalList.isEmpty
+                                ? const Center(child: Text("no data found !"))
+                                : ListView(
+                                    children: controller.timeIntervalList
+                                        .map((time) => GestureDetector(
+                                              onTap: () {
+                                                controller.time.value = time;
+                                                controller.toggleTimeExpand();
+                                              },
+                                              child: Padding(
+                                                padding:
+                                                    const EdgeInsets.all(8.0),
+                                                child: Center(
+                                                  child: Text(time),
+                                                ),
+                                              ),
+                                            ))
+                                        .toList()
 
-                                ListView.builder(
-                              shrinkWrap: true,
-                              itemCount: 5,
-                              itemBuilder: (context, int index) {
-                                return ListTile(
-                                  onTap: () {
-                                    controller.time.value = index.toString();
-                                    controller.toggleTimeExpand();
-                                  },
-                                  title: Text("index->$index"),
-                                );
-                              },
-                            ),
+                                    /*controller
+                                  .getTime(controller.outletShiftDetailsModel
+                                      .value.data!.regular![0]!)
+                                  .map((time) => GestureDetector(
+                                        onTap: () {
+                                          controller.time.value = time;
+                                          controller.toggleTimeExpand();
+                                        },
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: Center(
+                                            child: Text(time),
+                                          ),
+                                        ),
+                                      ))
+                                  .toList(),*/
+                                    ),
                           ),
                         ),
                       ),
@@ -205,7 +265,7 @@ class DeliveryLaterPage extends GetView<DeliveryLaterController> {
                                       ? Colors.grey.shade600
                                       : AppColors.black),
                         ),
-                        trailing: Icon(controller.isDataExpand.value
+                        trailing: Icon(controller.isDateExpand.value
                             ? Icons.arrow_drop_up
                             : Icons.keyboard_arrow_down),
                         shape: Border(
@@ -219,20 +279,27 @@ class DeliveryLaterPage extends GetView<DeliveryLaterController> {
                         child: Card(
                           child: SizedBox(
                             height: 200,
-                            child: ListView.builder(
-                              shrinkWrap: true,
-                              itemCount: 5,
-                              itemBuilder: (context, int index) {
-                                return ListTile(
-                                  onTap: () {
-                                    controller.streetName.value =
-                                        index.toString();
-                                    controller.toggleStreet();
-                                  },
-                                  title: Text("index->$index"),
-                                );
-                              },
-                            ),
+                            child: controller.streetList == null ||
+                                    controller.streetList!.isEmpty
+                                ? const Center(child: Text("No Data Found !"))
+                                : ListView.builder(
+                                    shrinkWrap: true,
+                                    itemCount: 5,
+                                    itemBuilder: (context, int index) {
+                                      SingleGeographyModel item =
+                                          controller.streetList![index];
+                                      return ListTile(
+                                        onTap: () {
+                                          controller.streetName.value =
+                                              item.geographyName.toString();
+                                          controller.toggleStreet();
+                                          controller.getPostCode(
+                                              item.geographyName ?? "");
+                                        },
+                                        title: Text(item.geographyName ?? ""),
+                                      );
+                                    },
+                                  ),
                           ),
                         ),
                       ),
@@ -240,13 +307,17 @@ class DeliveryLaterPage extends GetView<DeliveryLaterController> {
                   );
                 }),
                 const SizedBox(height: 10),
-                Card(
-                  child: TextFormField(
-                    controller: controller.postCodeController,
-                    focusNode: controller.postCodeFocus,
-                    decoration: const InputDecoration(hintText: "Post Code"),
-                  ),
-                ),
+                Obx(() {
+                  return Card(
+                    child: TextFormField(
+                      controller: controller.postCodeController,
+                      focusNode: controller.postCodeFocus,
+                      decoration: InputDecoration(
+                        hintText: controller.postCode.value,
+                      ),
+                    ),
+                  );
+                }),
                 const SizedBox(height: 10),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.start,
@@ -263,23 +334,6 @@ class DeliveryLaterPage extends GetView<DeliveryLaterController> {
                     const Text("Remember Delivery Details")
                   ],
                 ),
-                /* Row(
-                  children: [
-                    Expanded(
-                      child: ElevatedButton(
-                        style: ButtonStyle(
-                          backgroundColor:
-                              MaterialStateProperty.all<Color>(Colors.black),
-                        ),
-                        onPressed: () {},
-                        child: const Text(
-                          "Continue with the order",
-                          style: TextStyle(color: Colors.white),
-                        ),
-                      ),
-                    ),
-                  ],
-                )*/
               ],
             ),
           ),
@@ -291,7 +345,7 @@ class DeliveryLaterPage extends GetView<DeliveryLaterController> {
         height: 5.h,
         decoration: BoxDecoration(
             color: AppColors.black,
-            borderRadius: BorderRadius.all(Radius.circular(10))),
+            borderRadius: const BorderRadius.all(Radius.circular(10))),
         child: Text(
           "Continue with the order",
           style: TextStyle(color: AppColors.white),

@@ -1,111 +1,86 @@
-import 'dart:convert';
-
-class AllActiveOutletModel {
+class AllActiveOutletGeographyModel {
   String? message;
   bool? status;
-  List<Datum>? data;
+  List<GeographyData?>? data;
 
-  AllActiveOutletModel({
+  AllActiveOutletGeographyModel({
     this.message,
     this.status,
     this.data,
   });
 
-  factory AllActiveOutletModel.fromRawJson(String str) =>
-      AllActiveOutletModel.fromJson(json.decode(str));
+  factory AllActiveOutletGeographyModel.fromJson(Map<String, dynamic> json) {
+    var dataList = json['data'] as List<dynamic>?;
+    List<GeographyData?>? data = dataList?.map((dynamic item) => GeographyData.fromJson(item)).toList();
 
-  String toRawJson() => json.encode(toJson());
-
-  factory AllActiveOutletModel.fromJson(Map<String, dynamic> json) =>
-      AllActiveOutletModel(
-        message: json["message"],
-        status: json["status"],
-        data: json["Data"] == null
-            ? []
-            : List<Datum>.from(json["Data"]!.map((x) => Datum.fromJson(x))),
-      );
-
-  Map<String, dynamic> toJson() => {
-        "message": message,
-        "status": status,
-        "Data": data == null
-            ? []
-            : List<dynamic>.from(data!.map((x) => x.toJson())),
-      };
+    return AllActiveOutletGeographyModel(
+      message: json['message'],
+      status: json['status'],
+      data: data,
+    );
+  }
 }
 
-class Datum {
-  int? geographyMstId;
+class GeographyData {
+  int? geographyMSTId;
   String? geographyTypeCode;
   String? geographyTypeName;
   String? geographyCode;
   String? geographyName;
-  int? parentGeographyMstId;
-  ParentGeographyMst? parentGeographyMst;
+  int? parentGeographyMSTId;
+  ParentGeographyMST? parentGeographyMST;
 
-  Datum({
-    this.geographyMstId,
+  GeographyData({
+    this.geographyMSTId,
     this.geographyTypeCode,
     this.geographyTypeName,
     this.geographyCode,
     this.geographyName,
-    this.parentGeographyMstId,
-    this.parentGeographyMst,
+    this.parentGeographyMSTId,
+    this.parentGeographyMST,
   });
 
-  factory Datum.fromRawJson(String str) => Datum.fromJson(json.decode(str));
-
-  String toRawJson() => json.encode(toJson());
-
-  factory Datum.fromJson(Map<String, dynamic> json) => Datum(
-        geographyMstId: json["geographyMSTId"],
-        geographyTypeCode: json["geographyTypeCode"],
-        geographyTypeName: json["geographyTypeName"],
-        geographyCode: json["geographyCode"],
-        geographyName: json["geographyName"],
-        parentGeographyMstId: json["parentGeographyMSTId"],
-        parentGeographyMst: json["parentGeographyMST"] == null
-            ? null
-            : ParentGeographyMst.fromJson(json["parentGeographyMST"]),
-      );
-
-  Map<String, dynamic> toJson() => {
-        "geographyMSTId": geographyMstId,
-        "geographyTypeCode": geographyTypeCode,
-        "geographyTypeName": geographyTypeName,
-        "geographyCode": geographyCode,
-        "geographyName": geographyName,
-        "parentGeographyMSTId": parentGeographyMstId,
-        "parentGeographyMST": parentGeographyMst?.toJson(),
-      };
+  factory GeographyData.fromJson(Map<String, dynamic> json) {
+    return GeographyData(
+      geographyMSTId: json['geographyMSTId'],
+      geographyTypeCode: json['geographyTypeCode'],
+      geographyTypeName: json['geographyTypeName'],
+      geographyCode: json['geographyCode'],
+      geographyName: json['geographyName'],
+      parentGeographyMSTId: json['parentGeographyMSTId'],
+      parentGeographyMST: json['parentGeographyMST'] != null ? ParentGeographyMST.fromJson(json['parentGeographyMST']) : null,
+    );
+  }
 }
 
-class ParentGeographyMst {
-  int? geographyMstId;
+class ParentGeographyMST {
+  int? geographyMSTId;
   String? geographyCode;
   String? geographyName;
 
-  ParentGeographyMst({
-    this.geographyMstId,
+  ParentGeographyMST({
+    this.geographyMSTId,
     this.geographyCode,
     this.geographyName,
   });
 
-  factory ParentGeographyMst.fromRawJson(String str) =>
-      ParentGeographyMst.fromJson(json.decode(str));
-
-  String toRawJson() => json.encode(toJson());
-
-  factory ParentGeographyMst.fromJson(Map<String, dynamic> json) =>
-      ParentGeographyMst(
-        geographyMstId: json["geographyMSTId"],
-        geographyCode: json["geographyCode"],
-        geographyName: json["geographyName"],
-      );
-
-  Map<String, dynamic> toJson() => {
-        "geographyMSTId": geographyMstId,
-        "geographyCode": geographyCode,
-        "geographyName": geographyName,
-      };
+  factory ParentGeographyMST.fromJson(Map<String, dynamic> json) {
+    return ParentGeographyMST(
+      geographyMSTId: json['geographyMSTId'],
+      geographyCode: json['geographyCode'],
+      geographyName: json['geographyName'],
+    );
+  }
 }
+
+
+
+
+
+
+
+
+
+
+
+

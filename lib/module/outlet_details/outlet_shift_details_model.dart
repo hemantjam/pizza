@@ -1,52 +1,47 @@
 class OutletShiftDetailsModel {
   String? message;
   bool? status;
-  Data? data;
+  ShiftData? data;
 
-  OutletShiftDetailsModel({this.message, this.status, this.data});
+  OutletShiftDetailsModel({
+    this.message,
+    this.status,
+    this.data,
+  });
 
   factory OutletShiftDetailsModel.fromJson(Map<String, dynamic> json) {
     return OutletShiftDetailsModel(
       message: json['message'],
       status: json['status'],
-      data: json['data'] != null ? Data.fromJson(json['data']) : null,
+      data: json['data'] != null ? ShiftData.fromJson(json['data']) : null,
     );
-  }
-
-  Map<String, dynamic> toJson() {
-    return {
-      'message': message,
-      'status': status,
-      'data': data?.toJson(),
-    };
-  }
-}
-
-class Data {
-  List<ShiftData>? special;
-  List<ShiftData>? regular;
-
-  Data({this.special, this.regular});
-
-  factory Data.fromJson(Map<String, dynamic> json) {
-    final specialList = json['special'] as List;
-    final regularList = json['regular'] as List;
-
-    return Data(
-      special: specialList.map((item) => ShiftData.fromJson(item)).toList(),
-      regular: regularList.map((item) => ShiftData.fromJson(item)).toList(),
-    );
-  }
-
-  Map<String, dynamic> toJson() {
-    return {
-      'special': special?.map((item) => item.toJson()).toList(),
-      'regular': regular?.map((item) => item.toJson()).toList(),
-    };
   }
 }
 
 class ShiftData {
+  List<ShiftItem?>? special;
+  List<ShiftItem?>? regular;
+
+  ShiftData({
+    this.special,
+    this.regular,
+  });
+
+  factory ShiftData.fromJson(Map<String, dynamic> json) {
+    var specialList = json['special'] as List<dynamic>?;
+    var regularList = json['regular'] as List<dynamic>?;
+
+    List<ShiftItem?>? special = specialList?.map((item) => ShiftItem.fromJson(item)).toList();
+    List<ShiftItem?>? regular = regularList?.map((item) => ShiftItem.fromJson(item)).toList();
+
+    return ShiftData(
+      special: special,
+      regular: regular,
+    );
+  }
+}
+
+class ShiftItem {
   int? shiftId;
   int? day;
   String? date;
@@ -61,7 +56,7 @@ class ShiftData {
   bool? off;
   bool? special;
 
-  ShiftData({
+  ShiftItem({
     this.shiftId,
     this.day,
     this.date,
@@ -77,11 +72,11 @@ class ShiftData {
     this.special,
   });
 
-  factory ShiftData.fromJson(Map<String, dynamic> json) {
-    return ShiftData(
+  factory ShiftItem.fromJson(Map<String, dynamic> json) {
+    return ShiftItem(
       shiftId: json['shiftId'],
       day: json['day'],
-      date: json['date'],
+      date: json['date'].toString(),
       leadTime: json['leadTime'],
       startTime: json['startTime'],
       endTime: json['endTime'],
@@ -93,23 +88,5 @@ class ShiftData {
       off: json['off'],
       special: json['special'],
     );
-  }
-
-  Map<String, dynamic> toJson() {
-    return {
-      'shiftId': shiftId,
-      'day': day,
-      'date': date,
-      'leadTime': leadTime,
-      'startTime': startTime,
-      'endTime': endTime,
-      'cutoffTime': cutoffTime,
-      'intervalTime': intervalTime,
-      'orderTypeCode': orderTypeCode,
-      'orderTypeName': orderTypeName,
-      'orderTypeId': orderTypeId,
-      'off': off,
-      'special': special,
-    };
   }
 }

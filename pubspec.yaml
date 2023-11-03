@@ -46,6 +46,7 @@ dependencies:
   google_fonts: ^6.1.0
   url_launcher: 6.1.13
   map_launcher: ^3.0.1
+  intl: ^0.18.1
 
 
 dev_dependencies:

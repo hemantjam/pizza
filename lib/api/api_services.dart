@@ -27,13 +27,12 @@ class ApiServices {
           'Bearer ${ApiEndPoints.authToken}';
       final response = await _dio.get(endpoint + data,
           queryParameters: queryParameters, data: data);
-      log("response-->${response}");
+     // log("response-->${response}");
       if (response.statusCode == 200) {
         apiResponse = ApiResponse<T>.fromJson(response.data);
         return apiResponse;
       }
     } catch (e) {
-
       handleError(e);
     }
     return apiResponse;
@@ -51,7 +50,6 @@ class ApiServices {
 
       final response = await _dio.post(endpoint,
           data: '"' + data.toString() + '"', queryParameters: queryParameters);
-      log("response-of ${endpoint}->${response}");
 
       if (response.statusCode == 200) {
         apiResponse = ApiResponse<T>.fromJson(response.data);
@@ -74,14 +72,14 @@ class ApiServices {
         );
       } else {
         showErrorDialog(
-          title: "API Error",
-          message: "An error occurred while making the API call.",
+          title: "Something Went Wrong !",
+          message: "Please try again",
         );
       }
     } else {
       showErrorDialog(
-        title: "Error",
-        message: e.toString(),
+        title: "Something Went Wrong !",
+        message: "Please try again",
       );
     }
   }
