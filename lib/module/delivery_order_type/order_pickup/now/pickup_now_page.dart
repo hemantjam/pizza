@@ -21,10 +21,11 @@ class PickUpNowPage extends GetView<PickUpNowController> {
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                 Text(
+                /// store close validation
+                /* Text(
                   "Please Note : Store is closed currently , please select another time",
                   style: TextStyle(color: AppColors.red),
-                ),
+                ),*/
                 const SizedBox(
                   height: 15,
                 ),

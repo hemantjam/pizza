@@ -11,14 +11,14 @@ class AllActiveController extends GetxController {
   Rx<AllActiveOutletGeographyModel> allActiveOutletGeographyModel =
       AllActiveOutletGeographyModel().obs;
   Rx<GeographyByTypeModel> streetNameList = GeographyByTypeModel().obs;
-  Rx<GeographyByTypeModel> postCodeList = GeographyByTypeModel().obs;
+ // Rx<GeographyByTypeModel> postCodeList = GeographyByTypeModel().obs;
 
   @override
   void onReady() {
     super.onReady();
     getAllActiveOutlet();
     getStreetName();
-    getPostCode();
+   // getPostCode();
   }
 
   void getAllActiveOutlet() async {
@@ -40,12 +40,12 @@ class AllActiveController extends GetxController {
     update();
   }
 
-  void getPostCode() async {
+  /*void getPostCode() async {
     ApiResponse res = await apiServices
         .getRequest(ApiEndPoints.geoghraphyByTypeCode, data: "/GT4");
     if (res.status) {
       postCodeList.value = GeographyByTypeModel.fromJson(res.toJson());
     }
     update();
-  }
+  }*/
 }

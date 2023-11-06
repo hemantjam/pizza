@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:pizza/module/delivery_order_type/date_model.dart';
 import 'package:sizer/sizer.dart';
 
 import '../../../../constants/app_colors.dart';
+import '../../../../widgets/common_dialog.dart';
 import '../../../geography/byType/street_name_model.dart';
+import '../../date_time_searchable_list.dart';
+import '../../searchable_list.dart';
 import 'delivery_later_controller.dart';
 
 class DeliveryLaterPage extends GetView<DeliveryLaterController> {
@@ -45,78 +49,39 @@ class DeliveryLaterPage extends GetView<DeliveryLaterController> {
 
                 /// date
                 Obx(() {
-                  return Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      ListTile(
-                        onTap: () {
-                          controller.toggleDateExpand();
-                        },
-                        contentPadding: const EdgeInsets.only(bottom: 4.0),
-                        title: Text(
-                          controller.date.value,
-                          style: TextStyle(
-                              color: controller.date.value == "Date"
-                                  ? Colors.grey.shade600
-                                  : AppColors.black),
-                        ),
-                        trailing: Icon(controller.isDateExpand.value
-                            ? Icons.arrow_drop_up
-                            : Icons.keyboard_arrow_down),
-                        shape: Border(
-                          bottom: BorderSide(
-                            color: Colors.grey.shade800,
-                          ),
-                        ),
+                  List<DateModel> dateList =
+                      controller.getNext15DaysWithWeekdays();
+                  List<String> dateFormattedList = dateList
+                      .map((e) =>
+                          DateFormat('d MMMM yyyy, EEEE').format(e.dateTime))
+                      .toList();
+                  return ListTile(
+                    onTap: () async {
+                      String date = await Get.dialog(CommonSearchableList(
+                        title: "Date",
+                        streetList: dateFormattedList,
+                      ));
+                      if (date.isNotEmpty) {
+                        controller.date.value = date;
+                        DateFormat inputFormat =
+                            DateFormat('d MMMM yyyy, EEEE');
+                        DateTime dateTime = inputFormat.parse(date);
+                        controller.searchDateInList(dateTime);
+                      }
+                    },
+                    contentPadding: const EdgeInsets.only(bottom: 4.0),
+                    title: Text(
+                      controller.date.value,
+                      style: TextStyle(
+                          color: controller.date.value == "Date"
+                              ? Colors.grey.shade600
+                              : AppColors.black),
+                    ),
+                    shape: Border(
+                      bottom: BorderSide(
+                        color: Colors.grey.shade800,
                       ),
-                      Visibility(
-                        visible: controller.isDateExpand.value,
-                        child: Card(
-                          child: SizedBox(
-                            height: 200,
-                            child: ListView(
-                              children: controller
-                                  .getNext15DaysWithWeekdays()
-                                  .map((dateModel) {
-                                String formattedDate =
-                                    DateFormat('d MMMM yyyy, EEEE')
-                                        .format(dateModel.dateTime);
-                                return GestureDetector(
-                                  onTap: () {
-                                    controller.date.value = formattedDate;
-                                    controller.weekDay.value =
-                                        dateModel.weekday;
-                                    controller
-                                        .getTimerInterval(dateModel.dateTime);
-                                    controller.toggleDateExpand();
-                                  },
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Center(
-                                      child: Text(formattedDate),
-                                    ),
-                                  ),
-                                );
-                              }).toList(),
-                            ),
-
-                            /*ListView.builder(
-                              shrinkWrap: true,
-                              itemCount: 5,
-                              itemBuilder: (context, int index) {
-                                return ListTile(
-                                  onTap: () {
-                                    controller.date.value = index.toString();
-                                    controller.toggleDateExpand();
-                                  },
-                                  title: Text("index->$index"),
-                                );
-                              },
-                            ),*/
-                          ),
-                        ),
-                      ),
-                    ],
+                    ),
                   );
                 }),
                 const SizedBox(
@@ -127,17 +92,33 @@ class DeliveryLaterPage extends GetView<DeliveryLaterController> {
                 Text(
                   "Time",
                   style: TextStyle(
-                      color: AppColors.black,
-                      fontSize: 18.sp,
-                      fontWeight: FontWeight.bold),
+                    color: AppColors.black,
+                    fontSize: 18.sp,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
                 Obx(() {
                   return Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       ListTile(
-                        onTap: () {
-                          controller.toggleTimeExpand();
+                        onTap: () async {
+                          if (controller.date.value == "Date") {
+                            showErrorDialog(
+                              title: "Date Select",
+                              message: "Please select date first",
+                            );
+                          } else {
+                            String? time = await Get.dialog(
+                              CommonSearchableList(
+                                title: "Time",
+                                streetList: controller.timeIntervalList,
+                              ),
+                            );
+                            if (time != null) {
+                              controller.time.value = time;
+                            }
+                          }
                         },
                         contentPadding: const EdgeInsets.only(bottom: 4.0),
                         title: Text(
@@ -148,18 +129,18 @@ class DeliveryLaterPage extends GetView<DeliveryLaterController> {
                                 : AppColors.black,
                           ),
                         ),
-                        trailing: Icon(
+                        /* trailing: Icon(
                           controller.isTimeExpand.value
                               ? Icons.arrow_drop_up
                               : Icons.keyboard_arrow_down,
-                        ),
+                        ),*/
                         shape: Border(
                           bottom: BorderSide(
                             color: Colors.grey.shade800,
                           ),
                         ),
                       ),
-                      Visibility(
+                      /*    Visibility(
                         visible: controller.isTimeExpand.value,
                         child: Card(
                           child: SizedBox(
@@ -183,7 +164,7 @@ class DeliveryLaterPage extends GetView<DeliveryLaterController> {
                                             ))
                                         .toList()
 
-                                    /*controller
+                                    */ /*controller
                                   .getTime(controller.outletShiftDetailsModel
                                       .value.data!.regular![0]!)
                                   .map((time) => GestureDetector(
@@ -198,11 +179,11 @@ class DeliveryLaterPage extends GetView<DeliveryLaterController> {
                                           ),
                                         ),
                                       ))
-                                  .toList(),*/
+                                  .toList(),*/ /*
                                     ),
                           ),
                         ),
-                      ),
+                      ),*/
                     ],
                   );
                 }),
@@ -217,6 +198,7 @@ class DeliveryLaterPage extends GetView<DeliveryLaterController> {
                       fontWeight: FontWeight.bold),
                 ),
                 Card(
+                  elevation: 0,
                   child: TextFormField(
                     controller: controller.unitController,
                     focusNode: controller.unitFocus,
@@ -233,6 +215,7 @@ class DeliveryLaterPage extends GetView<DeliveryLaterController> {
                 ),
                 const SizedBox(height: 10),
                 Card(
+                  elevation: 0,
                   child: TextFormField(
                     controller: controller.streetNumberController,
                     focusNode: controller.streetNumberFocus,
@@ -249,61 +232,42 @@ class DeliveryLaterPage extends GetView<DeliveryLaterController> {
                 ),
                 const SizedBox(height: 10),
                 Obx(() {
-                  return Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      ListTile(
-                        onTap: () {
-                          controller.toggleStreet();
-                        },
-                        contentPadding: const EdgeInsets.only(bottom: 4.0),
-                        title: Text(
-                          controller.streetName.value,
-                          style: TextStyle(
-                              color:
-                                  controller.streetName.value == "Street Name"
-                                      ? Colors.grey.shade600
-                                      : AppColors.black),
+                  List<SingleGeographyModel> streetList = controller.streetList!
+                      .where((ele) =>
+                          ele.parentGeographyMst?.geographyTypeMst
+                              ?.geographyTypeCode ==
+                          "GT5")
+                      .toList();
+                  return ListTile(
+                    onTap: () async {
+                      SingleGeographyModel? item = await Get.dialog(
+                        SearchableStringListDialog(
+                          title: "Street Name",
+                          streetList: streetList,
                         ),
-                        trailing: Icon(controller.isDateExpand.value
-                            ? Icons.arrow_drop_up
-                            : Icons.keyboard_arrow_down),
-                        shape: Border(
-                          bottom: BorderSide(
-                            color: Colors.grey.shade800,
-                          ),
-                        ),
+                      );
+                      if (item != null) {
+                        controller.streetName.value =
+                            "${item.geographyName ?? ""} - ${item.parentGeographyMst != null ? item.parentGeographyMst!.geographyName : ""}";
+
+                        controller.postCode.value = item.parentGeographyMst
+                                ?.parentGeographyMst?.geographyName ??
+                            "";
+                      }
+                    },
+                    contentPadding: const EdgeInsets.only(bottom: 4.0),
+                    title: Text(
+                      controller.streetName.value,
+                      style: TextStyle(
+                          color: controller.streetName.value == "Street Name"
+                              ? Colors.grey.shade600
+                              : AppColors.black),
+                    ),
+                    shape: Border(
+                      bottom: BorderSide(
+                        color: Colors.grey.shade800,
                       ),
-                      Visibility(
-                        visible: controller.isStreetExpand.value,
-                        child: Card(
-                          child: SizedBox(
-                            height: 200,
-                            child: controller.streetList == null ||
-                                    controller.streetList!.isEmpty
-                                ? const Center(child: Text("No Data Found !"))
-                                : ListView.builder(
-                                    shrinkWrap: true,
-                                    itemCount: 5,
-                                    itemBuilder: (context, int index) {
-                                      SingleGeographyModel item =
-                                          controller.streetList![index];
-                                      return ListTile(
-                                        onTap: () {
-                                          controller.streetName.value =
-                                              item.geographyName.toString();
-                                          controller.toggleStreet();
-                                          controller.getPostCode(
-                                              item.geographyName ?? "");
-                                        },
-                                        title: Text(item.geographyName ?? ""),
-                                      );
-                                    },
-                                  ),
-                          ),
-                        ),
-                      ),
-                    ],
+                    ),
                   );
                 }),
                 const SizedBox(height: 10),
@@ -339,16 +303,23 @@ class DeliveryLaterPage extends GetView<DeliveryLaterController> {
           ),
         ),
       ),
-      bottomNavigationBar: Container(
-        margin: const EdgeInsets.only(bottom: 20, left: 10, right: 10),
-        alignment: Alignment.center,
-        height: 5.h,
-        decoration: BoxDecoration(
-            color: AppColors.black,
-            borderRadius: const BorderRadius.all(Radius.circular(10))),
-        child: Text(
-          "Continue with the order",
-          style: TextStyle(color: AppColors.white),
+      bottomNavigationBar: GestureDetector(
+        onTap: () {
+          if (controller.formKey.currentState!.validate()) {
+            showErrorDialog(title: "Success", message: "Order Successful");
+          }
+        },
+        child: Container(
+          margin: const EdgeInsets.only(bottom: 20, left: 10, right: 10),
+          alignment: Alignment.center,
+          height: 5.h,
+          decoration: BoxDecoration(
+              color: AppColors.black,
+              borderRadius: const BorderRadius.all(Radius.circular(10))),
+          child: Text(
+            "Continue with the order",
+            style: TextStyle(color: AppColors.white),
+          ),
         ),
       ),
     );

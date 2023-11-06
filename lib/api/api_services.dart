@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:dio/dio.dart';
 import 'package:pizza/api/end_point.dart';
+import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 
 import '../widgets/common_dialog.dart';
 import 'api_response.dart';
@@ -14,7 +15,7 @@ class ApiServices {
     _dio.options.headers['Content-Type'] = 'application/json';
     _dio.options.headers['Accept'] = 'application/json';
 
-    //_dio.interceptors.add(PrettyDioLogger());
+    _dio.interceptors.add(PrettyDioLogger(responseBody: true));
   }
 
   ApiResponse apiResponse =
@@ -27,7 +28,7 @@ class ApiServices {
           'Bearer ${ApiEndPoints.authToken}';
       final response = await _dio.get(endpoint + data,
           queryParameters: queryParameters, data: data);
-     // log("response-->${response}");
+      log("response-of $endpoint->${response}");
       if (response.statusCode == 200) {
         apiResponse = ApiResponse<T>.fromJson(response.data);
         return apiResponse;
@@ -50,7 +51,7 @@ class ApiServices {
 
       final response = await _dio.post(endpoint,
           data: '"' + data.toString() + '"', queryParameters: queryParameters);
-
+      log("response of $endpoint-->${response}");
       if (response.statusCode == 200) {
         apiResponse = ApiResponse<T>.fromJson(response.data);
         return apiResponse;

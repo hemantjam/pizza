@@ -12,16 +12,17 @@ class DeliveryNowController extends GetxController {
     super.onInit();
     ever(allActiveController.value.streetNameList,
         (callback) => {getStreetName()});
-    ever(allActiveController.value.postCodeList,
-        (callback) => {getPostCodeList()});
+   /* ever(allActiveController.value.postCodeList,
+        (callback) => {getPostCodeList()});*/
   }
-@override
+
+  @override
   void onReady() {
-    // TODO: implement onReady
     super.onReady();
     getStreetName();
-    getPostCodeList();
+   // getPostCodeList();
   }
+
   final Rx<AllActiveController> allActiveController =
       Get.find<AllActiveController>().obs;
 
@@ -41,13 +42,13 @@ class DeliveryNowController extends GetxController {
   final FocusNode postCodeFocus = FocusNode();
 
   final RxBool rememberAddress = false.obs;
-  final RxBool isStreetNameExpand = false.obs;
+ // final RxBool isStreetNameExpand = false.obs;
   RxString streetName = "Street Name".obs;
   RxString postCode = "Post Code".obs;
 
-  void toggleExpand() {
+/*  void toggleExpand() {
     isStreetNameExpand.value = !isStreetNameExpand.value;
-  }
+  }*/
 
   void rememberAdd(bool value) {
     rememberAddress.value = value;
@@ -58,12 +59,15 @@ class DeliveryNowController extends GetxController {
       streetList!.value = allActiveController.value.streetNameList.value.data!
           .where((element) => element.active!)
           .toList();
+      streetList!.sort((a,b)=>a.geographyName!.compareTo(b.geographyName!));
     }
+
     update();
   }
-
-  getPostCode(int id) {
-    log("id given in method ===>${id}");
+/*
+  getPostCode(String id) {
+    postCode.value=id;
+*//*    log("id given in method ===>${id}");
     if (postCodeList == null || postCodeList!.isEmpty) {
       return;
     } else {
@@ -77,16 +81,16 @@ class DeliveryNowController extends GetxController {
         }
       });
       log("--->loading finish");
-    }
-  }
+    }*//*
+  }*/
 
-  void getPostCodeList() {
-   // log("method called-->");
+ /* void getPostCodeList() {
+    // log("method called-->");
     if (allActiveController.value.postCodeList.value.data != null) {
       postCodeList!.value = allActiveController.value.postCodeList.value.data!
           .where((element) => element.active!)
           .toList();
     }
     update();
-  }
+  }*/
 }

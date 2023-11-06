@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import 'package:pizza/module/delivery_order_type/order_pickup/later/pickup_later_controller.dart';
 import 'package:sizer/sizer.dart';
 
 import '../../../../constants/app_colors.dart';
+import '../../../../widgets/common_dialog.dart';
+import '../../date_model.dart';
+import '../../date_time_searchable_list.dart';
 
 class PickUpLaterPage extends GetView<PickUpLaterController> {
   const PickUpLaterPage({super.key});
@@ -29,52 +33,39 @@ class PickUpLaterPage extends GetView<PickUpLaterController> {
                       fontWeight: FontWeight.bold),
                 ),
                 Obx(() {
-                  return Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      ListTile(
-                        onTap: () {
-                          controller.toggleDateExpand();
-                        },
-                        contentPadding: const EdgeInsets.only(bottom: 4.0),
-                        title: Text(
-                          controller.date.value,
-                          style: TextStyle(
-                              color: controller.date.value == "Date"
-                                  ? Colors.grey.shade600
-                                  : AppColors.black),
-                        ),
-                        trailing: Icon(controller.isDataExpand.value
-                            ? Icons.arrow_drop_up
-                            : Icons.keyboard_arrow_down),
-                        shape: Border(
-                          bottom: BorderSide(
-                            color: Colors.grey.shade800,
-                          ),
-                        ),
+                  List<DateModel> dateList =
+                      controller.getNext15DaysWithWeekdays();
+                  List<String> dateFormattedList = dateList
+                      .map((e) =>
+                          DateFormat('d MMMM yyyy, EEEE').format(e.dateTime))
+                      .toList();
+                  return ListTile(
+                    onTap: () async {
+                      String date = await Get.dialog(CommonSearchableList(
+                        title: "Date",
+                        streetList: dateFormattedList,
+                      ));
+                      if (date.isNotEmpty) {
+                        controller.date.value = date;
+                        DateFormat inputFormat =
+                            DateFormat('d MMMM yyyy, EEEE');
+                        DateTime dateTime = inputFormat.parse(date);
+                        controller.searchDateInList(dateTime);
+                      }
+                    },
+                    contentPadding: const EdgeInsets.only(bottom: 4.0),
+                    title: Text(
+                      controller.date.value,
+                      style: TextStyle(
+                          color: controller.date.value == "Date"
+                              ? Colors.grey.shade600
+                              : AppColors.black),
+                    ),
+                    shape: Border(
+                      bottom: BorderSide(
+                        color: Colors.grey.shade800,
                       ),
-                      Visibility(
-                        visible: controller.isDataExpand.value,
-                        child: Card(
-                          child: SizedBox(
-                            height: 200,
-                            child: ListView.builder(
-                              shrinkWrap: true,
-                              itemCount: 5,
-                              itemBuilder: (context, int index) {
-                                return ListTile(
-                                  onTap: () {
-                                    controller.date.value = index.toString();
-                                    controller.toggleDateExpand();
-                                  },
-                                  title: Text("index->$index"),
-                                );
-                              },
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
+                    ),
                   );
                 }),
                 const SizedBox(
@@ -92,8 +83,23 @@ class PickUpLaterPage extends GetView<PickUpLaterController> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       ListTile(
-                        onTap: () {
-                          controller.toggleTimeExpand();
+                        onTap: () async {
+                          if (controller.date.value == "Date") {
+                            showErrorDialog(
+                              title: "Date Select",
+                              message: "Please select date first",
+                            );
+                          } else {
+                            String? time = await Get.dialog(
+                              CommonSearchableList(
+                                title: "Time",
+                                streetList: controller.timeIntervalList,
+                              ),
+                            );
+                            if (time != null) {
+                              controller.time.value = time;
+                            }
+                          }
                         },
                         contentPadding: const EdgeInsets.only(bottom: 4.0),
                         title: Text(
@@ -104,32 +110,9 @@ class PickUpLaterPage extends GetView<PickUpLaterController> {
                                 : AppColors.black,
                           ),
                         ),
-                        trailing: Icon(
-                          controller.isTimeExpand.value
-                              ? Icons.arrow_drop_up
-                              : Icons.keyboard_arrow_down,
-                        ),
                         shape: Border(
                           bottom: BorderSide(
                             color: Colors.grey.shade800,
-                          ),
-                        ),
-                      ),
-                      Visibility(
-                        visible: controller.isTimeExpand.value,
-                        child: Card(
-                          child: ListView.builder(
-                            shrinkWrap: true,
-                            itemCount: 5,
-                            itemBuilder: (context, int index) {
-                              return ListTile(
-                                onTap: () {
-                                  controller.time.value = index.toString();
-                                  controller.toggleTimeExpand();
-                                },
-                                title: Text("index->$index"),
-                              );
-                            },
                           ),
                         ),
                       ),
@@ -147,6 +130,7 @@ class PickUpLaterPage extends GetView<PickUpLaterController> {
                       fontWeight: FontWeight.bold),
                 ),
                 Card(
+                  elevation: 0,
                   child: TextFormField(
                     controller: controller.outletAddController,
                     decoration:
@@ -158,16 +142,23 @@ class PickUpLaterPage extends GetView<PickUpLaterController> {
           ),
         ),
       ),
-      bottomNavigationBar: Container(
-        margin: const EdgeInsets.only(bottom: 20, left: 10, right: 10),
-        alignment: Alignment.center,
-        height: 5.h,
-        decoration:  BoxDecoration(
-            color: AppColors.black,
-            borderRadius: BorderRadius.all(Radius.circular(10))),
-        child:  Text(
-          "Continue with the order",
-          style: TextStyle(color: AppColors.white),
+      bottomNavigationBar: GestureDetector(
+        onTap: () {
+          if (controller.formKey.currentState!.validate()) {
+            showErrorDialog(title: "Success", message: "Order Successful");
+          }
+        },
+        child: Container(
+          margin: const EdgeInsets.only(bottom: 20, left: 10, right: 10),
+          alignment: Alignment.center,
+          height: 5.h,
+          decoration: BoxDecoration(
+              color: AppColors.black,
+              borderRadius: const BorderRadius.all(Radius.circular(10))),
+          child: Text(
+            "Continue with the order",
+            style: TextStyle(color: AppColors.white),
+          ),
         ),
       ),
     );

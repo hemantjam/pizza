@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:get/get.dart';
 import 'package:pizza/api/end_point.dart';
 import 'package:pizza/constants/route_names.dart';
@@ -13,7 +15,7 @@ class SplashController extends GetxController {
   void onReady() {
     super.onReady();
     getToken();
-    loading.value ? handleNavigation() : null;
+    ever(loading, (callback) => !loading.value ? handleNavigation() : null);
   }
 
   void handleNavigation() {
@@ -41,7 +43,6 @@ class SplashController extends GetxController {
       ApiEndPoints.authToken = res.data.toString();
       getOutletToken(ApiEndPoints.authToken);
     }
-
   }
 
   getOutletToken(String token) async {
@@ -55,9 +56,11 @@ class SplashController extends GetxController {
       systemToken = res.data.toString();
       ApiEndPoints.authToken = res.data.toString();
     }
+   // log("\ntokensss-------->${systemToken}\n\n\n${ApiEndPoints.authToken}\n\n");
     if (ApiEndPoints.authToken == systemToken) {
       loading.value = false;
+    }else {
+      //loading.value = true;
     }
-
   }
 }

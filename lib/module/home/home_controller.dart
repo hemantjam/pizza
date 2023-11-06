@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:pizza/module/offers/offer_view_all.dart';
 
 import 'home_page.dart';
 
@@ -9,7 +10,8 @@ class HomeController extends GetxController {
 
   final List<Widget> pages = [
     HomePage(),
-    const Page(text: "build your pizza page will be here"),
+    OfferList(),
+    //const Page(text: "build your pizza page will be here"),
     const Page(text: "half and half page will be here"),
     const Page(text: "quick orders will be here"),
   ].obs;

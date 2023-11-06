@@ -1,8 +1,10 @@
+import 'dart:developer';
+
 import 'package:get/get.dart';
 
-import '../../../api/api_response.dart';
-import '../../../api/api_services.dart';
-import '../../../api/end_point.dart';
+import '../../../../api/api_response.dart';
+import '../../../../api/api_services.dart';
+import '../../../../api/end_point.dart';
 import 'outlet_shift_details_model.dart';
 
 class OutletShiftDetailsController extends GetxController {
@@ -17,11 +19,14 @@ class OutletShiftDetailsController extends GetxController {
   }
 
   void getShiftDetails() async {
+    log("method called");
     ApiResponse res =
         await apiClient.getRequest(ApiEndPoints.outletShiftDetails);
+    log(res.toJson().toString());
     if (res.status) {
       outletShiftDetailsModel.value =
           OutletShiftDetailsModel.fromJson(res.toJson());
+      log("------>${outletShiftDetailsModel.value.toString()}");
     }
     update();
   }

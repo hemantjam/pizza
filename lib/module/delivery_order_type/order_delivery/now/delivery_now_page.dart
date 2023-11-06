@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:pizza/widgets/common_dialog.dart';
 import 'package:sizer/sizer.dart';
 
 import '../../../../constants/app_colors.dart';
 import '../../../geography/byType/street_name_model.dart';
+import '../../searchable_list.dart';
 import 'delivery_now_controller.dart';
 
 class DeliveryNowPage extends GetView<DeliveryNowController> {
@@ -21,10 +23,11 @@ class DeliveryNowPage extends GetView<DeliveryNowController> {
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
+                /// if store is close
+                /*Text(
                   "Please Note : Store is closed currently , please select another time",
                   style: TextStyle(color: AppColors.red),
-                ),
+                ),*/
                 const SizedBox(
                   height: 15,
                 ),
@@ -37,6 +40,7 @@ class DeliveryNowPage extends GetView<DeliveryNowController> {
                   ),
                 ),
                 Card(
+                  elevation: 0,
                   child: TextFormField(
                     controller: controller.unitController,
                     focusNode: controller.unitFocus,
@@ -52,7 +56,7 @@ class DeliveryNowPage extends GetView<DeliveryNowController> {
                   ),
                 ),
                 const SizedBox(height: 10),
-                Card(
+                Card( elevation: 0,
                   child: TextFormField(
                     controller: controller.streetNumberController,
                     focusNode: controller.streetNumberFocus,
@@ -69,66 +73,46 @@ class DeliveryNowPage extends GetView<DeliveryNowController> {
                 ),
                 const SizedBox(height: 10),
                 Obx(() {
-                  return Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      ListTile(
-                        onTap: () {
-                          controller.toggleExpand();
-                        },
-                        contentPadding: const EdgeInsets.only(bottom: 4.0),
-                        title: Text(
-                          controller.streetName.value,
-                          style: TextStyle(
-                              color:
-                                  controller.streetName.value == "Street Name"
-                                      ? Colors.grey.shade600
-                                      : AppColors.black),
+                  List<SingleGeographyModel> streetList=controller.streetList!
+                      .where((ele) =>
+                  ele.parentGeographyMst?.geographyTypeMst
+                      ?.geographyTypeCode ==
+                      "GT5")
+                      .toList();
+                  return ListTile(
+                    onTap: () async {
+                      SingleGeographyModel? item = await Get.dialog(
+                        SearchableStringListDialog(
+                          title: "Street Name",
+                          streetList: streetList,
                         ),
-                        trailing: Icon(controller.isStreetNameExpand.value
-                            ? Icons.arrow_drop_up
-                            : Icons.keyboard_arrow_down),
-                        shape: Border(
-                          bottom: BorderSide(
-                            color: Colors.grey.shade800,
-                          ),
-                        ),
-                      ),
-                      Obx(() {
-                        return Visibility(
-                          visible: controller.isStreetNameExpand.value,
-                          child: Card(
-                            child: SizedBox(
-                              height: 200,
-                              child: controller.streetList == null ||
-                                      controller.streetList!.isEmpty
-                                  ? const Center(child: Text("No Data Found !"))
-                                  : ListView.builder(
-                                      shrinkWrap: true,
-                                      itemCount: controller.streetList?.length,
-                                      itemBuilder: (context, int index) {
-                                        SingleGeographyModel item =
-                                            controller.streetList![index];
-                                        return ListTile(
-                                          onTap: () {
-                                            controller.streetName.value =
-                                                item.geographyName ?? "";
-                                            controller.toggleExpand();
-                                            controller.getPostCode(
-                                              item.geographyMstId!,
-                                            );
-                                          },
-                                          title: Text(
-                                            item.geographyName ?? "",
-                                          ),
-                                        );
-                                      },
-                                    ),
-                            ),
-                          ),
-                        );
-                      }),
-                    ],
+                      );
+                      if (item != null) {
+                        controller.streetName.value =
+                            "${item.geographyName ?? ""} - ${item.parentGeographyMst != null ? item.parentGeographyMst!.geographyName : ""}";
+
+                     //   controller.toggleExpand();
+
+                        controller.postCode.value = item.parentGeographyMst
+                                ?.parentGeographyMst?.geographyName ??
+                            "";
+                      }
+                    },
+                    contentPadding: const EdgeInsets.only(bottom: 4.0),
+                    title: Text(
+                      controller.streetName.value,
+                      style: TextStyle(
+                          color:
+                              controller.streetName.value == "Street Name"
+                                  ? Colors.grey.shade600
+                                  : AppColors.black),
+                    ),
+                    /*trailing: Icon(controller.isStreetNameExpand.value
+                        ? Icons.arrow_drop_up
+                        : Icons.keyboard_arrow_down),*/
+                    shape: Border(
+                      bottom: BorderSide(color: Colors.grey.shade800),
+                    ),
                   );
                 }),
                 const SizedBox(height: 10),
@@ -165,16 +149,23 @@ class DeliveryNowPage extends GetView<DeliveryNowController> {
           ),
         ),
       ),
-      bottomNavigationBar: Container(
-        margin: const EdgeInsets.only(bottom: 20, left: 10, right: 10),
-        alignment: Alignment.center,
-        height: 5.h,
-        decoration: BoxDecoration(
-            color: AppColors.black,
-            borderRadius: BorderRadius.all(Radius.circular(10))),
-        child: Text(
-          "Continue with the order",
-          style: TextStyle(color: AppColors.white),
+      bottomNavigationBar: GestureDetector(
+        onTap: (){
+          if(controller.formKey.currentState!.validate()){
+            showErrorDialog(title: "Success", message: "Order Successful");
+          }
+        },
+        child: Container(
+          margin: const EdgeInsets.only(bottom: 20, left: 10, right: 10),
+          alignment: Alignment.center,
+          height: 5.h,
+          decoration: BoxDecoration(
+              color: AppColors.black,
+              borderRadius: const BorderRadius.all(Radius.circular(10))),
+          child: Text(
+            "Continue with the order",
+            style: TextStyle(color: AppColors.white),
+          ),
         ),
       ),
     );

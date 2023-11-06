@@ -25,31 +25,7 @@ class Header extends GetView<HomeController> {
                 borderRadius: BorderRadius.circular(8.sp),
                 color: AppColors.black,
               ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  GestureDetector(
-                    onTap: controller.openDrawer,
-                    child: Center(
-                      child: SvgPicture.asset(
-                        Assets.menu,
-                        height: 24.sp,
-                        width: 24.sp,
-                      ),
-                    ),
-                  ),
-                  GestureDetector(
-                    onTap: () {},
-                    child: Center(
-                      child: SvgPicture.asset(
-                        Assets.cart,
-                        height: 24.sp,
-                        width: 24.sp,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
+
             ),
           ),
           Center(

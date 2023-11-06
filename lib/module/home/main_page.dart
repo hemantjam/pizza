@@ -15,6 +15,29 @@ class MainPage extends GetView<HomeController> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
+        appBar: AppBar(
+          elevation: 0,
+          title:   Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            GestureDetector(
+              onTap: controller.openDrawer,
+              child: Center(
+                child: SvgPicture.asset(
+                  Assets.menu,
+                  height: 24.sp,
+                  width: 24.sp,
+                ),
+              ),
+            ),
+            GestureDetector(
+              onTap: () {},
+              child: Center(
+                child: Text("sign in")
+              ),
+            ),
+          ],
+        ),),
           key: controller.scaffoldKey,
           drawer: const AppDrawer(),
           body: Obx(() {
@@ -24,18 +47,15 @@ class MainPage extends GetView<HomeController> {
           }),
           bottomNavigationBar: const Row(
             children: <Widget>[
+              BottomTabBarItem(index: 0, image: Assets.logoPng, label: "Home"),
               BottomTabBarItem(
-                  index: 0, image: Assets.logoPng, label: "Pippo's\n Pizza"),
-              BottomTabBarItem(
-                  index: 1,
-                  image: Assets.bottomBuildYourPizza,
-                  label: 'Build your\n own'),
+                  index: 1, image: Assets.bottomBuildYourPizza, label: 'Offer'),
               BottomTabBarItem(
                   index: 2,
                   image: Assets.bottomHalfHalf,
-                  label: 'Half &\n Half'),
+                  label: 'Quick Orders'),
               BottomTabBarItem(
-                  index: 3, image: Assets.bottomQuick, label: 'Quick\n Orders'),
+                  index: 3, image: Assets.bottomQuick, label: 'Cart'),
             ],
           )),
     );
@@ -56,13 +76,14 @@ class BottomTabBarItem extends GetView<HomeController> {
 
   @override
   Widget build(BuildContext context) {
-    return Obx(() {
-      return GestureDetector(
+    return Obx(
+      () {
+        return GestureDetector(
           onTap: () {
             controller.changeIndex(index);
           },
           child: Container(
-            height: 10.h,
+            height: 8.h,
             width: 25.w,
             padding: const EdgeInsets.only(top: 5),
             decoration: BoxDecoration(
@@ -85,17 +106,18 @@ class BottomTabBarItem extends GetView<HomeController> {
                         height: 24.sp,
                         width: 24.sp,
                       ),
+                SizedBox(
+                  height: 5
+                ),
                 Text(
                   label,
-                  style: TextStyle(
-                    color: controller.currentIndex.value == index
-                        ? AppColors.white
-                        : AppColors.black,
-                  ),
+                  style: TextStyle(color: AppColors.black),
                 ),
               ],
             ),
-          ));
-    });
+          ),
+        );
+      },
+    );
   }
 }
