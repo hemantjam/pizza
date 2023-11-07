@@ -19,14 +19,12 @@ class OutletShiftDetailsController extends GetxController {
   }
 
   void getShiftDetails() async {
-    log("method called");
     ApiResponse res =
         await apiClient.getRequest(ApiEndPoints.outletShiftDetails);
     log(res.toJson().toString());
     if (res.status) {
       outletShiftDetailsModel.value =
           OutletShiftDetailsModel.fromJson(res.toJson());
-      log("------>${outletShiftDetailsModel.value.toString()}");
     }
     update();
   }

@@ -15,7 +15,7 @@ class ApiServices {
     _dio.options.headers['Content-Type'] = 'application/json';
     _dio.options.headers['Accept'] = 'application/json';
 
-    _dio.interceptors.add(PrettyDioLogger(responseBody: true));
+    //_dio.interceptors.add(PrettyDioLogger(responseBody: true));
   }
 
   ApiResponse apiResponse =
@@ -28,12 +28,13 @@ class ApiServices {
           'Bearer ${ApiEndPoints.authToken}';
       final response = await _dio.get(endpoint + data,
           queryParameters: queryParameters, data: data);
-      log("response-of $endpoint->${response}");
       if (response.statusCode == 200) {
         apiResponse = ApiResponse<T>.fromJson(response.data);
         return apiResponse;
       }
     } catch (e) {
+      log("error--->${endpoint}");
+
       handleError(e);
     }
     return apiResponse;
@@ -51,12 +52,12 @@ class ApiServices {
 
       final response = await _dio.post(endpoint,
           data: '"' + data.toString() + '"', queryParameters: queryParameters);
-      log("response of $endpoint-->${response}");
       if (response.statusCode == 200) {
         apiResponse = ApiResponse<T>.fromJson(response.data);
         return apiResponse;
       }
     } catch (e) {
+      log("error--->${endpoint}");
       handleError(e);
     }
     return apiResponse;
@@ -78,6 +79,7 @@ class ApiServices {
         );
       }
     } else {
+      log("error--->${e.error.toString()}");
       showErrorDialog(
         title: "Something Went Wrong !",
         message: "Please try again",

@@ -22,13 +22,15 @@ class PickUpNowPage extends GetView<PickUpNowController> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 /// store close validation
-                /* Text(
-                  "Please Note : Store is closed currently , please select another time",
-                  style: TextStyle(color: AppColors.red),
-                ),*/
-                const SizedBox(
-                  height: 15,
-                ),
+                Obx(() {
+                  return controller.storeOff.value
+                      ? Text(
+                          "Please Note : Store is closed currently , please select another time",
+                          style: TextStyle(color: AppColors.red),
+                        )
+                      : SizedBox();
+                }),
+                const SizedBox(height: 15),
                 Text(
                   "Outlet Address",
                   style: TextStyle(
@@ -37,24 +39,33 @@ class PickUpNowPage extends GetView<PickUpNowController> {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                Card(
-                  child: TextFormField(
-                    controller: controller.outletAddController,
-                    decoration: const InputDecoration(hintText: "Outlet Address"),
-                  ),
-                ),
+                Obx(() {
+                  return Card(
+                    elevation: 0,
+                    child: IgnorePointer(
+                      ignoring: true,
+                      child: TextFormField(
+                        readOnly: true,
+                        controller: controller.outletAddController,
+                        decoration: InputDecoration(
+                            hintText: controller.outletAddress.value),
+                      ),
+                    ),
+                  );
+                }),
                 const SizedBox(height: 10),
                 GestureDetector(
-                  onTap:()=> controller.launchMapWithLocation(),
+                  onTap: () => controller
+                      .launchMapWithAddress(controller.outletAddress.value),
                   child: Image.asset(
                     Assets.mapPlaceHolder,
-                    height: 40.h,
+                    height: 50.h,
                     width: 100.w,
                     fit: BoxFit.contain,
                   ),
                 ),
                 const SizedBox(height: 10),
-              /*  Row(
+                /*  Row(
                   children: [
                     Expanded(
                       child: ElevatedButton(
@@ -80,10 +91,10 @@ class PickUpNowPage extends GetView<PickUpNowController> {
         margin: const EdgeInsets.only(bottom: 20, left: 10, right: 10),
         alignment: Alignment.center,
         height: 5.h,
-        decoration:  BoxDecoration(
+        decoration: BoxDecoration(
             color: AppColors.black,
             borderRadius: BorderRadius.all(Radius.circular(10))),
-        child:  Text(
+        child: Text(
           "Continue with the order",
           style: TextStyle(color: AppColors.white),
         ),

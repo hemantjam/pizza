@@ -41,18 +41,16 @@ class SearchableStringListDialogState
     return SizedBox(
       height: 50.h,
       child: AlertDialog(
-        titlePadding: EdgeInsets.all(10),
+        titlePadding: const EdgeInsets.all(10),
         contentPadding: const EdgeInsets.all(2),
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(widget.title),
-            SizedBox(
-              height: 10,
-            ),
+            const SizedBox(height: 10),
             TextField(
               onChanged: filterList,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                   suffixIcon: Icon(Icons.search),
                   contentPadding:
                       EdgeInsets.only(left: 4, right: 0, top: 0, bottom: 0),
@@ -64,7 +62,7 @@ class SearchableStringListDialogState
         content: SizedBox(
           height: 50.h,
           width: double.maxFinite,
-          child: Scrollbar(
+          child:widget.streetList.isEmpty||filteredList.isEmpty?Center(child: Text("Please wait..."),): Scrollbar(
             interactive: true,
             trackVisibility: true,
             thickness: 20,
@@ -103,7 +101,7 @@ class SearchableStringListDialogState
               onPressed: () {
                 Get.back();
               },
-              child: Text("CANCEL"))
+              child: const Text("CANCEL"))
         ],
       ),
     );

@@ -3,9 +3,9 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:pizza/constants/app_colors.dart';
 import 'package:pizza/constants/assets.dart';
-import 'package:pizza/module/home/drawer/drawer.dart';
 import 'package:sizer/sizer.dart';
 
+import 'drawer/drawer.dart';
 import 'home_controller.dart';
 
 class MainPage extends GetView<HomeController> {
@@ -15,29 +15,35 @@ class MainPage extends GetView<HomeController> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        appBar: AppBar(
-          elevation: 0,
-          title:   Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            GestureDetector(
-              onTap: controller.openDrawer,
-              child: Center(
-                child: SvgPicture.asset(
-                  Assets.menu,
-                  height: 24.sp,
-                  width: 24.sp,
+          appBar: AppBar(
+            automaticallyImplyLeading: false,
+            elevation: 0,
+            title: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                GestureDetector(
+                  onTap: controller.openDrawer,
+                  child: Center(
+                    child: SvgPicture.asset(
+                      Assets.menu,
+                      height: 24.sp,
+                      width: 24.sp,
+                      color: Colors.black,
+                    ),
+                  ),
                 ),
-              ),
+                GestureDetector(
+                  onTap: () {},
+                  child: Center(
+                      child: Text("Sign in",
+                          style: TextStyle(
+                            decoration: TextDecoration.underline,
+                            fontWeight: FontWeight.w400,
+                          ))),
+                ),
+              ],
             ),
-            GestureDetector(
-              onTap: () {},
-              child: Center(
-                child: Text("sign in")
-              ),
-            ),
-          ],
-        ),),
+          ),
           key: controller.scaffoldKey,
           drawer: const AppDrawer(),
           body: Obx(() {
@@ -49,13 +55,11 @@ class MainPage extends GetView<HomeController> {
             children: <Widget>[
               BottomTabBarItem(index: 0, image: Assets.logoPng, label: "Home"),
               BottomTabBarItem(
-                  index: 1, image: Assets.bottomBuildYourPizza, label: 'Offer'),
+                  index: 1, image: Assets.bottomOffer, label: 'Offer'),
               BottomTabBarItem(
-                  index: 2,
-                  image: Assets.bottomHalfHalf,
-                  label: 'Quick Orders'),
+                  index: 2, image: Assets.bottomQuick, label: 'Quick Orders'),
               BottomTabBarItem(
-                  index: 3, image: Assets.bottomQuick, label: 'Cart'),
+                  index: 3, image: Assets.bottomCart, label: 'Cart'),
             ],
           )),
     );
@@ -106,9 +110,7 @@ class BottomTabBarItem extends GetView<HomeController> {
                         height: 24.sp,
                         width: 24.sp,
                       ),
-                SizedBox(
-                  height: 5
-                ),
+                SizedBox(height: 5),
                 Text(
                   label,
                   style: TextStyle(color: AppColors.black),

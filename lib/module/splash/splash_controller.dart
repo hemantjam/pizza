@@ -20,7 +20,7 @@ class SplashController extends GetxController {
 
   void handleNavigation() {
     Future.delayed(const Duration(seconds: 2), () {
-      Get.toNamed(RouteNames.homePage);
+      Get.offAllNamed(RouteNames.homePage);
     });
   }
 

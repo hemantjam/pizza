@@ -9,6 +9,8 @@ class Assets {
   static const String bottomBuildYourPizza = "assets/icons/bottom_build.svg";
   static const String bottomHalfHalf = "assets/icons/bottom_half_half.svg";
   static const String bottomQuick = "assets/icons/bottom_quick.svg";
+  static const String bottomCart = "assets/icons/bottom_cart.svg";
+  static const String bottomOffer = "assets/icons/bottom_offer.svg";
 
   static const String orderDelivery = "assets/icons/order_delivery.svg";
   static const String orderDeliveryPng = "assets/icons/order_delivery_png.png";

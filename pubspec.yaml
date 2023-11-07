@@ -47,11 +47,15 @@ dependencies:
   url_launcher: 6.1.13
   map_launcher: ^3.0.1
   intl: ^0.18.1
+  objectbox: ^2.3.1
+  uuid: ^4.1.0
+  shared_preferences: ^2.2.2
 
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  build_runner: any
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is

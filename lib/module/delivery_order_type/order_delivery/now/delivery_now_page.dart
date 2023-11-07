@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:pizza/local_storage/shared_pref.dart';
 import 'package:pizza/widgets/common_dialog.dart';
 import 'package:sizer/sizer.dart';
 
@@ -24,10 +25,12 @@ class DeliveryNowPage extends GetView<DeliveryNowController> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 /// if store is close
-                /*Text(
-                  "Please Note : Store is closed currently , please select another time",
-                  style: TextStyle(color: AppColors.red),
-                ),*/
+              Obx(
+                ()=> controller.storeOff.value?  Text(
+                    "Please Note : Store is closed currently , please select another time",
+                    style: TextStyle(color: AppColors.red),
+                  ):SizedBox(),
+              ),
                 const SizedBox(
                   height: 15,
                 ),
@@ -56,7 +59,8 @@ class DeliveryNowPage extends GetView<DeliveryNowController> {
                   ),
                 ),
                 const SizedBox(height: 10),
-                Card( elevation: 0,
+                Card(
+                  elevation: 0,
                   child: TextFormField(
                     controller: controller.streetNumberController,
                     focusNode: controller.streetNumberFocus,
@@ -73,52 +77,73 @@ class DeliveryNowPage extends GetView<DeliveryNowController> {
                 ),
                 const SizedBox(height: 10),
                 Obx(() {
-                  List<SingleGeographyModel> streetList=controller.streetList!
+                  List<SingleGeographyModel> streetList = controller.streetList!
                       .where((ele) =>
-                  ele.parentGeographyMst?.geographyTypeMst
-                      ?.geographyTypeCode ==
-                      "GT5")
+                          ele.parentGeographyMst?.geographyTypeMst
+                              ?.geographyTypeCode ==
+                          "GT5")
                       .toList();
-                  return ListTile(
-                    onTap: () async {
-                      SingleGeographyModel? item = await Get.dialog(
-                        SearchableStringListDialog(
-                          title: "Street Name",
-                          streetList: streetList,
+                  return Column(
+                    children: [
+                      Card(
+                        elevation: 0,
+                        child: TextFormField(
+                          readOnly: true,
+                          onTap: () async {
+                            SingleGeographyModel? item = await Get.dialog(
+                              SearchableStringListDialog(
+                                title: "Street Name",
+                                streetList: streetList,
+                              ),
+                            );
+                            if (item != null) {
+                              controller.streetNameController.text =
+                                  "${item.geographyName ?? ""} - ${item.parentGeographyMst != null ? item.parentGeographyMst!.geographyName : ""}";
+                              controller.postCodeController.text = item
+                                      .parentGeographyMst
+                                      ?.parentGeographyMst
+                                      ?.geographyName ??
+                                  "";
+                            }
+                          },
+                          controller: controller.streetNameController,
+                          decoration:
+                              const InputDecoration(hintText: "Street Name"),
+                          validator: (street) {
+                            return street!.isEmpty ? "*Required" : null;
+                          },
+
+                          // textInputAction: TextInputAction.next,
                         ),
-                      );
-                      if (item != null) {
-                        controller.streetName.value =
-                            "${item.geographyName ?? ""} - ${item.parentGeographyMst != null ? item.parentGeographyMst!.geographyName : ""}";
-
-                     //   controller.toggleExpand();
-
-                        controller.postCode.value = item.parentGeographyMst
-                                ?.parentGeographyMst?.geographyName ??
-                            "";
-                      }
-                    },
-                    contentPadding: const EdgeInsets.only(bottom: 4.0),
-                    title: Text(
-                      controller.streetName.value,
-                      style: TextStyle(
-                          color:
-                              controller.streetName.value == "Street Name"
-                                  ? Colors.grey.shade600
-                                  : AppColors.black),
-                    ),
-                    /*trailing: Icon(controller.isStreetNameExpand.value
-                        ? Icons.arrow_drop_up
-                        : Icons.keyboard_arrow_down),*/
-                    shape: Border(
-                      bottom: BorderSide(color: Colors.grey.shade800),
-                    ),
+                      ),
+                      /*  ListTile(
+                        contentPadding: const EdgeInsets.only(bottom: 4.0),
+                        title: Text(
+                          controller.streetName.value,
+                          style: TextStyle(
+                              color:
+                                  controller.streetName.value == "Street Name"
+                                      ? Colors.grey.shade600
+                                      : AppColors.black),
+                        ),
+                        */ /*trailing: Icon(controller.isStreetNameExpand.value
+                            ? Icons.arrow_drop_up
+                            : Icons.keyboard_arrow_down),*/ /*
+                        shape: Border(
+                          bottom: BorderSide(color: Colors.grey.shade800),
+                        ),
+                      ),*/
+                    ],
                   );
                 }),
                 const SizedBox(height: 10),
                 Obx(() {
                   return Card(
+                    elevation: 0,
                     child: TextFormField(
+                      validator: (postCode) {
+                        return postCode!.isEmpty ? "*Required" : null;
+                      },
                       readOnly: true,
                       controller: controller.postCodeController,
                       focusNode: controller.postCodeFocus,
@@ -150,9 +175,21 @@ class DeliveryNowPage extends GetView<DeliveryNowController> {
         ),
       ),
       bottomNavigationBar: GestureDetector(
-        onTap: (){
-          if(controller.formKey.currentState!.validate()){
+        onTap: () {
+          if (controller.formKey.currentState!.validate()) {
+            if (controller.rememberAddress.value) {
+              List<String> address = [
+                controller.unitController.text,
+                controller.streetNumberController.text,
+                controller.streetNameController.text,
+                controller.postCodeController.text,
+              ];
+              SharedPref.saveAddress("now",address);
+            } else if (!controller.rememberAddress.value) {
+              SharedPref.deleteAddress("now");
+            }
             showErrorDialog(title: "Success", message: "Order Successful");
+            controller.formKey.currentState?.reset();
           }
         },
         child: Container(

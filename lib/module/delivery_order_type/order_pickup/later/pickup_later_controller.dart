@@ -1,13 +1,14 @@
-import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'dart:core';
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
+import 'package:pizza/module/outlet_details/outlet/outlet_model.dart';
 
 import '../../../geography/all_active_controller.dart';
 import '../../../geography/byType/street_name_model.dart';
+import '../../../outlet_details/outlet/outlet_controller.dart';
 import '../../../outlet_details/shift/outlet_shift_details_controller.dart';
 import '../../../outlet_details/shift/outlet_shift_details_model.dart';
 import '../../date_model.dart';
@@ -17,10 +18,20 @@ class PickUpLaterController extends GetxController {
   void onInit() {
     super.onInit();
     getShiftDetails();
-
+    getOutletDetails();
+    dateController = TextEditingController(
+        text: DateFormat('d MMMM yyyy, EEEE').format(DateTime.now()));
     ever(outletShiftDetailsController.value.outletShiftDetailsModel,
-            (callback) => {getShiftDetails()});
+        (callback) => getShiftDetails());
+    ever(outletController.value.outletAddress, (callback) {
+      getOutletDetails();
+    });
   }
+
+  Rx<OutletController> outletController = OutletController().obs;
+
+  Rx<OutletModel> outletModel = OutletModel().obs;
+
   Rx<OutletShiftDetailsController> outletShiftDetailsController =
       Get.find<OutletShiftDetailsController>().obs;
 
@@ -33,24 +44,43 @@ class PickUpLaterController extends GetxController {
   RxList<ShiftData?> regularShiftData = <ShiftData?>[].obs;
   List<SingleGeographyModel>? streetList = <SingleGeographyModel>[].obs;
 
-
   GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
-  final TextEditingController outletAddController = TextEditingController();
-
-  final RxString outletAddress = "Outlet Address".obs;
-  final RxString date = "Date".obs;
-  final RxString time = "Time".obs;
-  final RxInt weekDay = 0.obs;
+  TextEditingController outletAddController =
+      TextEditingController(text: "77, Hoffmans Rd, NIDDRIE, 3042");
+  TextEditingController dateController = TextEditingController();
+  TextEditingController timeController = TextEditingController();
+  RxString outletAddress = "77, Hoffmans Rd, NIDDRIE, 3042".obs;
   RxList<String> timeIntervalList = <String>[].obs;
-  final RxBool isStoreOff = false.obs;
+  final RxBool storeOff = false.obs;
+
+  getOutletDetails() {
+    outletAddress.value = outletController.value.outletAddress.value;
+    update();
+  }
+
+  @override
+  void onReady() {
+    super.onReady();
+    DateTime currentDateTime = DateTime.now();
+
+    // Reset the hours and minutes to midnight.
+    currentDateTime = DateTime(
+      currentDateTime.year,
+      currentDateTime.month,
+      currentDateTime.day,
+    );
+    searchDateInList(currentDateTime);
+
+  }
   void getShiftDetails() {
     outletShiftDetailsModel =
         outletShiftDetailsController.value.outletShiftDetailsModel;
     update();
   }
 
-  getTime(ShiftItem shiftData) {
+  List<String> getTimeIntervals(ShiftItem shiftData, DateTime selectedDate) {
+    timeIntervalList.clear();
     String startTime = shiftData.startTime ?? "";
     String endTime = shiftData.endTime ?? "";
     int cutoffTimeMinutes = parseTimeToMinutes(shiftData.cutoffTime ?? "");
@@ -66,80 +96,76 @@ class PickUpLaterController extends GetxController {
     int intervalEndTime = endTimeMinutes - cutoffTimeMinutes;
 
     for (int time = intervalStartTime;
-    time <= intervalEndTime;
-    time += intervalTimeMinutes) {
+        time <= intervalEndTime;
+        time += intervalTimeMinutes) {
       int hours = time ~/ 60;
       int minutes = time % 60;
 
-      if (time < currentTimeMinutes) {
-        continue;
-      }
+      DateTime intervalDateTime =
+          selectedDate.add(Duration(hours: hours, minutes: minutes));
 
-      String period = hours >= 12 ? 'PM' : 'AM';
-      hours = hours % 12;
-      if (hours == 0) {
-        hours = 12;
-      }
+      if (intervalDateTime.isAfter(now)) {
+        String period = hours >= 12 ? 'PM' : 'AM';
+        hours = hours % 12;
+        if (hours == 0) {
+          hours = 12;
+        }
 
-      String formattedTime =
-          '$hours:${minutes.toString().padLeft(2, '0')} $period';
-      timeIntervalList.add(formattedTime);
+        String formattedTime =
+            '$hours:${minutes.toString().padLeft(2, '0')} $period';
+        timeIntervalList.add(formattedTime);
+      }
+    }
+
+    return timeIntervalList;
+  }
+
+  searchDateInList(DateTime dateTime) {
+    log("date time--->${dateTime}");
+    storeOff.value = true;
+
+    List<int> selectedDate = <int>[
+      dateTime.year,
+      dateTime.month,
+      dateTime.day,
+    ];
+
+    if (outletShiftDetailsModel.value.data != null &&
+        outletShiftDetailsModel.value.data!.special != null) {
+      List<ShiftItem?>? special = outletShiftDetailsModel.value.data!.special!
+          .where((element) => element!.orderTypeCode == OrderTypeCode.pickUp)
+          .toList();
+      for (var element in special) {
+        if (element!.date == selectedDate.toString()) {
+          getTimeIntervals(element, dateTime);
+          storeOff.value = false;
+          return;
+        }
+      }
+    }
+
+    if (outletShiftDetailsModel.value.data != null &&
+        outletShiftDetailsModel.value.data!.regular != null) {
+      List<ShiftItem?>? regular = outletShiftDetailsModel.value.data!.regular!
+          .where((element) =>
+              element!.day == dateTime.weekday &&
+              element.orderTypeCode == OrderTypeCode.pickUp)
+          .toList();
+
+      if (regular.isNotEmpty) {
+        getTimeIntervals(regular.first!, dateTime);
+        storeOff.value = false;
+      }
     }
   }
 
-  searchDateInList(DateTime dateTime)
-  {
-    log("--->method called");
-    if (outletShiftDetailsModel.value.data != null) {
-      log("--->date is not null");
-
-      if (outletShiftDetailsModel.value.data!.special != null &&
-          outletShiftDetailsModel.value.data!.special!.isNotEmpty) {
-        /// check in special shift
-        List<ShiftItem?>? special = outletShiftDetailsModel.value.data!.special!
-            .where(
-                (element) => element!.orderTypeCode == OrderTypeCode.delivery)
-            .toList();
-        List<int> selectedDate = <int>[
-          dateTime.year,
-          dateTime.month,
-          dateTime.day
-        ];
-        if (special.isNotEmpty) {
-          for (var element in special) {
-            if (element!.date! == selectedDate.toString()) {
-              getTime(element);
-            } else {
-              isStoreOff.value = true;
-            }
-          }
-        }
-      }
-
-      /// check in regular shift
-      else if (outletShiftDetailsModel.value.data!.regular != null &&
-          outletShiftDetailsModel.value.data!.regular!.isNotEmpty) {
-        List<ShiftItem?>? regular = outletShiftDetailsModel.value.data!.regular!
-            .where((element) =>
-        element!.day == dateTime.day &&
-            element.orderTypeCode == OrderTypeCode.delivery)
-            .toList();
-        if (regular.isNotEmpty) {
-          getTime(regular.first!);
-        } else {
-          isStoreOff.value = true;
-        }
-      }
-    } else {
-      log("--->data nulll");
-    }
-  }
   int parseTimeToMinutes(String time) {
     List<String> parts = time.split(':');
     int hours = int.parse(parts[0]);
     int minutes = int.parse(parts[1]);
     return hours * 60 + minutes;
   }
+
   List<DateModel> getNext15DaysWithWeekdays() {
     final List<DateModel> result = [];
 

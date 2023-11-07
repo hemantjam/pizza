@@ -1,8 +1,7 @@
-import 'dart:developer';
-
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 
+import '../../../../local_storage/shared_pref.dart';
 import '../../../geography/all_active_controller.dart';
 import '../../../geography/byType/street_name_model.dart';
 
@@ -10,17 +9,30 @@ class DeliveryNowController extends GetxController {
   @override
   void onInit() {
     super.onInit();
+    getStreetName();
     ever(allActiveController.value.streetNameList,
         (callback) => {getStreetName()});
-   /* ever(allActiveController.value.postCodeList,
+    getSavedAddress();
+    /* ever(allActiveController.value.postCodeList,
         (callback) => {getPostCodeList()});*/
   }
 
   @override
   void onReady() {
     super.onReady();
-    getStreetName();
-   // getPostCodeList();
+    //
+    // getPostCodeList();
+  }
+
+  getSavedAddress() async {
+    List<String>? address = await SharedPref.getAddress("now");
+    if (address != null) {
+      unitController.text = address[0];
+      streetNumberController.text = address[1];
+      streetNameController.text = address[2];
+      postCodeController.text = address[3];
+    }
+    update();
   }
 
   final Rx<AllActiveController> allActiveController =
@@ -41,10 +53,12 @@ class DeliveryNowController extends GetxController {
   final FocusNode streetNameFocus = FocusNode();
   final FocusNode postCodeFocus = FocusNode();
 
-  final RxBool rememberAddress = false.obs;
- // final RxBool isStreetNameExpand = false.obs;
+  final RxBool rememberAddress = true.obs;
+
+  // final RxBool isStreetNameExpand = false.obs;
   RxString streetName = "Street Name".obs;
   RxString postCode = "Post Code".obs;
+  RxBool storeOff = false.obs;
 
 /*  void toggleExpand() {
     isStreetNameExpand.value = !isStreetNameExpand.value;
@@ -59,7 +73,7 @@ class DeliveryNowController extends GetxController {
       streetList!.value = allActiveController.value.streetNameList.value.data!
           .where((element) => element.active!)
           .toList();
-      streetList!.sort((a,b)=>a.geographyName!.compareTo(b.geographyName!));
+      streetList!.sort((a, b) => a.geographyName!.compareTo(b.geographyName!));
     }
 
     update();
@@ -67,7 +81,7 @@ class DeliveryNowController extends GetxController {
 /*
   getPostCode(String id) {
     postCode.value=id;
-*//*    log("id given in method ===>${id}");
+*/ /*    log("id given in method ===>${id}");
     if (postCodeList == null || postCodeList!.isEmpty) {
       return;
     } else {
@@ -81,10 +95,10 @@ class DeliveryNowController extends GetxController {
         }
       });
       log("--->loading finish");
-    }*//*
+    }*/ /*
   }*/
 
- /* void getPostCodeList() {
+/* void getPostCodeList() {
     // log("method called-->");
     if (allActiveController.value.postCodeList.value.data != null) {
       postCodeList!.value = allActiveController.value.postCodeList.value.data!

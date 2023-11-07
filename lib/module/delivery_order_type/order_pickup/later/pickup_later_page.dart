@@ -25,6 +25,14 @@ class PickUpLaterPage extends GetView<PickUpLaterController> {
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.max,
               children: [
+                Obx(() {
+                  return controller.storeOff.value
+                      ? Text(
+                    "Please Note : Store is closed currently , please select another time",
+                    style: TextStyle(color: AppColors.red),
+                  )
+                      : const SizedBox();
+                }),
                 Text(
                   "Date",
                   style: TextStyle(
@@ -32,7 +40,39 @@ class PickUpLaterPage extends GetView<PickUpLaterController> {
                       fontSize: 18.sp,
                       fontWeight: FontWeight.bold),
                 ),
-                Obx(() {
+                Card(
+                  elevation: 0,
+                  child: TextFormField(
+                    onTap: () async {
+                      List<DateModel> dateList =
+                      controller.getNext15DaysWithWeekdays();
+                      List<String> dateFormattedList = dateList
+                          .map((e) =>
+                          DateFormat('d MMMM yyyy, EEEE')
+                              .format(e.dateTime))
+                          .toList();
+                      String date = await Get.dialog(CommonSearchableList(
+                        title: "Date",
+                        streetList: dateFormattedList,
+                      ));
+                      if (date.isNotEmpty) {
+                        controller.timeController.clear();
+                        controller.dateController.text = date;
+                        DateFormat inputFormat =
+                        DateFormat('d MMMM yyyy, EEEE');
+                        DateTime dateTime = inputFormat.parse(date);
+                        controller.searchDateInList(dateTime);
+                      }
+                    },
+                    readOnly: true,
+                    controller: controller.dateController,
+                    decoration: const InputDecoration(hintText: "Date"),
+                    validator: (date) {
+                      return date!.isEmpty ? "*Required" : null;
+                    },
+                  ),
+                ),
+                /* Obx(() {
                   List<DateModel> dateList =
                       controller.getNext15DaysWithWeekdays();
                   List<String> dateFormattedList = dateList
@@ -67,7 +107,7 @@ class PickUpLaterPage extends GetView<PickUpLaterController> {
                       ),
                     ),
                   );
-                }),
+                }),*/
                 const SizedBox(
                   height: 15,
                 ),
@@ -78,7 +118,36 @@ class PickUpLaterPage extends GetView<PickUpLaterController> {
                       fontSize: 18.sp,
                       fontWeight: FontWeight.bold),
                 ),
-                Obx(() {
+                Card(
+                  elevation: 0,
+                  child: TextFormField(
+                    onTap: () async {
+                      if (controller.dateController.text.isEmpty) {
+                        showErrorDialog(
+                          title: "Date Select",
+                          message: "Please select date first",
+                        );
+                      } else {
+                        String? time = await Get.dialog(
+                          CommonSearchableList(
+                            title: "Time",
+                            streetList: controller.timeIntervalList,
+                          ),
+                        );
+                        if (time != null) {
+                          controller.timeController.text = time;
+                        }
+                      }
+                    },
+                    readOnly: true,
+                    controller: controller.timeController,
+                    decoration: const InputDecoration(hintText: "Time"),
+                    validator: (time) {
+                      return time!.isEmpty ? "*Required" : null;
+                    },
+                  ),
+                ),
+                /* Obx(() {
                   return Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -118,7 +187,7 @@ class PickUpLaterPage extends GetView<PickUpLaterController> {
                       ),
                     ],
                   );
-                }),
+                }),*/
                 const SizedBox(
                   height: 15,
                 ),
@@ -129,14 +198,21 @@ class PickUpLaterPage extends GetView<PickUpLaterController> {
                       fontSize: 18.sp,
                       fontWeight: FontWeight.bold),
                 ),
-                Card(
-                  elevation: 0,
-                  child: TextFormField(
-                    controller: controller.outletAddController,
-                    decoration:
-                        const InputDecoration(hintText: "Outlet Address"),
-                  ),
-                ),
+                Obx(() {
+                  return Card(
+                    elevation: 0,
+                    child: IgnorePointer(
+                      ignoring: true,
+                      child: TextFormField(
+                        readOnly: true,
+                        controller: controller.outletAddController,
+                        decoration: InputDecoration(
+                          hintText: controller.outletAddress.value,
+                        ),
+                      ),
+                    ),
+                  );
+                }),
               ],
             ),
           ),
@@ -146,6 +222,7 @@ class PickUpLaterPage extends GetView<PickUpLaterController> {
         onTap: () {
           if (controller.formKey.currentState!.validate()) {
             showErrorDialog(title: "Success", message: "Order Successful");
+            controller.formKey.currentState?.reset();
           }
         },
         child: Container(

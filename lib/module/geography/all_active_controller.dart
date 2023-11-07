@@ -33,7 +33,7 @@ class AllActiveController extends GetxController {
 
   void getStreetName() async {
     ApiResponse res = await apiServices
-        .getRequest(ApiEndPoints.geoghraphyByTypeCode, data: "/GT6");
+        .getRequest(ApiEndPoints.geographyByTypeCode, data: "/GT6");
     if (res.status) {
       streetNameList.value = GeographyByTypeModel.fromJson(res.toJson());
     }

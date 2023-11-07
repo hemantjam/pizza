@@ -16,6 +16,7 @@ import 'module/delivery_order_type/order_delivery/order_delivery_options_page.da
 import 'module/delivery_order_type/order_pickup/order_pickup_options_page.dart';
 import 'module/geography/all_active_binding.dart';
 import 'module/home/main_page.dart';
+import 'module/outlet_details/outlet/outlet_binding.dart';
 import 'module/outlet_details/shift/outlet_shift_details_binding.dart';
 import 'module/splash/splash_page.dart';
 
@@ -57,7 +58,8 @@ class RouteGenerator {
         MenuBiding(),
         OfferBinding(),
         OutletShiftDetailsBinding(),
-        AllActiveBinding()
+        AllActiveBinding(),
+        OutletBinding()
       ],
     ),
   ];
