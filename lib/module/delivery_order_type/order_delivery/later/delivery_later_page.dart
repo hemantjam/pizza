@@ -2,14 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:pizza/local_storage/shared_pref.dart';
-import 'package:pizza/module/delivery_order_type/date_model.dart';
+import 'package:pizza/module/delivery_order_type/utils/date_model.dart';
+import 'package:pizza/module/delivery_order_type/widgets/order_button.dart';
 import 'package:sizer/sizer.dart';
 
 import '../../../../constants/app_colors.dart';
 import '../../../../widgets/common_dialog.dart';
 import '../../../geography/byType/street_name_model.dart';
-import '../../date_time_searchable_list.dart';
-import '../../searchable_list.dart';
+import '../../utils/get_week_list.dart';
+import '../../widgets/date_time_searchable_list.dart';
+import '../../widgets/searchable_list.dart';
 import 'delivery_later_controller.dart';
 
 class DeliveryLaterPage extends GetView<DeliveryLaterController> {
@@ -53,7 +55,7 @@ class DeliveryLaterPage extends GetView<DeliveryLaterController> {
                   child: TextFormField(
                     onTap: () async {
                       List<DateModel> dateList =
-                          controller.getNext15DaysWithWeekdays();
+                          getNext15DaysWithWeekdays();
                       List<String> dateFormattedList = dateList
                           .map((e) => DateFormat('d MMMM yyyy, EEEE')
                               .format(e.dateTime))
@@ -204,7 +206,7 @@ class DeliveryLaterPage extends GetView<DeliveryLaterController> {
                   elevation: 0,
                   child: TextFormField(
                     controller: controller.postCodeController,
-                    focusNode: controller.postCodeFocus,
+                   // focusNode: controller.postCodeFocus,
                     decoration: const InputDecoration(
                       hintText: "Post Code",
                     ),
@@ -234,7 +236,7 @@ class DeliveryLaterPage extends GetView<DeliveryLaterController> {
           ),
         ),
       ),
-      bottomNavigationBar: GestureDetector(
+      bottomNavigationBar: OrderButton(
         onTap: () {
           if (controller.formKey.currentState!.validate()) {
             if (controller.rememberAddress.value) {
@@ -252,18 +254,7 @@ class DeliveryLaterPage extends GetView<DeliveryLaterController> {
             controller.formKey.currentState?.reset();
           }
         },
-        child: Container(
-          margin: const EdgeInsets.only(bottom: 20, left: 10, right: 10),
-          alignment: Alignment.center,
-          height: 5.h,
-          decoration: BoxDecoration(
-              color: AppColors.black,
-              borderRadius: const BorderRadius.all(Radius.circular(10))),
-          child: Text(
-            "Continue with the order",
-            style: TextStyle(color: AppColors.white),
-          ),
-        ),
+
       ),
     );
   }

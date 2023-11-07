@@ -6,6 +6,23 @@ import '../../../geography/all_active_controller.dart';
 import '../../../geography/byType/street_name_model.dart';
 
 class DeliveryNowController extends GetxController {
+  final Rx<AllActiveController> allActiveController =
+      Get.find<AllActiveController>().obs;
+
+  final GlobalKey<FormState> formKey = GlobalKey<FormState>();
+
+  final TextEditingController unitController = TextEditingController();
+  final TextEditingController streetNumberController = TextEditingController();
+  final TextEditingController streetNameController = TextEditingController();
+  final TextEditingController postCodeController = TextEditingController();
+
+  final FocusNode unitFocus = FocusNode();
+  final FocusNode streetNumberFocus = FocusNode();
+
+  RxList<SingleGeographyModel>? streetList = <SingleGeographyModel>[].obs;
+  final RxBool rememberAddress = true.obs;
+  RxBool storeOff = false.obs;
+
   @override
   void onInit() {
     super.onInit();
@@ -13,15 +30,6 @@ class DeliveryNowController extends GetxController {
     ever(allActiveController.value.streetNameList,
         (callback) => {getStreetName()});
     getSavedAddress();
-    /* ever(allActiveController.value.postCodeList,
-        (callback) => {getPostCodeList()});*/
-  }
-
-  @override
-  void onReady() {
-    super.onReady();
-    //
-    // getPostCodeList();
   }
 
   getSavedAddress() async {
@@ -35,35 +43,6 @@ class DeliveryNowController extends GetxController {
     update();
   }
 
-  final Rx<AllActiveController> allActiveController =
-      Get.find<AllActiveController>().obs;
-
-  final GlobalKey<FormState> formKey = GlobalKey<FormState>();
-
-  RxList<SingleGeographyModel>? streetList = <SingleGeographyModel>[].obs;
-  RxList<SingleGeographyModel>? postCodeList = <SingleGeographyModel>[].obs;
-
-  final TextEditingController unitController = TextEditingController();
-  final TextEditingController streetNumberController = TextEditingController();
-  final TextEditingController streetNameController = TextEditingController();
-  final TextEditingController postCodeController = TextEditingController();
-
-  final FocusNode unitFocus = FocusNode();
-  final FocusNode streetNumberFocus = FocusNode();
-  final FocusNode streetNameFocus = FocusNode();
-  final FocusNode postCodeFocus = FocusNode();
-
-  final RxBool rememberAddress = true.obs;
-
-  // final RxBool isStreetNameExpand = false.obs;
-  RxString streetName = "Street Name".obs;
-  RxString postCode = "Post Code".obs;
-  RxBool storeOff = false.obs;
-
-/*  void toggleExpand() {
-    isStreetNameExpand.value = !isStreetNameExpand.value;
-  }*/
-
   void rememberAdd(bool value) {
     rememberAddress.value = value;
   }
@@ -75,36 +54,6 @@ class DeliveryNowController extends GetxController {
           .toList();
       streetList!.sort((a, b) => a.geographyName!.compareTo(b.geographyName!));
     }
-
     update();
   }
-/*
-  getPostCode(String id) {
-    postCode.value=id;
-*/ /*    log("id given in method ===>${id}");
-    if (postCodeList == null || postCodeList!.isEmpty) {
-      return;
-    } else {
-      log("--->loading start");
-      postCodeList?.forEach((element) {
-        log("element-->${element.parentGeographyMstId}");
-        if (element.parentGeographyMstId == id) {
-          log("id mathcing in loop===>${element.parentGeographyMstId}");
-          postCode.value = element.geographyName.toString();
-          log("--found--${postCode.value}");
-        }
-      });
-      log("--->loading finish");
-    }*/ /*
-  }*/
-
-/* void getPostCodeList() {
-    // log("method called-->");
-    if (allActiveController.value.postCodeList.value.data != null) {
-      postCodeList!.value = allActiveController.value.postCodeList.value.data!
-          .where((element) => element.active!)
-          .toList();
-    }
-    update();
-  }*/
 }

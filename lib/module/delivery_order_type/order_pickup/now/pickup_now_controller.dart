@@ -1,10 +1,8 @@
+
 import 'dart:developer';
-import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:map_launcher/map_launcher.dart';
-import 'package:pizza/widgets/common_dialog.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../outlet_details/outlet/outlet_controller.dart';
@@ -30,18 +28,11 @@ class PickUpNowController extends GetxController {
 
   getOutletDetails() {
     outletAddController.text = outletController.value.outletAddress.value;
-    // log("====>${outletModel.value.data}");
-    /* if (outletModel.value.data != null) {
-      outletAddController.text = outletModel.value.data!.address1 ?? "";
-     // log("=======>${outletAddController.text}");
-    }else{
-      outletAddController.text="Address not found";
-    }update();*/
+
   }
 
   Future<void> launchMapWithAddress(String address) async {
     try {
-
       final query = Uri.encodeComponent(address);
       final url = 'https://www.google.com/maps/search/?api=1&query=$query';
       if (await canLaunch(url)) {
@@ -50,8 +41,7 @@ class PickUpNowController extends GetxController {
         throw 'Could not launch $url';
       }
     } catch (e) {
-      print("Error: $e");
-      // Handle the error as needed, e.g., show an error dialog.
+      log("Error: $e");
     }
   }
 }

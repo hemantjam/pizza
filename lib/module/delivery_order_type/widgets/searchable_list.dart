@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:sizer/sizer.dart';
 
-import '../geography/byType/street_name_model.dart';
+import '../../geography/byType/street_name_model.dart';
 
 class SearchableStringListDialog extends StatefulWidget {
   final String title;
