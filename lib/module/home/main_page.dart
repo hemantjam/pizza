@@ -5,6 +5,7 @@ import 'package:pizza/constants/app_colors.dart';
 import 'package:pizza/constants/assets.dart';
 import 'package:sizer/sizer.dart';
 
+import '../../constants/route_names.dart';
 import 'drawer/drawer.dart';
 import 'home_controller.dart';
 
@@ -33,7 +34,9 @@ class MainPage extends GetView<HomeController> {
                   ),
                 ),
                 GestureDetector(
-                  onTap: () {},
+                  onTap: () {
+                    Get.toNamed(RouteNames.login);
+                  },
                   child: Center(
                       child: Text("Sign in",
                           style: TextStyle(

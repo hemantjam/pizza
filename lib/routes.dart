@@ -7,6 +7,8 @@ import 'package:pizza/module/menu/menu_binding.dart';
 import 'package:pizza/module/offers/offer_binding.dart';
 import 'package:pizza/module/offers/offer_view_all.dart';
 import 'package:pizza/module/splash/splash_binding.dart';
+import 'package:pizza/module/user/login/login_binding.dart';
+import 'package:pizza/module/user/login/login_page.dart';
 
 import 'constants/route_names.dart';
 import 'module/delivery_order_type/order_delivery/later/delivery_later_binding.dart';
@@ -19,14 +21,19 @@ import 'module/home/main_page.dart';
 import 'module/outlet_details/outlet/outlet_binding.dart';
 import 'module/outlet_details/shift/outlet_shift_details_binding.dart';
 import 'module/splash/splash_page.dart';
+import 'module/user/register/register.dart';
+import 'module/user/register/register_binding.dart';
 
 class RouteGenerator {
   static List<GetPage> routes = [
+    /// splash
     GetPage(
       name: RouteNames.initial,
       page: () => const SplashPage(),
       binding: SplashBinding(),
     ),
+
+    /// OrderDeliveryOptionsPage
     GetPage(
       name: RouteNames.orderDeliveryOptions,
       page: () => const OrderDeliveryOptionsPage(),
@@ -36,6 +43,8 @@ class RouteGenerator {
         DeliveryNowBinding()
       ],
     ),
+
+    /// OrderPickupOptionsPage
     GetPage(
       name: RouteNames.orderPickUpOptions,
       page: () => const OrderPickupOptionsPage(),
@@ -45,11 +54,29 @@ class RouteGenerator {
         PickUpNowBinding()
       ],
     ),
+
+    /// OfferList
     GetPage(
       name: RouteNames.offerList,
       page: () => const OfferList(),
       binding: OfferBinding(),
     ),
+
+    /// sign in
+    GetPage(
+      name: RouteNames.login,
+      page: () => const LogInPage(),
+      binding: LoginBinding(),
+    ),
+
+    /// register
+    GetPage(
+      name: RouteNames.register,
+      page: () => const RegisterPage(),
+      binding: RegisterBinding(),
+    ),
+
+    /// MainPage
     GetPage(
       name: RouteNames.homePage,
       page: () => const MainPage(),

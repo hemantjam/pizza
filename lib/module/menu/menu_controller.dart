@@ -15,5 +15,6 @@ class OutletMenuController extends GetxController {
 
   void getMenu() async {
     menuListModel.value = await _repo.getMenu();
+    menuListModel.where((p0) => p0.webDisplay!);
   }
 }
