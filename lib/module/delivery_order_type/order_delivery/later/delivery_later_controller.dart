@@ -9,8 +9,10 @@ import '../../../geography/all_active_controller.dart';
 import '../../../geography/byType/street_name_model.dart';
 import '../../../outlet_details/shift/outlet_shift_details_controller.dart';
 import '../../../outlet_details/shift/outlet_shift_details_model.dart';
+import '../../utils/calculate_shift_time.dart';
 import '../../utils/date_model.dart';
 import '../../utils/get_time_interval.dart';
+import '../../utils/get_week_list.dart';
 
 class DeliveryLaterController extends GetxController {
   Rx<OutletShiftDetailsController> outletShiftDetailsController =
@@ -40,11 +42,10 @@ class DeliveryLaterController extends GetxController {
   final RxBool rememberAddress = true.obs;
   RxList<String> timeIntervalList = <String>[].obs;
   final RxBool isStoreOff = false.obs;
+  RxList<String> dateList = <String>[].obs;
 
   @override
   void onInit() {
-    dateController = TextEditingController(
-        text: DateFormat('d MMMM yyyy, EEEE').format(DateTime.now()));
     super.onInit();
     getShiftDetails();
     getStreetNameList();
@@ -53,6 +54,9 @@ class DeliveryLaterController extends GetxController {
     ever(outletShiftDetailsController.value.outletShiftDetailsModel,
         (callback) => {getShiftDetails(), searchDateInList(DateTime.now())});
     getSavedAddress();
+    dateList.value = getNext15DaysWithWeekdays()
+        .map((element) => DateFormat('d MMMM yyyy, EEEE').format(element))
+        .toList();
   }
 
   @override
@@ -98,13 +102,13 @@ class DeliveryLaterController extends GetxController {
   }
 
   searchDateInList(DateTime dateTime) {
+    dateController.clear();
     isStoreOff.value = true;
     List<int> selectedDate = <int>[
       dateTime.year,
       dateTime.month,
       dateTime.day,
     ];
-
     if (outletShiftDetailsModel.value.data != null &&
         outletShiftDetailsModel.value.data!.special != null) {
       List<ShiftItem?>? special = outletShiftDetailsModel.value.data!.special!
@@ -112,7 +116,10 @@ class DeliveryLaterController extends GetxController {
           .toList();
       for (var element in special) {
         if (element!.date == selectedDate.toString()) {
-          timeIntervalList.value = getTimeIntervals(special.first!, dateTime);
+          dateController.text =
+              DateFormat('d MMMM yyyy, EEEE').format(dateTime);
+          timeIntervalList.value = getTimeIntervals(element, dateTime);
+          timeController.text = timeIntervalList.first;
           isStoreOff.value = false;
           return;
         }
@@ -127,10 +134,23 @@ class DeliveryLaterController extends GetxController {
               element.orderTypeCode == OrderTypeCode.delivery)
           .toList();
 
-      if (regular.isNotEmpty) {
+      if (regular.isNotEmpty &&
+          (calculateShiftEndTime(
+                  regular.first!.endTime!, regular.first!.cutoffTime!)
+              .isBefore(dateTime))) {
+        dateController.text = DateFormat('d MMMM yyyy, EEEE').format(dateTime);
         timeIntervalList.value = getTimeIntervals(regular.first!, dateTime);
+        timeController.text = timeIntervalList.first;
         isStoreOff.value = false;
+        return;
       }
+    }
+
+    if (isStoreOff.value && dateTime.day == DateTime.now().day) {
+      dateList.removeAt(0);
+      searchDateInList(DateTime.now().add(Duration(days: 1)));
+    } else {
+      dateController.text = DateFormat('d MMMM yyyy, EEEE').format(dateTime);
     }
   }
 }

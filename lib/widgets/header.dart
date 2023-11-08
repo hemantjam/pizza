@@ -22,7 +22,7 @@ class Header extends GetView<HomeController> {
               height: 30.sp,
               alignment: Alignment.center,
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(8.sp),
+                borderRadius: BorderRadius.circular(20.sp),
                 color: AppColors.black,
               ),
 

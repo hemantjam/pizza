@@ -2,14 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:pizza/local_storage/shared_pref.dart';
-import 'package:pizza/module/delivery_order_type/utils/date_model.dart';
 import 'package:pizza/module/delivery_order_type/widgets/order_button.dart';
 import 'package:sizer/sizer.dart';
 
 import '../../../../constants/app_colors.dart';
 import '../../../../widgets/common_dialog.dart';
 import '../../../geography/byType/street_name_model.dart';
-import '../../utils/get_week_list.dart';
 import '../../widgets/date_time_searchable_list.dart';
 import '../../widgets/searchable_list.dart';
 import 'delivery_later_controller.dart';
@@ -35,7 +33,7 @@ class DeliveryLaterPage extends GetView<DeliveryLaterController> {
                 ),
                 Obx(() => controller.isStoreOff.value
                     ? Text(
-                        "Store is close please select another date",
+                        "Store is currently closed. Please select next available time",
                         style: TextStyle(color: AppColors.red),
                       )
                     : const SizedBox()),
@@ -54,19 +52,12 @@ class DeliveryLaterPage extends GetView<DeliveryLaterController> {
                   elevation: 0,
                   child: TextFormField(
                     onTap: () async {
-                      List<DateModel> dateList =
-                          getNext15DaysWithWeekdays();
-                      List<String> dateFormattedList = dateList
-                          .map((e) => DateFormat('d MMMM yyyy, EEEE')
-                              .format(e.dateTime))
-                          .toList();
                       String date = await Get.dialog(CommonSearchableList(
                         title: "Date",
-                        streetList: dateFormattedList,
+                        streetList: controller.dateList,
                       ));
                       if (date.isNotEmpty) {
                         controller.timeController.clear();
-                        controller.dateController.text = date;
                         DateFormat inputFormat =
                             DateFormat('d MMMM yyyy, EEEE');
                         DateTime dateTime = inputFormat.parse(date);
@@ -206,7 +197,7 @@ class DeliveryLaterPage extends GetView<DeliveryLaterController> {
                   elevation: 0,
                   child: TextFormField(
                     controller: controller.postCodeController,
-                   // focusNode: controller.postCodeFocus,
+                    // focusNode: controller.postCodeFocus,
                     decoration: const InputDecoration(
                       hintText: "Post Code",
                     ),
@@ -236,26 +227,28 @@ class DeliveryLaterPage extends GetView<DeliveryLaterController> {
           ),
         ),
       ),
-      bottomNavigationBar: OrderButton(
-        onTap: () {
-          if (controller.formKey.currentState!.validate()) {
-            if (controller.rememberAddress.value) {
-              List<String> address = [
-                controller.unitController.text,
-                controller.streetNumberController.text,
-                controller.streetNameController.text,
-                controller.postCodeController.text,
-              ];
-              SharedPref.saveAddress("later",address);
-            } else if (!controller.rememberAddress.value) {
-              SharedPref.deleteAddress("later");
+      bottomNavigationBar: Obx(() {
+        return OrderButton(
+          enable: !controller.isStoreOff.value,
+          onTap: () {
+            if (controller.formKey.currentState!.validate()) {
+              if (controller.rememberAddress.value) {
+                List<String> address = [
+                  controller.unitController.text,
+                  controller.streetNumberController.text,
+                  controller.streetNameController.text,
+                  controller.postCodeController.text,
+                ];
+                SharedPref.saveAddress("later", address);
+              } else if (!controller.rememberAddress.value) {
+                SharedPref.deleteAddress("later");
+              }
+              showErrorDialog(title: "Success", message: "Order Successful");
+              controller.formKey.currentState?.reset();
             }
-            showErrorDialog(title: "Success", message: "Order Successful");
-            controller.formKey.currentState?.reset();
-          }
-        },
-
-      ),
+          },
+        );
+      }),
     );
   }
 }

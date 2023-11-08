@@ -17,7 +17,7 @@ class DeliveryNowPage extends GetView<DeliveryNowController> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Padding(
-        padding: const EdgeInsets.all(8.0),
+        padding: const EdgeInsets.symmetric(vertical: 2,horizontal: 5),
         child: Form(
           key: controller.formKey,
           child: SingleChildScrollView(
@@ -28,7 +28,7 @@ class DeliveryNowPage extends GetView<DeliveryNowController> {
                 Obx(
                   () => controller.storeOff.value
                       ? Text(
-                          "Please Note : Store is closed currently , please select another time",
+                          "Please Note : Store is currently closed. Please select next available time.",
                           style: TextStyle(color: AppColors.red),
                         )
                       : const SizedBox(),
@@ -147,25 +147,28 @@ class DeliveryNowPage extends GetView<DeliveryNowController> {
           ),
         ),
       ),
-      bottomNavigationBar: OrderButton(
-        onTap: () {
-          if (controller.formKey.currentState!.validate()) {
-            if (controller.rememberAddress.value) {
-              List<String> address = [
-                controller.unitController.text,
-                controller.streetNumberController.text,
-                controller.streetNameController.text,
-                controller.postCodeController.text,
-              ];
-              SharedPref.saveAddress("now", address);
-            } else if (!controller.rememberAddress.value) {
-              SharedPref.deleteAddress("now");
+      bottomNavigationBar: Obx(() {
+        return OrderButton(
+          enable: !controller.storeOff.value,
+          onTap: () {
+            if (controller.formKey.currentState!.validate()) {
+              if (controller.rememberAddress.value) {
+                List<String> address = [
+                  controller.unitController.text,
+                  controller.streetNumberController.text,
+                  controller.streetNameController.text,
+                  controller.postCodeController.text,
+                ];
+                SharedPref.saveAddress("now", address);
+              } else if (!controller.rememberAddress.value) {
+                SharedPref.deleteAddress("now");
+              }
+              showErrorDialog(title: "Success", message: "Order Successful");
+              controller.formKey.currentState?.reset();
             }
-            showErrorDialog(title: "Success", message: "Order Successful");
-            controller.formKey.currentState?.reset();
-          }
-        },
-      ),
+          },
+        );
+      }),
     );
   }
 }

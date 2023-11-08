@@ -31,103 +31,103 @@ class _OrderDeliveryOptionsPageState extends State<OrderDeliveryOptionsPage>
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        appBar: AppBar(
+      appBar:  AppBar(
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back_ios_sharp),
+            onPressed: () {
+              Get.back();
+            },
+          ),
           elevation: 0,
-          automaticallyImplyLeading: false,
+          title: const Text("Enter Delivery Details"),
         ),
-        body: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            AppBar(
-              leading: IconButton(
-                icon: const Icon(Icons.arrow_back_ios_sharp),
-                onPressed: () {
-                  Get.back();
-                },
-              ),
-              elevation: 0,
-              title: const Text("Enter Delivery Details"),
-            ),
-            Container(
-              margin: EdgeInsets.symmetric(horizontal: 2.w),
-              child: IntrinsicHeight(
-                child: Card(
-                  elevation: 3,
-                  child: Row(
-                    children: <Widget>[
-                      Expanded(
-                        child: GestureDetector(
-                          onTap: () {
-                            deliveryController.changeIndex(0);
-                          },
-                          child: Obx(() {
-                            return Container(
-                              alignment: Alignment.center,
-                              padding: const EdgeInsets.all(10.0),
-                              decoration: BoxDecoration(
-                                color: deliveryController.index.value == 0
-                                    ? AppColors.lightOrange
-                                    : AppColors.white, // Change the tab color
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(3.sp)),
-                              ),
-                              child: Text(
-                                "NOW",
-                                style: TextStyle(
-                                  color: AppColors.black,
-                                  fontSize: 12.sp,
-                                  fontWeight: FontWeight.w400,
+        body: Padding(
+          padding:  EdgeInsets.only(top: 10.sp),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+
+              Container(
+                margin: EdgeInsets.symmetric(horizontal: 2.w),
+                child: IntrinsicHeight(
+                  child: Card(
+                    elevation: 3,
+                    child: Row(
+                      children: <Widget>[
+                        Expanded(
+                          child: GestureDetector(
+                            onTap: () {
+                              deliveryController.changeIndex(0);
+                            },
+                            child: Obx(() {
+                              return Container(
+                                alignment: Alignment.center,
+                                padding: const EdgeInsets.all(10.0),
+                                decoration: BoxDecoration(
+                                  color: deliveryController.index.value == 0
+                                      ? AppColors.lightOrange
+                                      : AppColors.white, // Change the tab color
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(3.sp)),
                                 ),
-                              ),
-                            );
-                          }),
-                        ),
-                      ),
-                      Expanded(
-                        child: GestureDetector(
-                          onTap: () {
-                            deliveryController.changeIndex(1);
-                          },
-                          child: Obx(() {
-                            return Container(
-                              alignment: Alignment.center,
-                              padding: const EdgeInsets.all(10.0),
-                              decoration: BoxDecoration(
-                                color: deliveryController.index.value == 1
-                                    ? AppColors.lightOrange
-                                    : AppColors.white, // Change the tab color
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(3.sp)),
-                              ),
-                              child: Text(
-                                "LATER",
-                                style: TextStyle(
-                                  color: AppColors.black,
-                                  fontSize: 12.sp,
-                                  fontWeight: FontWeight.w400,
+                                child: Text(
+                                  "NOW",
+                                  style: TextStyle(
+                                    color: AppColors.black,
+                                    fontSize: 12.sp,
+                                    fontWeight: FontWeight.w400,
+                                  ),
                                 ),
-                              ),
-                            );
-                          }),
+                              );
+                            }),
+                          ),
                         ),
-                      ),
-                    ],
+                        Expanded(
+                          child: GestureDetector(
+                            onTap: () {
+                              deliveryController.changeIndex(1);
+                            },
+                            child: Obx(() {
+                              return Container(
+                                alignment: Alignment.center,
+                                padding: const EdgeInsets.all(10.0),
+                                decoration: BoxDecoration(
+                                  color: deliveryController.index.value == 1
+                                      ? AppColors.lightOrange
+                                      : AppColors.white, // Change the tab color
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(3.sp)),
+                                ),
+                                child: Text(
+                                  "LATER",
+                                  style: TextStyle(
+                                    color: AppColors.black,
+                                    fontSize: 12.sp,
+                                    fontWeight: FontWeight.w400,
+                                  ),
+                                ),
+                              );
+                            }),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
-            ),
-            Expanded(
-              child: Obx(() {
-                return IndexedStack(
-                  index: deliveryController.index.value,
-                  children: const [
-                    DeliveryNowPage(),
-                    DeliveryLaterPage(),
-                  ],
-                );
-              }),
-            ),
-          ],
+              Expanded(
+                child: Obx(() {
+                  return IndexedStack(
+                    index: deliveryController.index.value,
+                    children: const [
+                      DeliveryNowPage(),
+                      DeliveryLaterPage(),
+                    ],
+                  );
+                }),
+              ),
+            ],
+          ),
         ),
       ),
     );

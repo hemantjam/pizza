@@ -8,8 +8,10 @@ import 'package:pizza/module/outlet_details/outlet/outlet_model.dart';
 import '../../../outlet_details/outlet/outlet_controller.dart';
 import '../../../outlet_details/shift/outlet_shift_details_controller.dart';
 import '../../../outlet_details/shift/outlet_shift_details_model.dart';
+import '../../utils/calculate_shift_time.dart';
 import '../../utils/date_model.dart';
 import '../../utils/get_time_interval.dart';
+import '../../utils/get_week_list.dart';
 
 class PickUpLaterController extends GetxController {
   Rx<OutletController> outletController = OutletController().obs;
@@ -32,8 +34,8 @@ class PickUpLaterController extends GetxController {
 
   RxString outletAddress = "77, Hoffmans Rd, NIDDRIE, 3042".obs;
   RxList<String> timeIntervalList = <String>[].obs;
-  final RxBool storeOff = false.obs;
-
+  final RxBool isStoreOff = false.obs;
+  RxList<String> dateList =  <String>[].obs;
   @override
   void onInit() {
     super.onInit();
@@ -46,6 +48,9 @@ class PickUpLaterController extends GetxController {
     ever(outletController.value.outletAddress, (callback) {
       getOutletDetails();
     });
+    dateList.value = getNext15DaysWithWeekdays()
+        .map((element) => DateFormat('d MMMM yyyy, EEEE').format(element))
+        .toList();
   }
 
   @override
@@ -71,7 +76,7 @@ class PickUpLaterController extends GetxController {
     update();
   }
 
-  searchDateInList(DateTime dateTime) {
+  /*searchDateInList(DateTime dateTime) {
     storeOff.value = true;
 
     List<int> selectedDate = <int>[
@@ -107,6 +112,57 @@ class PickUpLaterController extends GetxController {
         storeOff.value = false;
       }
     }
-  }
+  }*/
+  searchDateInList(DateTime dateTime) {
+    dateController.clear();
+    isStoreOff.value = true;
+    List<int> selectedDate = <int>[
+      dateTime.year,
+      dateTime.month,
+      dateTime.day,
+    ];
+    if (outletShiftDetailsModel.value.data != null &&
+        outletShiftDetailsModel.value.data!.special != null) {
+      List<ShiftItem?>? special = outletShiftDetailsModel.value.data!.special!
+          .where((element) => element!.orderTypeCode == OrderTypeCode.pickUp)
+          .toList();
+      for (var element in special) {
+        if (element!.date == selectedDate.toString()) {
+          dateController.text =
+              DateFormat('d MMMM yyyy, EEEE').format(dateTime);
+          timeIntervalList.value = getTimeIntervals(element, dateTime);
+          timeController.text = timeIntervalList.first;
+          isStoreOff.value = false;
+          return;
+        }
+      }
+    }
 
+    if (outletShiftDetailsModel.value.data != null &&
+        outletShiftDetailsModel.value.data!.regular != null) {
+      List<ShiftItem?>? regular = outletShiftDetailsModel.value.data!.regular!
+          .where((element) =>
+      element!.day == dateTime.weekday &&
+          element.orderTypeCode == OrderTypeCode.pickUp)
+          .toList();
+
+      if (regular.isNotEmpty &&
+          (calculateShiftEndTime(
+              regular.first!.endTime!, regular.first!.cutoffTime!)
+              .isBefore(dateTime))) {
+        dateController.text = DateFormat('d MMMM yyyy, EEEE').format(dateTime);
+        timeIntervalList.value = getTimeIntervals(regular.first!, dateTime);
+        timeController.text = timeIntervalList.first;
+        isStoreOff.value = false;
+        return;
+      }
+    }
+
+    if (isStoreOff.value && dateTime.day == DateTime.now().day) {
+      dateList.removeAt(0);
+      searchDateInList(DateTime.now().add(Duration(days: 1)));
+    } else {
+      dateController.text = DateFormat('d MMMM yyyy, EEEE').format(dateTime);
+    }
+  }
 }

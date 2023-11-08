@@ -16,7 +16,7 @@ class HomePage extends GetView<HomeController> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(2.0),
+      padding: const EdgeInsets.only(left: 2, right: 2),
       child: SingleChildScrollView(
           primary: true,
           child: Column(
@@ -26,11 +26,7 @@ class HomePage extends GetView<HomeController> {
               //SizedBox(height: 5.sp),
               const OrderDeliveryTypeOption(),
               SizedBox(height: 10.sp),
-               const MenusPage(),
-             // SizedBox(height: 10.sp),
-           //   SizedBox(height: 10.sp),
-             // const MenuBannerItem()
-              //  const OfferInfoPage()
+              const MenusPage(),
             ],
           )),
     );

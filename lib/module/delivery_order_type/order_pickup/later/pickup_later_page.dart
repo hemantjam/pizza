@@ -28,11 +28,11 @@ class PickUpLaterPage extends GetView<PickUpLaterController> {
               mainAxisSize: MainAxisSize.max,
               children: [
                 Obx(() {
-                  return controller.storeOff.value
+                  return controller.isStoreOff.value
                       ? Text(
-                          "Please Note : Store is closed currently , please select another time",
-                          style: TextStyle(color: AppColors.red),
-                        )
+                    "Please Note : Store is closed currently , please select another time",
+                    style: TextStyle(color: AppColors.red),
+                  )
                       : const SizedBox();
                 }),
                 Text(
@@ -46,20 +46,20 @@ class PickUpLaterPage extends GetView<PickUpLaterController> {
                   elevation: 0,
                   child: TextFormField(
                     onTap: () async {
-                      List<DateModel> dateList = getNext15DaysWithWeekdays();
-                      List<String> dateFormattedList = dateList
+                      // List<DateModel> dateList = getNext15DaysWithWeekdays();
+                      /*List<String> dateFormattedList = controller.dateList
                           .map((e) => DateFormat('d MMMM yyyy, EEEE')
-                              .format(e.dateTime))
-                          .toList();
+                              .format(e))
+                          .toList();*/
                       String date = await Get.dialog(CommonSearchableList(
                         title: "Date",
-                        streetList: dateFormattedList,
+                        streetList: controller.dateList,
                       ));
                       if (date.isNotEmpty) {
                         controller.timeController.clear();
                         controller.dateController.text = date;
                         DateFormat inputFormat =
-                            DateFormat('d MMMM yyyy, EEEE');
+                        DateFormat('d MMMM yyyy, EEEE');
                         DateTime dateTime = inputFormat.parse(date);
                         controller.searchDateInList(dateTime);
                       }
@@ -141,14 +141,17 @@ class PickUpLaterPage extends GetView<PickUpLaterController> {
           ),
         ),
       ),
-      bottomNavigationBar: OrderButton(
-        onTap: () {
-          if (controller.formKey.currentState!.validate()) {
-            showErrorDialog(title: "Success", message: "Order Successful");
-            controller.formKey.currentState?.reset();
-          }
-        },
-      ),
+      bottomNavigationBar: Obx(() {
+        return OrderButton(
+          enable: !controller.isStoreOff.value,
+          onTap: () {
+            if (controller.formKey.currentState!.validate()) {
+              showErrorDialog(title: "Success", message: "Order Successful");
+              controller.formKey.currentState?.reset();
+            }
+          },
+        );
+      }),
     );
   }
 }
