@@ -7,6 +7,7 @@ import 'package:pizza/module/menu/menu_binding.dart';
 import 'package:pizza/module/offers/offer_binding.dart';
 import 'package:pizza/module/offers/offer_view_all.dart';
 import 'package:pizza/module/splash/splash_binding.dart';
+import 'package:pizza/module/user/forgot_password/forgot_pass_binding.dart';
 import 'package:pizza/module/user/login/login_binding.dart';
 import 'package:pizza/module/user/login/login_page.dart';
 
@@ -21,6 +22,7 @@ import 'module/home/main_page.dart';
 import 'module/outlet_details/outlet/outlet_binding.dart';
 import 'module/outlet_details/shift/outlet_shift_details_binding.dart';
 import 'module/splash/splash_page.dart';
+import 'module/user/forgot_password/forgot_password.dart';
 import 'module/user/register/register.dart';
 import 'module/user/register/register_binding.dart';
 
@@ -68,7 +70,12 @@ class RouteGenerator {
       page: () => const LogInPage(),
       binding: LoginBinding(),
     ),
-
+/// forgot password
+    GetPage(
+      name: RouteNames.forgotPass,
+      page: () => const ForgotPasswordPage(),
+      binding: ForgotPassBinding(),
+    ),
     /// register
     GetPage(
       name: RouteNames.register,

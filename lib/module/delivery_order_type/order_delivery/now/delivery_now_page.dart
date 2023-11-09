@@ -159,9 +159,9 @@ class DeliveryNowPage extends GetView<DeliveryNowController> {
                   controller.streetNameController.text,
                   controller.postCodeController.text,
                 ];
-                SharedPref.saveAddress("now", address);
+                SharedPref.saveStringList("now", address);
               } else if (!controller.rememberAddress.value) {
-                SharedPref.deleteAddress("now");
+                SharedPref.deleteData("now");
               }
               showErrorDialog(title: "Success", message: "Order Successful");
               controller.formKey.currentState?.reset();

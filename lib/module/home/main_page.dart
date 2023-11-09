@@ -3,6 +3,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:pizza/constants/app_colors.dart';
 import 'package:pizza/constants/assets.dart';
+import 'package:pizza/module/user/login/login_controller.dart';
 import 'package:sizer/sizer.dart';
 
 import '../../constants/route_names.dart';
@@ -16,6 +17,7 @@ class MainPage extends GetView<HomeController> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
+
           appBar: AppBar(
             automaticallyImplyLeading: false,
             elevation: 0,
@@ -33,17 +35,33 @@ class MainPage extends GetView<HomeController> {
                     ),
                   ),
                 ),
-                GestureDetector(
-                  onTap: () {
-                    Get.toNamed(RouteNames.login);
-                  },
-                  child: Center(
-                      child: Text("Sign in",
-                          style: TextStyle(
-                            decoration: TextDecoration.underline,
-                            fontWeight: FontWeight.w400,
-                          ))),
-                ),
+                GetBuilder<LoginController>(
+                    init: Get.put(LoginController()),
+                    builder: (LoginController loginController) {
+                      return GestureDetector(
+                        onTap: () {
+                          Get.toNamed(RouteNames.login);
+                        },
+                        child: Center(
+                            child: Row(
+                          children: [
+                            Text("${controller.userName.value}"),
+                            loginController.userName.value.isNotEmpty
+                                ? Row(
+                                    children: [
+                                      const Icon(Icons.person),
+                                      Text(loginController.userName.value)
+                                    ],
+                                  )
+                                : const Text("Sign in",
+                                    style: TextStyle(
+                                      decoration: TextDecoration.underline,
+                                      fontWeight: FontWeight.w400,
+                                    )),
+                          ],
+                        )),
+                      );
+                    })
               ],
             ),
           ),
@@ -113,7 +131,7 @@ class BottomTabBarItem extends GetView<HomeController> {
                         height: 24.sp,
                         width: 24.sp,
                       ),
-                SizedBox(height: 5),
+                const SizedBox(height: 5),
                 Text(
                   label,
                   style: TextStyle(color: AppColors.black),

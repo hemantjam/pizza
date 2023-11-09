@@ -61,7 +61,7 @@ class DeliveryNowController extends GetxController {
   }
 
   getSavedAddress() async {
-    List<String>? address = await SharedPref.getAddress("now");
+    List<String>? address = await SharedPref.fetchStringList("now");
     if (address != null) {
       unitController.text = address[0];
       streetNumberController.text = address[1];

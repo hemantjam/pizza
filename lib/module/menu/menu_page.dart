@@ -14,7 +14,7 @@ class MenusPage extends GetView<OutletMenuController> {
     return Obx(() => Card(
           elevation: 10,
           child: Wrap(
-            alignment: WrapAlignment.center,
+            alignment: WrapAlignment.start,
             children: controller.menuListModel
                 .asMap()
                 .entries

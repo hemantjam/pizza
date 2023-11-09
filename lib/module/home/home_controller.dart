@@ -2,14 +2,38 @@ import 'package:carousel_slider/carousel_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:pizza/module/offers/offer_view_all.dart';
+import 'package:pizza/module/user/login/login_controller.dart';
 
 import 'home_page.dart';
 
 class HomeController extends GetxController {
   RxBool showHeader = false.obs;
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
-  PageController indicatorController=PageController();
-  CarouselController carouselController=CarouselController();
+  PageController indicatorController = PageController();
+  CarouselController carouselController = CarouselController();
+  LoginController loginController = Get.put(LoginController());
+  RxString userName = "".obs;
+
+  @override
+  void onInit() {
+    super.onInit();
+    ever(loginController.userName, (callback) {
+      changeUserName();
+    });
+  }
+
+  @override
+  void onReady() {
+    super.onReady();
+    ever(loginController.userName, (callback) {
+      changeUserName();
+    });
+  }
+
+  changeUserName() {
+    userName.value = loginController.userName.value;
+    update();
+  }
 
   final List<Widget> pages = [
     HomePage(),

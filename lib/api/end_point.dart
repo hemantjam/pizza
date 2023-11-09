@@ -7,15 +7,17 @@ class ApiEndPoints {
   static const String getMenu = "homeController/menus";
   static const String loginByIp = "userMST/login/byIp/";
 
+  static const String register="customerMST/signUpCustomer/";
   static const String addIntoSystem = "/userMST/addIntoToken/system";
   static const String addIntoOutlet = "/userMST/addIntoToken/outlet";
-
+  static const String userLogin = "userMST/login/";
+  static const String userLoggedIn = "userMST/loggedInUser/";
   static const String offerList = "homeController/offers";
   static const String offerInfo = "homeController/offersinfo/";
   static const String outletShiftDetails = "outletShiftDTL/byOutletSystem/";
   static const String allActiveOutlet = "geographyMST/allActive/";
   static const String geographyByTypeCode = "geographyMST/byTypeCode/";
-  static const String outletDetailsByCode="outletMST/code/";
+  static const String outletDetailsByCode = "outletMST/code/";
 }
 
 /* https://tomcat.harvices.com/POSLocalAPI/userMST/addIntoToken/outlet

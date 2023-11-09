@@ -1,66 +1,85 @@
-import 'dart:developer';
-
 import 'package:get/get.dart';
 import 'package:pizza/api/end_point.dart';
 import 'package:pizza/constants/route_names.dart';
+import 'package:pizza/local_storage/shared_pref.dart';
+import 'package:pizza/module/user/login/login_controller.dart';
 
 import '../../api/api_response.dart';
 import '../../api/api_services.dart';
+import '../user/logged_in_user/logged_in_user_model.dart';
 
 class SplashController extends GetxController {
   RxBool loading = false.obs;
   ApiServices apiServices = ApiServices();
+  LoginController loginController = Get.put(LoginController());
+  Rx<LoggedInUserModel> loggedInUserModel = LoggedInUserModel().obs;
 
   @override
   void onReady() {
     super.onReady();
-    getToken();
+    checkLoggedInUser();
     ever(loading, (callback) => !loading.value ? handleNavigation() : null);
   }
 
   void handleNavigation() {
-    Future.delayed(const Duration(seconds: 2), () {
+    Future.delayed(const Duration(seconds: 1), () {
       Get.offAllNamed(RouteNames.homePage);
     });
   }
 
-  getToken() async {
+  Future<String?> getOfflineToken() async {
+    return await SharedPref.fetchString("token");
+  }
+
+  saveOfflineToken(String data) {
+    SharedPref.saveString("token", data);
+  }
+
+  checkLoggedInUser() async {
+    String? token = await getOfflineToken();
+    ApiEndPoints.authToken = token ?? "";
+    ApiResponse res = await apiServices.getRequest(ApiEndPoints.userLoggedIn);
+    if (res.status) {
+      loginController.userName.value ="assigned";
+      loggedInUserModel.value = LoggedInUserModel.fromJson(res.toJson());
+      loginController.userName.value ="assigned";
+          //loggedInUserModel.value.data?.customerMST?.customerFirstName ?? "";
+      loading.value = false;
+    } else if (!res.status) {
+      loginByIp();
+    }
+  }
+
+  loginByIp() async {
     loading.value = true;
     var res = await apiServices.getRequest(ApiEndPoints.loginByIp);
     if (res.status) {
       ApiEndPoints.authToken = res.data["jwtToken"];
-      getSystemToken(ApiEndPoints.authToken);
+      saveOfflineToken(ApiEndPoints.authToken);
+      getSystemToken();
     }
   }
 
-  getSystemToken(String token) async {
+  getSystemToken() async {
     ApiResponse<dynamic>? res = await apiServices.postRequest(
         ApiEndPoints.addIntoSystem,
-        token: token,
-        queryParameters: {},
-        data: "pizzaportal");
+        data: '"' + 'PIZZAPORTAL' + '"');
     if (res.status) {
       ApiEndPoints.authToken = res.data.toString();
-      getOutletToken(ApiEndPoints.authToken);
+      saveOfflineToken(ApiEndPoints.authToken);
+      getOutletToken();
     }
   }
 
-  getOutletToken(String token) async {
+  getOutletToken() async {
     ApiResponse<dynamic>? res = await apiServices.postRequest(
-        ApiEndPoints.addIntoOutlet,
-        token: token,
-        queryParameters: {},
-        data: "rjt01");
-    String systemToken = "systemToken";
+      ApiEndPoints.addIntoOutlet,
+      data: '"' + 'rjt01' + '"',
+    );
     if (res.status) {
-      systemToken = res.data.toString();
       ApiEndPoints.authToken = res.data.toString();
-    }
-   // log("\ntokensss-------->${systemToken}\n\n\n${ApiEndPoints.authToken}\n\n");
-    if (ApiEndPoints.authToken == systemToken) {
+      saveOfflineToken(ApiEndPoints.authToken);
       loading.value = false;
-    }else {
-      //loading.value = true;
     }
   }
 }

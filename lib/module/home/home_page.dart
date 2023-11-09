@@ -20,6 +20,7 @@ class HomePage extends GetView<HomeController> {
     return Padding(
       padding: const EdgeInsets.only(left: 2, right: 2),
       child: SingleChildScrollView(
+        physics: const BouncingScrollPhysics(),
           primary: true,
           child: Column(
             children: [
@@ -53,10 +54,10 @@ class Slider extends GetView<HomeController> {
                 controller.changeSlider(index);
               },
               autoPlayInterval: const Duration(seconds: 5),
-              autoPlay: true,
+              autoPlay: false,
               height: 25.h,
               aspectRatio: 1,
-              viewportFraction: 0.9,
+              viewportFraction: 1,
             ),
             items: [1, 2, 3, 4].map((i) {
               return Builder(
@@ -80,7 +81,7 @@ class Slider extends GetView<HomeController> {
               );
             }).toList(),
           ),
-          Obx(() {
+          /*Obx(() {
             return Align(
               alignment: Alignment.bottomCenter,
               child: Padding(
@@ -95,7 +96,7 @@ class Slider extends GetView<HomeController> {
                 ),
               ),
             );
-          })
+          })*/
         ],
       ),
     );

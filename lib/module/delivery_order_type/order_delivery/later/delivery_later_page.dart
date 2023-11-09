@@ -52,11 +52,11 @@ class DeliveryLaterPage extends GetView<DeliveryLaterController> {
                   elevation: 0,
                   child: TextFormField(
                     onTap: () async {
-                      String date = await Get.dialog(CommonSearchableList(
+                      String? date = await Get.dialog(CommonSearchableList(
                         title: "Date",
                         streetList: controller.dateList,
                       ));
-                      if (date.isNotEmpty) {
+                      if (date!=null&&date.isNotEmpty) {
                         controller.timeController.clear();
                         DateFormat inputFormat =
                             DateFormat('d MMMM yyyy, EEEE');
@@ -239,9 +239,9 @@ class DeliveryLaterPage extends GetView<DeliveryLaterController> {
                   controller.streetNameController.text,
                   controller.postCodeController.text,
                 ];
-                SharedPref.saveAddress("later", address);
+                SharedPref.saveStringList("later", address);
               } else if (!controller.rememberAddress.value) {
-                SharedPref.deleteAddress("later");
+                SharedPref.deleteData("later");
               }
               showErrorDialog(title: "Success", message: "Order Successful");
               controller.formKey.currentState?.reset();

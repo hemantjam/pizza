@@ -84,7 +84,7 @@ class ShiftItem {
       intervalTime: json['intervalTime'],
       orderTypeCode: json['orderTypeCode'],
       orderTypeName: json['orderTypeName'],
-      orderTypeId: json['orderTypeId'],
+      orderTypeId: json['orderTypeId'].toString(),
       off: json['off'],
       special: json['special'],
     );
