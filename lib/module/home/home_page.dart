@@ -10,7 +10,7 @@ import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 import '../../widgets/header.dart';
 import '../delivery_order_type/delivery_order_type_optios.dart';
-import '../menu/menu_page.dart';
+import '../menu/home_page_list/menu_page.dart';
 
 class HomePage extends GetView<HomeController> {
   const HomePage({super.key});
@@ -25,7 +25,7 @@ class HomePage extends GetView<HomeController> {
           child: Column(
             children: [
               const Header(),
-              const Slider(),
+              const CustomSlider(),
               const OrderDeliveryTypeOption(),
               SizedBox(height: 10.sp),
               const MenusPage(),
@@ -35,8 +35,8 @@ class HomePage extends GetView<HomeController> {
   }
 }
 
-class Slider extends GetView<HomeController> {
-  const Slider({
+class CustomSlider extends GetView<HomeController> {
+  const CustomSlider({
     super.key,
   });
 
@@ -103,7 +103,7 @@ class Slider extends GetView<HomeController> {
   }
 }
 
-class Banner extends StatelessWidget {
+/*class Banner extends StatelessWidget {
   const Banner({super.key});
 
   @override
@@ -122,4 +122,4 @@ class Banner extends StatelessWidget {
       ),
     );
   }
-}
+}*/

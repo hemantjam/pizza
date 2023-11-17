@@ -12,7 +12,7 @@ import '../../../local_storage/shared_pref.dart';
 import 'login_model.dart';
 
 class LoginController extends GetxController {
-  LoggedInUserModel loggedInUserModel=Get.put(LoggedInUserModel()).obs();
+  LoggedInUserModel loggedInUserModel = Get.put(LoggedInUserModel());
   UserDataModel userDataModel = UserDataModel();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passController = TextEditingController();
@@ -27,8 +27,17 @@ class LoginController extends GetxController {
 
   @override
   void onInit() {
+    log("====>$userName");
+    getusername();
+    log("====>$userName");
     super.onInit();
+    ever(loggedInUserModel.obs, (callback) => getusername());
     getSavedCredential();
+  }
+
+  getusername() {
+    userName.value =
+        loggedInUserModel.data?.customerMST?.customerFirstName ?? "";
   }
 
   getSavedCredential() async {
@@ -56,7 +65,7 @@ class LoginController extends GetxController {
       deleteLoginCreds();
     }
     showLoading.value = true;
-    ApiResponse res = await apiServices.postRequest(
+    ApiResponse? res = await apiServices.postRequest(
       ApiEndPoints.userLogin,
       data: {
         "userName": emailController.text.trim(),
@@ -64,8 +73,8 @@ class LoginController extends GetxController {
         "system": "PIZZAPORTAL"
       },
     );
-    log("login response-->${res.toJson()}");
-    if (res.status) {
+    log("login response-->${res?.toJson()}");
+    if (res != null && res.status) {
       userDataModel = UserDataModel.fromJson(res.toJson());
       if (userDataModel.data != null) {
         ApiEndPoints.authToken = userDataModel.data?.jwtToken ?? "";

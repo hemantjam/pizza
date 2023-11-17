@@ -87,7 +87,7 @@ class PickUpLaterPage extends GetView<PickUpLaterController> {
                   child: TextFormField(
                     onTap: () async {
                       if (controller.dateController.text.isEmpty) {
-                        showErrorDialog(
+                        showCoomonErrorDialog(
                           title: "Date Select",
                           message: "Please select date first",
                         );
@@ -146,7 +146,7 @@ class PickUpLaterPage extends GetView<PickUpLaterController> {
           enable: !controller.isStoreOff.value,
           onTap: () {
             if (controller.formKey.currentState!.validate()) {
-              showErrorDialog(title: "Success", message: "Order Successful");
+              showCoomonErrorDialog(title: "Success", message: "Order Successful");
               controller.formKey.currentState?.reset();
             }
           },

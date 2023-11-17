@@ -88,7 +88,7 @@ class DeliveryLaterPage extends GetView<DeliveryLaterController> {
                   child: TextFormField(
                     onTap: () async {
                       if (controller.dateController.text.isEmpty) {
-                        showErrorDialog(
+                        showCoomonErrorDialog(
                           title: "Date Select",
                           message: "Please select date first",
                         );
@@ -243,7 +243,7 @@ class DeliveryLaterPage extends GetView<DeliveryLaterController> {
               } else if (!controller.rememberAddress.value) {
                 SharedPref.deleteData("later");
               }
-              showErrorDialog(title: "Success", message: "Order Successful");
+              showCoomonErrorDialog(title: "Success", message: "Order Successful");
               controller.formKey.currentState?.reset();
             }
           },

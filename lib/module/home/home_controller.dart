@@ -16,6 +16,7 @@ class HomeController extends GetxController {
 
   @override
   void onInit() {
+    changeUserName();
     super.onInit();
     ever(loginController.userName, (callback) {
       changeUserName();
@@ -24,6 +25,7 @@ class HomeController extends GetxController {
 
   @override
   void onReady() {
+    changeUserName();
     super.onReady();
     ever(loginController.userName, (callback) {
       changeUserName();

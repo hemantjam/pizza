@@ -7,4 +7,5 @@ class RouteNames {
   static const String offerList = "/offerList";
   static const String orderDeliveryOptions = "/orderDeliveryOptions";
   static const String orderPickUpOptions = "/orderPickUpOptions";
+  static const String pizzaMenuPage="/allMenuPage";
 }

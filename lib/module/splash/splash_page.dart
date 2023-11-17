@@ -9,6 +9,36 @@ class SplashPage extends GetView<SplashController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: Center(child: Image.asset(Assets.logoPng, fit: BoxFit.contain)));
+      body: Obx(
+        () {
+          return Center(
+            child: controller.serverIssue.value
+                ? const Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Icons.error_outline,
+                        size: 50,
+                        color: Colors.orange,
+                      ),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      Text(
+                        "Server did not respond , Please try again.",
+                        style: TextStyle(
+                          fontSize: 22,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ],
+                  )
+                : Center(
+                    child: Image.asset(Assets.logoPng, fit: BoxFit.contain),
+                  ),
+          );
+        },
+      ),
+    );
   }
 }

@@ -11,20 +11,21 @@ class AllActiveController extends GetxController {
   Rx<AllActiveOutletGeographyModel> allActiveOutletGeographyModel =
       AllActiveOutletGeographyModel().obs;
   Rx<GeographyByTypeModel> streetNameList = GeographyByTypeModel().obs;
- // Rx<GeographyByTypeModel> postCodeList = GeographyByTypeModel().obs;
+
+  // Rx<GeographyByTypeModel> postCodeList = GeographyByTypeModel().obs;
 
   @override
   void onReady() {
     super.onReady();
     getAllActiveOutlet();
     getStreetName();
-   // getPostCode();
+    // getPostCode();
   }
 
   void getAllActiveOutlet() async {
-    ApiResponse res =
+    ApiResponse? res =
         await apiServices.getRequest(ApiEndPoints.allActiveOutlet);
-    if (res.status) {
+    if (res != null && res.status) {
       allActiveOutletGeographyModel.value =
           AllActiveOutletGeographyModel.fromJson(res.toJson());
     }
@@ -32,15 +33,15 @@ class AllActiveController extends GetxController {
   }
 
   void getStreetName() async {
-    ApiResponse res = await apiServices
+    ApiResponse? res = await apiServices
         .getRequest(ApiEndPoints.geographyByTypeCode, data: "/GT6");
-    if (res.status) {
+    if (res!=null&&res.status) {
       streetNameList.value = GeographyByTypeModel.fromJson(res.toJson());
     }
     update();
   }
 
-  /*void getPostCode() async {
+/*void getPostCode() async {
     ApiResponse res = await apiServices
         .getRequest(ApiEndPoints.geoghraphyByTypeCode, data: "/GT4");
     if (res.status) {

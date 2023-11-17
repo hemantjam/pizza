@@ -45,7 +45,7 @@ class MainPage extends GetView<HomeController> {
                         child: Center(
                             child: Row(
                           children: [
-                            Text("${controller.userName.value}"),
+                           // Text("${controller.userName.value}"),
                             loginController.userName.value.isNotEmpty
                                 ? Row(
                                     children: [

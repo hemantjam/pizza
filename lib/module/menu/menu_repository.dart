@@ -10,7 +10,7 @@ class MenuRepository {
 
   Future<List<MenuListModel>> getMenu() async {
     ApiResponse? res = await apiClient.getRequest(ApiEndPoints.getMenu);
-    if (res.status) {
+    if (res!=null&&res.status) {
       List<dynamic> data = res.data as List<dynamic>;
 
       menuList = data.map((item) => MenuListModel.fromJson(item)).toList();

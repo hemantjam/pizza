@@ -13,6 +13,7 @@ class SplashController extends GetxController {
   ApiServices apiServices = ApiServices();
   LoginController loginController = Get.put(LoginController());
   Rx<LoggedInUserModel> loggedInUserModel = LoggedInUserModel().obs;
+  RxBool serverIssue = false.obs;
 
   @override
   void onReady() {
@@ -38,48 +39,57 @@ class SplashController extends GetxController {
   checkLoggedInUser() async {
     String? token = await getOfflineToken();
     ApiEndPoints.authToken = token ?? "";
-    ApiResponse res = await apiServices.getRequest(ApiEndPoints.userLoggedIn);
-    if (res.status) {
-      loginController.userName.value ="assigned";
+    ApiResponse? res = await apiServices.getRequest(ApiEndPoints.userLoggedIn);
+    //log("${res!.toJson()}");
+    if (res != null && res.status) {
+      //  loginController.userName.value = "assigned";
       loggedInUserModel.value = LoggedInUserModel.fromJson(res.toJson());
-      loginController.userName.value ="assigned";
-          //loggedInUserModel.value.data?.customerMST?.customerFirstName ?? "";
+      // log("=====>Logged in model->${loggedInUserModel.value.data?.userMST?.userName.toString()}");
+      //log("=====>Logged in model->${loggedInUserModel.value.data?.customerMST.toString()}");
+      //loginController.userName.value = "assigned";
+      //loggedInUserModel.value.data?.customerMST?.customerFirstName ?? "";
       loading.value = false;
-    } else if (!res.status) {
+    } else {
       loginByIp();
     }
+    update();
   }
 
   loginByIp() async {
     loading.value = true;
-    var res = await apiServices.getRequest(ApiEndPoints.loginByIp);
-    if (res.status) {
+    ApiResponse? res = await apiServices.getRequest(ApiEndPoints.loginByIp);
+    if (res != null && res.status) {
       ApiEndPoints.authToken = res.data["jwtToken"];
       saveOfflineToken(ApiEndPoints.authToken);
       getSystemToken();
+    } else {
+      serverIssue.value = true;
     }
   }
 
   getSystemToken() async {
-    ApiResponse<dynamic>? res = await apiServices.postRequest(
-        ApiEndPoints.addIntoSystem,
+    ApiResponse? res = await apiServices.postRequest(ApiEndPoints.addIntoSystem,
         data: '"' + 'PIZZAPORTAL' + '"');
-    if (res.status) {
+    if (res != null && res.status) {
       ApiEndPoints.authToken = res.data.toString();
       saveOfflineToken(ApiEndPoints.authToken);
       getOutletToken();
+    } else {
+      serverIssue.value = true;
     }
   }
 
   getOutletToken() async {
-    ApiResponse<dynamic>? res = await apiServices.postRequest(
+    ApiResponse? res = await apiServices.postRequest(
       ApiEndPoints.addIntoOutlet,
       data: '"' + 'rjt01' + '"',
     );
-    if (res.status) {
+    if (res != null && res.status) {
       ApiEndPoints.authToken = res.data.toString();
       saveOfflineToken(ApiEndPoints.authToken);
       loading.value = false;
+    } else {
+      serverIssue.value = true;
     }
   }
 }

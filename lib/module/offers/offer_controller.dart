@@ -16,9 +16,8 @@ class OfferController extends GetxController {
   }
 
   getOffers() async {
-    ApiResponse<dynamic>? res =
-        await apiClient.getRequest(ApiEndPoints.offerInfo);
-    if (res.status) {
+    ApiResponse? res = await apiClient.getRequest(ApiEndPoints.offerInfo);
+    if (res != null && res.status) {
       offerInfoModel.value =
           OfferInfoModel.fromJson(res.data as Map<String, dynamic>);
     }

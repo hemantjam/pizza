@@ -3,7 +3,7 @@ import 'package:pizza/module/delivery_order_type/order_pickup/later/pickup_later
 import 'package:pizza/module/delivery_order_type/order_pickup/now/pickup_now_binding.dart';
 import 'package:pizza/module/delivery_order_type/order_pickup/order_pick_up_binding.dart';
 import 'package:pizza/module/home/home_binding.dart';
-import 'package:pizza/module/menu/menu_binding.dart';
+import 'package:pizza/module/menu/home_page_list/menu_binding.dart';
 import 'package:pizza/module/offers/offer_binding.dart';
 import 'package:pizza/module/offers/offer_view_all.dart';
 import 'package:pizza/module/splash/splash_binding.dart';
@@ -19,10 +19,12 @@ import 'module/delivery_order_type/order_delivery/order_delivery_options_page.da
 import 'module/delivery_order_type/order_pickup/order_pickup_options_page.dart';
 import 'module/geography/all_active_binding.dart';
 import 'module/home/main_page.dart';
+import 'module/menu/menu_details_list/all_menu_page.dart';
+import 'module/menu/menu_details_list/menu_details_binding.dart';
 import 'module/outlet_details/outlet/outlet_binding.dart';
 import 'module/outlet_details/shift/outlet_shift_details_binding.dart';
 import 'module/splash/splash_page.dart';
-import 'module/user/forgot_password/forgot_password.dart';
+import 'module/user/forgot_password/forgot_password_page.dart';
 import 'module/user/register/register.dart';
 import 'module/user/register/register_binding.dart';
 
@@ -70,12 +72,14 @@ class RouteGenerator {
       page: () => const LogInPage(),
       binding: LoginBinding(),
     ),
-/// forgot password
+
+    /// forgot password
     GetPage(
       name: RouteNames.forgotPass,
       page: () => const ForgotPasswordPage(),
       binding: ForgotPassBinding(),
     ),
+
     /// register
     GetPage(
       name: RouteNames.register,
@@ -96,5 +100,13 @@ class RouteGenerator {
         OutletBinding()
       ],
     ),
+
+    /// pizza menu page
+    GetPage(
+      name: RouteNames.pizzaMenuPage,
+      page: () => const AllMenuPage(),
+      binding: MenuDetailsBinding(),
+      arguments: Get.arguments
+    )
   ];
 }

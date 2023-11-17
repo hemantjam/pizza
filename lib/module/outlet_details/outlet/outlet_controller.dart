@@ -17,9 +17,9 @@ class OutletController extends GetxController {
 
   getOutletDetails() async {
 
-    ApiResponse res = await apiServices
+    ApiResponse? res = await apiServices
         .getRequest(ApiEndPoints.outletDetailsByCode, data: "RJT01");
-    if (res.status) {
+    if (res!=null&&res.status) {
       outletAddress.value = res.data["address1"];
     }
    

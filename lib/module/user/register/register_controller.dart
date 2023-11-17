@@ -39,7 +39,7 @@ class RegisterController extends GetxController {
 
   void register() async {
     showLoading.value = true;
-    ApiResponse res = await apiServices.postRequest(
+    ApiResponse? res = await apiServices.postRequest(
       ApiEndPoints.register,
       data: {
         "confirmPassword": cPassController.text.trim(),
@@ -56,7 +56,7 @@ class RegisterController extends GetxController {
       },
     );
     //log("register response-->${res.toJson()}");
-    if (res.status) {
+    if (res!=null&&res.status) {
       showLoading.value = false;
       if (registerModel.value.data != null) {
         registerModel.value = RegisterModel.fromJson(res.toJson());

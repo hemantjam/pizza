@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 
 import '../constants/app_colors.dart';
 
-void showErrorDialog({required String title, required String message}) {
+void showCoomonErrorDialog({required String title, required String message}) {
   Get.dialog(
       CommonErrorDialog(
         title: title,
@@ -45,6 +45,7 @@ class CommonErrorDialog extends StatelessWidget {
                 color: AppColors.black,
                 fontSize: 16.0,
               ),
+              textAlign: TextAlign.center,
             ),
             const SizedBox(height: 20.0),
             ElevatedButton(

@@ -70,7 +70,7 @@ class PickUpNowPage extends GetView<PickUpNowController> {
         return OrderButton(
           enable: !controller.storeOff.value,
           onTap: () {
-            showErrorDialog(title: "Success", message: "Order Successful");
+            showCoomonErrorDialog(title: "Success", message: "Order Successful");
           },
         );
       }),

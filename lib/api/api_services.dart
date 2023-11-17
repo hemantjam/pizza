@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:developer';
 
 import 'package:dio/dio.dart';
@@ -19,10 +20,10 @@ class ApiServices {
         responseBody: false, responseHeader: true, requestBody: true));
   }
 
-  ApiResponse apiResponse =
+  /* ApiResponse apiResponse =
       ApiResponse(message: "Data Not Found", status: false, data: {});
-
-  Future<ApiResponse> getRequest<T>(String endpoint,
+*/
+  Future<ApiResponse?> getRequest<T>(String endpoint,
       {Map<String, dynamic>? queryParameters, String data = ""}) async {
     try {
       _dio.options.headers['Authorization'] =
@@ -30,18 +31,20 @@ class ApiServices {
       final response = await _dio.get(endpoint + data,
           queryParameters: queryParameters, data: data);
       if (response.statusCode == 200) {
-        apiResponse = ApiResponse<T>.fromJson(response.data);
+        ApiResponse apiResponse = ApiResponse<T>.fromJson(response.data);
         return apiResponse;
+      } else {
+        showCoomonErrorDialog(
+            title: "Error", message: response.statusMessage ?? "");
       }
     } catch (e) {
       log("error--->${endpoint}");
-
       handleError(e);
     }
-    return apiResponse;
+    return null;
   }
 
-  Future<ApiResponse> postRequest<T>(
+  Future<ApiResponse?> postRequest<T>(
     String endpoint, {
     dynamic data,
     Map<String, dynamic>? queryParameters,
@@ -54,36 +57,48 @@ class ApiServices {
       final response = await _dio.post(endpoint,
           data: data ?? '"' + data + '"', queryParameters: queryParameters);
       if (response.statusCode == 200) {
-        apiResponse = ApiResponse<T>.fromJson(response.data);
+        ApiResponse apiResponse = ApiResponse<T>.fromJson(response.data);
         return apiResponse;
+      } else {
+        handleError({
+          "status": response.statusCode!,
+          "message": response.statusMessage ?? ""
+        });
       }
     } catch (e) {
-      handleError(e);
+    //  handleError(e);
       log("error===>${endpoint}");
     }
-    return apiResponse;
+    return null;
   }
 
   void handleError(dynamic e) {
+log("----->${e.toString()}");
     if (e is DioException) {
       if (e.type == DioExceptionType.connectionTimeout ||
           e.type == DioExceptionType.sendTimeout ||
-          e.type == DioExceptionType.receiveTimeout) {
-        showErrorDialog(
+          e.type == DioExceptionType.receiveTimeout ||
+          e.type == DioExceptionType.connectionError) {
+        showCoomonErrorDialog(
           title: "Network Error",
           message: "Check your internet connection and try again.",
         );
+      }else if(e.type==DioExceptionType.badResponse){
+        showCoomonErrorDialog(
+          title: "Error:",
+          message:e.response?.statusMessage ?? "",
+        );
       } else {
-        showErrorDialog(
+        showCoomonErrorDialog(
           title: "Something Went Wrong !!",
-          message: "${e.error}",
+          message: e.response?.statusMessage ?? "",
         );
       }
     } else {
       log("error--->${e.error.toString()}");
-      showErrorDialog(
+      showCoomonErrorDialog(
         title: "Something Went Wrong !",
-        message: "Please try again",
+        message: e.message ?? "",
       );
     }
   }

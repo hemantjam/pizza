@@ -163,7 +163,7 @@ class DeliveryNowPage extends GetView<DeliveryNowController> {
               } else if (!controller.rememberAddress.value) {
                 SharedPref.deleteData("now");
               }
-              showErrorDialog(title: "Success", message: "Order Successful");
+              showCoomonErrorDialog(title: "Success", message: "Order Successful");
               controller.formKey.currentState?.reset();
             }
           },
