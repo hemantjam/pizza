@@ -6,9 +6,9 @@ import '../../../constants/app_colors.dart';
 class OrderButton extends StatelessWidget {
   final Function() onTap;
   final bool enable;
-  String text;
+  final String text;
 
-  OrderButton(
+  const OrderButton(
       {super.key,
       required this.onTap,
       required this.enable, this.text = "Continue with the order"});

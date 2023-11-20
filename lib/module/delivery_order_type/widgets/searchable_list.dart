@@ -62,7 +62,7 @@ class SearchableStringListDialogState
         content: SizedBox(
           height: 50.h,
           width: double.maxFinite,
-          child:widget.streetList.isEmpty||filteredList.isEmpty?Center(child: Text("Please wait..."),): Scrollbar(
+          child:widget.streetList.isEmpty||filteredList.isEmpty?const Center(child: Text("Please wait..."),): Scrollbar(
             interactive: true,
             trackVisibility: true,
             thickness: 20,

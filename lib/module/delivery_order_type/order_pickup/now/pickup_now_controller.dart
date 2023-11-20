@@ -95,8 +95,8 @@ class PickUpNowController extends GetxController {
           .toList();
       for (var element in special) {
         DateTime shiftEndTime =
-            calculateShiftEndTime(element!.endTime!, element!.cutoffTime!);
-        if (element!.date == selectedDate.toString()) {
+            calculateShiftEndTime(element!.endTime!, element.cutoffTime!);
+        if (element.date == selectedDate.toString()) {
           storeOff.value = false;
           return;
         }
@@ -116,7 +116,7 @@ class PickUpNowController extends GetxController {
       if (regular.isNotEmpty) {
         for (var element in regular) {
           DateTime shiftEndTime =
-              calculateShiftEndTime(element!.endTime!, element!.cutoffTime!);
+              calculateShiftEndTime(element!.endTime!, element.cutoffTime!);
 
           if (shiftEndTime.isBefore(currentTime)) {
             storeOff.value = true;

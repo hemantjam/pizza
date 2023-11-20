@@ -7,8 +7,6 @@ import 'package:sizer/sizer.dart';
 
 import '../../../../constants/app_colors.dart';
 import '../../../../widgets/common_dialog.dart';
-import '../../utils/date_model.dart';
-import '../../utils/get_week_list.dart';
 import '../../widgets/date_time_searchable_list.dart';
 
 class PickUpLaterPage extends GetView<PickUpLaterController> {

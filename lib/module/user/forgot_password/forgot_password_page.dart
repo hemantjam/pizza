@@ -130,7 +130,7 @@ class ForgotPasswordPage extends GetView<ForgotPassController> {
                 ),
               ),
               bottomNavigationBar: Padding(
-                padding: EdgeInsets.all(0.0),
+                padding: const EdgeInsets.all(0.0),
                 child: Obx(() {
                   return OrderButton(
                     onTap: () {

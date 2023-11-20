@@ -6,7 +6,6 @@ import 'package:get/get.dart';
 import 'package:pizza/constants/assets.dart';
 import 'package:pizza/module/home/home_controller.dart';
 import 'package:sizer/sizer.dart';
-import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 import '../../widgets/header.dart';
 import '../delivery_order_type/delivery_order_type_optios.dart';

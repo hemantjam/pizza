@@ -42,49 +42,56 @@ class MenusPage extends GetView<OutletMenuController> {
                       .asMap()
                       .entries
                       .map((e) => GestureDetector(
-
-                      onTap: () {
-                        Get.toNamed(RouteNames.pizzaMenuPage, arguments: controller.menuListModel);
-                      },
-                      child: menuItem(e.value)))
+                          onTap: () {
+                            Get.toNamed(RouteNames.pizzaMenuPage,
+                                arguments: controller.menuListModel);
+                          },
+                          child: MenuItem(item: e.value)))
                       .toList(),
                 ),
         ));
   }
 }
 
-Widget menuItem(MenuListModel item) {
-  return item.webDisplay != null && item.webDisplay!
-      ? Container(
-        alignment: Alignment.center,
-        width: 47.w,
-        padding: const EdgeInsets.all(6.0),
-        decoration: BoxDecoration(
-          border: Border.all(
-            color: Colors.grey,
-            width: 0.5,
-          ), // Border style
-        ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            item.bigImage != null
-                ? SvgPicture.network(
-                    item.bigImage ?? "",
-                    fit: BoxFit.contain,
-                    height: 35.sp,
-                    width: 35.sp,
-                  )
-                : const SizedBox(),
-            SizedBox(
-              height: 10.sp,
+class MenuItem extends StatelessWidget {
+  final MenuListModel item;
+
+  const MenuItem({super.key, required this.item});
+
+  @override
+  Widget build(BuildContext context) {
+    return item.webDisplay != null && item.webDisplay!
+        ? Container(
+            alignment: Alignment.center,
+            width: 47.w,
+            padding: const EdgeInsets.all(6.0),
+            decoration: BoxDecoration(
+              border: Border.all(
+                color: Colors.grey,
+                width: 0.5,
+              ), // Border style
             ),
-            Text(
-              item.name ?? "",
-              style: TextStyle(fontSize: 16.sp),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                item.bigImage != null
+                    ? SvgPicture.network(
+                        item.bigImage ?? "",
+                        fit: BoxFit.contain,
+                        height: 35.sp,
+                        width: 35.sp,
+                      )
+                    : const SizedBox(),
+                SizedBox(
+                  height: 10.sp,
+                ),
+                Text(
+                  item.name ?? "",
+                  style: TextStyle(fontSize: 16.sp),
+                ),
+              ],
             ),
-          ],
-        ),
-      )
-      : const SizedBox();
+          )
+        : const SizedBox();
+  }
 }

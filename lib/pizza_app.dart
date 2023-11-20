@@ -6,8 +6,6 @@ import 'package:pizza/constants/route_names.dart';
 import 'package:pizza/routes.dart';
 import 'package:sizer/sizer.dart';
 
-import 'module/menu/menu_details_list/all_menu_page.dart';
-import 'module/user/forgot_password/forgot_password_page.dart';
 
 class PizzaApp extends StatelessWidget {
   const PizzaApp({super.key});

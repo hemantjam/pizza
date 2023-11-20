@@ -14,6 +14,7 @@ class SplashController extends GetxController {
   LoginController loginController = Get.put(LoginController());
   Rx<LoggedInUserModel> loggedInUserModel = LoggedInUserModel().obs;
   RxBool serverIssue = false.obs;
+  RxString userName = "".obs;
 
   @override
   void onReady() {
@@ -47,6 +48,8 @@ class SplashController extends GetxController {
       // log("=====>Logged in model->${loggedInUserModel.value.data?.userMST?.userName.toString()}");
       //log("=====>Logged in model->${loggedInUserModel.value.data?.customerMST.toString()}");
       //loginController.userName.value = "assigned";
+      userName.value =
+          loggedInUserModel.value.data?.customerMST?.customerFirstName ?? "";
       //loggedInUserModel.value.data?.customerMST?.customerFirstName ?? "";
       loading.value = false;
     } else {

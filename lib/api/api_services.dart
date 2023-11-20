@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:developer';
 
 import 'package:dio/dio.dart';
@@ -38,7 +37,7 @@ class ApiServices {
             title: "Error", message: response.statusMessage ?? "");
       }
     } catch (e) {
-      log("error--->${endpoint}");
+      log("error--->$endpoint");
       handleError(e);
     }
     return null;
@@ -67,7 +66,7 @@ class ApiServices {
       }
     } catch (e) {
     //  handleError(e);
-      log("error===>${endpoint}");
+      log("error===>$endpoint");
     }
     return null;
   }

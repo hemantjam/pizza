@@ -198,9 +198,19 @@ class RecipeModel {
 
   factory RecipeModel.fromJson(Map<String, dynamic> json) {
     return RecipeModel(
-      size:json['size'] != null
-          ? AvailableSizesModel.fromJson(json['size'])
+      size:json['Size'] != null
+          ? AvailableSizesModel.fromJson(json['Size'])
           : null,
+
+     /* size: json['data'] != null
+          ? Map<String, GroupModel>.from(
+        (json['data'] as Map<String, dynamic>).map(
+              (key, value) => MapEntry(key, GroupModel.fromJson(value)),
+        ),
+      )
+          : null,*/
+
+
       sauce:  json['Sauce'] != null
           ? List<SauceModel>.from(
         (json['Sauce'] as List<dynamic>).map(
@@ -375,7 +385,8 @@ class QuantityInfoModel {
       minimumQuantity: json['minimumQuantity'],
     );
   }
-}class SauceModel {
+}
+class SauceModel {
   String? name;
   bool? stockAvailable;
   String? image;

@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:get/get.dart';
 import 'package:pizza/api/api_response.dart';
 import 'package:pizza/api/api_services.dart';
@@ -17,17 +15,18 @@ class MenuDetailsController extends GetxController {
 
   MenuDetailsController(this.menuListModel);
 
+  RxList<BaseModel?> sizes = <BaseModel?>[].obs;
+  RxSet<String> categories = <String>{}.obs;
+  RxMap<String, List<RecipeDetailsModel>> categorizedRecipes =
+      <String, List<RecipeDetailsModel>>{}.obs;
   RxInt selectedItemIndex = 0.obs;
-RxString totalPrice="".obs;
+  RxString totalPrice = "".obs;
+
   @override
   void onInit() {
     getMenu();
     menuListModel.where((p0) => p0.webDisplay!);
     super.onInit();
-  }
-
-  filter() {
-    //model.value.data.g1.items.the1PippoSSpecialPizza12.
   }
 
   getMenu() async {
@@ -38,21 +37,45 @@ RxString totalPrice="".obs;
     };
     ApiResponse? res =
         await _apiServices.postRequest(ApiEndPoints.getMenuByCode, data: data);
-    // log("-->response data--->${res?.data}");
     if (res != null && res.status) {
       model.value = MenuGroupCodeModel.fromJson(res.toJson());
-      log("------>${model.value.data?.entries.first.value.items?.entries.first.toString()}");
-      // GroupModel groupModel = GroupModel();
-      //log("********${.toString()}");
-      //  groupModel = GroupModel.fromJson(model.value.data?.values.first);
-      // List<ItemModel> list = [];
-      // log("===============${groupModel.items}");
-      /* groupModel.items?.forEach((key, value) {
-        list.add(ItemModel.fromJson(value));
-      });*/
-      // log("------------>${list.length}");
     } else {
       showCoomonErrorDialog(title: "Error", message: res?.message ?? "");
+    }
+    if (model.value.data != null) {
+      getCategories();
+    }
+  }
+
+  getCategories() {
+    if (model.value.data != null) {
+      for (var element in model.value.data!.entries) {
+        if (element.value.items != null) {
+          element.value.items?.forEach((key, value) {
+            if (value.availableCategories != null ||
+                value.availableCategories!.isNotEmpty) {
+              value.availableCategories?.forEach((element) {
+                categories.add(element.name ?? "");
+              });
+            }
+          });
+        }
+      }
+    }
+    filterCategoryList();
+  }
+
+  filterCategoryList() {
+    for (var categoryName in categories) {
+      categorizedRecipes[categoryName] = (model.value.data?.entries
+              .map((entry) => entry.value.items?.values)
+              .expand<RecipeDetailsModel>((items) => items ?? [])
+              .where((item) =>
+                  item.availableCategories
+                      ?.any((category) => category.name == categoryName) ==
+                  true)
+              .toList() ??
+          <RecipeDetailsModel>[]);
     }
   }
 }

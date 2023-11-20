@@ -160,7 +160,7 @@ class PickUpLaterController extends GetxController {
 
     if (isStoreOff.value && dateTime.day == DateTime.now().day) {
       dateList.removeAt(0);
-      searchDateInList(DateTime.now().add(Duration(days: 1)));
+      searchDateInList(DateTime.now().add(const Duration(days: 1)));
     } else {
       dateController.text = DateFormat('d MMMM yyyy, EEEE').format(dateTime);
     }

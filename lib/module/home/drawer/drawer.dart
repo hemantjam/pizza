@@ -12,9 +12,9 @@ class AppDrawer extends StatelessWidget {
         child: ListView(
           children: [
             UserAccountsDrawerHeader(
-              accountName: Text('John Doe'),
-              accountEmail: Text('johndoe@example.com'),
-              currentAccountPicture: CircleAvatar(
+              accountName: const Text('John Doe'),
+              accountEmail: const Text('johndoe@example.com'),
+              currentAccountPicture: const CircleAvatar(
                 backgroundImage: AssetImage('assets/profile_image.jpg'),
               ),
               decoration: BoxDecoration(color: AppColors.grey400),

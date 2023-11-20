@@ -13,6 +13,7 @@ class HomeController extends GetxController {
   CarouselController carouselController = CarouselController();
   LoginController loginController = Get.put(LoginController());
   RxString userName = "".obs;
+ // SplashController splashController=Get.find(tag:SplashController);
 
   @override
   void onInit() {
@@ -38,8 +39,8 @@ class HomeController extends GetxController {
   }
 
   final List<Widget> pages = [
-    HomePage(),
-    OfferList(),
+    const HomePage(),
+    const OfferList(),
     const Page(text: "half and half page will be here"),
     const Page(text: "quick orders will be here"),
   ].obs;

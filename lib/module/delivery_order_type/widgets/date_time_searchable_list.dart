@@ -59,7 +59,7 @@ class CommonSearchableListState extends State<CommonSearchableList> {
         content: SizedBox(
           height: 50.h,
           width: double.maxFinite,
-          child:widget.streetList.isEmpty||filteredList.isEmpty?Center(child: Text("no data found !"),): Scrollbar(
+          child:widget.streetList.isEmpty||filteredList.isEmpty?const Center(child: Text("no data found !"),): Scrollbar(
             interactive: true,
             trackVisibility: true,
             thickness: 20,
