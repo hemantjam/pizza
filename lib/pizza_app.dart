@@ -7,7 +7,8 @@ import 'package:pizza/routes.dart';
 import 'package:sizer/sizer.dart';
 import 'package:uuid/uuid.dart';
 
-Uuid uuid=Uuid();
+Uuid uuid = Uuid();
+
 class PizzaApp extends StatelessWidget {
   const PizzaApp({super.key});
 

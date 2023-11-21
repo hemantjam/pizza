@@ -17,7 +17,6 @@ class MainPage extends GetView<HomeController> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-
           appBar: AppBar(
             automaticallyImplyLeading: false,
             elevation: 0,

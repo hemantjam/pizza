@@ -5,6 +5,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:pizza/constants/assets.dart';
 import 'package:pizza/module/menu/menu_details_list/menu_details_controller.dart';
+import 'package:pizza/module/menu/utils/calculate_tax.dart';
 import 'package:sizer/sizer.dart';
 
 import '../by_group_code/menu_by_group_code_model.dart';
@@ -86,15 +87,15 @@ class MenuList extends GetView<MenuDetailsController> {
                         .asMap()
                         .entries
                         .where((element) => element.value.webDisplay!)
-                        .map((e) => e.key == 0
-                            ? const MenuDetails()
-                            : SizedBox(
-                                child: Center(
-                                  child: Text(
-                                      "${e.value.name ?? ""} will be here!"),
-                                ),
-                              ))
-                        .toList()),
+                        .map((e) {
+                      return controller.groupModelList.values.isEmpty
+                          ? SizedBox()
+                          : MenuDetails(
+                              groupModel: controller.groupModelList.entries
+                                  .firstWhere(
+                                      (element) => element.key == e.value.code)
+                                  .value);
+                    }).toList()),
               )
             ],
           ));
@@ -103,14 +104,33 @@ class MenuList extends GetView<MenuDetailsController> {
 }
 
 class MenuDetails extends GetView<MenuDetailsController> {
-  const MenuDetails({super.key});
+  final GroupModel groupModel;
+
+  const MenuDetails({super.key, required this.groupModel});
 
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
-      child: Obx(() {
-        return controller.categorizedRecipes.isEmpty
-            ? Center(child: Text("wait..."))
+      child: GetBuilder<MenuDetailsController>(builder: (logic) {
+        Map<String, List<RecipeDetailsModel>> categorizedRecipes =
+            controller.fetchCategories(groupModel);
+        //log("======>${categorizedRecipes.entries.first.value.length}");
+        return categorizedRecipes.isEmpty
+            ? Column(
+                children: groupModel.items != null
+                    ? groupModel.items!.entries
+                        .map((e) => MenuItemDetails(value: e.value))
+                        .toList()
+                    : [],
+              ) /*SingleChildScrollView(
+              child: ListView.builder(
+                  shrinkWrap: true,
+                  itemCount: groupModel.items?.length ?? 0,
+                  itemBuilder: (context, int index) {
+                    return MenuItemDetails(
+                        value: groupModel.items!.values.toList()[index]);
+                  }),
+            )*/
             : Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -118,7 +138,7 @@ class MenuDetails extends GetView<MenuDetailsController> {
                 children: [
                   SizedBox(
                     child: Column(
-                      children: controller.categorizedRecipes.entries
+                      children: categorizedRecipes.entries
                           .map((e) => categoryTile(
                               e.key, e.value.map((e) => e).toList()))
                           .toList(),
@@ -174,7 +194,7 @@ class CustomTabBar extends GetView<MenuDetailsController> {
   }
 }
 
-class MenuItemDetails extends GetView<MenuDetailsController> {
+class MenuItemDetails extends StatelessWidget {
   final RecipeDetailsModel value;
 
   const MenuItemDetails({super.key, required this.value});
@@ -251,7 +271,7 @@ class MenuItemDetails extends GetView<MenuDetailsController> {
 }
 
 class DetailsWidget extends StatefulWidget {
-  final RecipeDetailsModel value;
+  final RecipeDetailsModel? value;
 
   const DetailsWidget({super.key, required this.value});
 
@@ -282,31 +302,33 @@ class _DetailsWidgetState extends State<DetailsWidget> {
             children: [
               Flexible(
                 child: Text(
-                  widget.value.name ?? "",
+                  widget.value?.name ?? "",
                   style: TextStyle(fontSize: 18.sp),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
               ),
-              Text(price.toString()),
+              // Text(price.toString()),
               Text(
-                "\$${widget.value.recipes?.first.basePrice?.toStringAsFixed(2).toString()}",
+                "\$${calculateTotalPrice(widget.value?.recipes?.first.basePrice ?? 0, widget.value?.recipes?.first.tax ?? 0)}",
                 style: TextStyle(fontSize: 18.sp, color: Colors.orange),
                 maxLines: 1,
               ),
             ],
           ),
           Text(
-            widget.value.ingredients ?? "",
+            widget.value?.ingredients ?? "",
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
           ),
           const SizedBox(height: 20),
-          SizeSelection(
-            name: "Pizza Size",
-            model: widget.value.recipes!,
-            onSelect: countPrice,
-          ),
+          widget.value != null && widget.value!.recipes != null
+              ? SizeSelection(
+                  name: "Pizza Size",
+                  model: widget.value!.recipes!,
+                  onSelect: countPrice,
+                )
+              : SizedBox(),
           const Text("Quantity"),
         ],
       ),

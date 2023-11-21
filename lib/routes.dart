@@ -98,7 +98,6 @@ class RouteGenerator {
         OutletShiftDetailsBinding(),
         AllActiveBinding(),
         OutletBinding(),
-       // MenuDetailsBinding()
       ],
     ),
 
