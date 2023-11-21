@@ -54,12 +54,15 @@ dependencies:
   google_maps_flutter: ^2.5.0
   #input_quantity: ^2.1.1
   quantity_input: ^1.0.2
+  floor: ^1.4.2
+  sqflite: ^2.3.0
 
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   build_runner: any
+  floor_generator: ^1.4.2
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is

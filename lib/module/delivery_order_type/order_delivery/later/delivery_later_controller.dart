@@ -140,7 +140,7 @@ class DeliveryLaterController extends GetxController {
               .isBefore(dateTime))) {
         dateController.text = DateFormat('d MMMM yyyy, EEEE').format(dateTime);
         timeIntervalList.value = getTimeIntervals(regular.first!, dateTime);
-        timeController.text = timeIntervalList.first;
+        if(timeIntervalList.isNotEmpty)timeController.text = timeIntervalList.first;
         isStoreOff.value = false;
         return;
       }

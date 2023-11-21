@@ -4,12 +4,11 @@ import '../menu_model.dart';
 import 'menu_details_controller.dart';
 
 class MenuDetailsBinding extends Bindings {
-  MenuDetailsBinding();
-  // menuListModel = <MenuListModel>[].obs;
+  //MenuDetailsBinding();
 
   @override
   void dependencies() {
     final RxList<MenuListModel> model = Get.arguments as RxList<MenuListModel>;
-    Get.lazyPut(() => MenuDetailsController(model));
+    Get.put(MenuDetailsController(model));
   }
 }

@@ -3,7 +3,10 @@ import 'package:get/get.dart';
 import 'package:pizza/api/api_response.dart';
 import 'package:pizza/api/api_services.dart';
 import 'package:pizza/api/end_point.dart';
+import 'package:pizza/module/user/register/register_controller.dart';
 import 'package:pizza/widgets/common_dialog.dart';
+
+import '../../../constants/route_names.dart';
 
 class ForgotPassController extends GetxController {
   ApiServices apiServices = ApiServices();
@@ -20,7 +23,6 @@ class ForgotPassController extends GetxController {
   RxBool showLoading = false.obs;
   RxBool isOtpSent = false.obs;
 
-  // RxBool showNewPassword = false.obs;
 
   sendOtp() async {
     showLoading.value = true;
@@ -52,9 +54,13 @@ class ForgotPassController extends GetxController {
     if (response != null && response.status) {
       showCoomonErrorDialog(title: "Success", message: "Please login again");
       Get.back();
+      handleNavigate();
     } else if (response != null && !response.status) {
       showCoomonErrorDialog(title: "Error", message: response.message);
     }
     showLoading.value = false;
+  }
+  handleNavigate() {
+    Get.toNamed(RouteNames.initial);
   }
 }

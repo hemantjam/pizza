@@ -17,9 +17,8 @@ class AllMenuPage extends GetView<MenuDetailsController> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        floatingActionButton: FloatingActionButton(
-          onPressed: controller.getMenu,
-        ),
+        floatingActionButton:
+            FloatingActionButton(onPressed: controller.checkForOfflineData),
         appBar: AppBar(
           leadingWidth: 30,
           title: const Text("Menu"),
@@ -104,29 +103,29 @@ class MenuList extends GetView<MenuDetailsController> {
 }
 
 class MenuDetails extends GetView<MenuDetailsController> {
-  const MenuDetails({
-    super.key,
-  });
+  const MenuDetails({super.key});
 
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
       child: Obx(() {
-        return Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            SizedBox(
-              child: Column(
-                children: controller.categorizedRecipes.entries
-                    .map((e) => categoryTile(
-                        e.key, e.value.map((e) => e).toList() ))
-                    .toList(),
-              ),
-            ),
-          ],
-        );
+        return controller.categorizedRecipes.isEmpty
+            ? Center(child: Text("wait..."))
+            : Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  SizedBox(
+                    child: Column(
+                      children: controller.categorizedRecipes.entries
+                          .map((e) => categoryTile(
+                              e.key, e.value.map((e) => e).toList()))
+                          .toList(),
+                    ),
+                  ),
+                ],
+              );
       }),
     );
   }
@@ -410,17 +409,17 @@ class BaseSelection extends StatelessWidget {
   final List<BaseModel?> sizes;
   final Function(double) onSelect;
 
-  const BaseSelection({
+  BaseSelection({
     super.key,
     required this.name,
     required this.sizes,
     required this.onSelect,
   });
 
+  String selectedItem = "";
+
   @override
   Widget build(BuildContext context) {
-    String selectedItem = "";
-
     return SizedBox(
       child: sizes.isNotEmpty
           ? Row(
@@ -442,12 +441,12 @@ class BaseSelection extends StatelessWidget {
                               setState(() {
                                 selectedItem = newValue;
                               });
-                              onSelect(sizes
+                              /*onSelect(sizes
                                       .firstWhere((element) =>
                                           element?.name == selectedItem &&
                                           element?.addCost != null)
                                       ?.addCost ??
-                                  0.0);
+                                  0.0);*/
                             }
                           },
                           items: sizes
