@@ -13,7 +13,6 @@ import '../menu_model.dart';
 import 'local_storage/menu_details_database.dart';
 
 class MenuDetailsController extends GetxController {
-  Rx<MenuGroupCodeModel> model = MenuGroupCodeModel().obs;
   RxMap<String, GroupModel> groupModelList = <String, GroupModel>{}.obs;
 
   final ApiServices _apiServices = ApiServices();
@@ -21,15 +20,7 @@ class MenuDetailsController extends GetxController {
 
   MenuDetailsController(this.menuListModel);
 
-  RxList<BaseModel?> sizes = <BaseModel?>[].obs;
-
-  RxSet<String> categories = <String>{}.obs;
-
-  RxMap<String, List<RecipeDetailsModel>> categorizedRecipes =
-      <String, List<RecipeDetailsModel>>{}.obs;
-
   RxInt selectedItemIndex = 0.obs;
-  RxString totalPrice = "".obs;
 
   @override
   void onInit() {
@@ -41,24 +32,29 @@ class MenuDetailsController extends GetxController {
   checkForOfflineData() async {
     AppDatabase? database =
         await $FloorAppDatabase.databaseBuilder('app_database.db').build();
+
     if (!database.isBlank!) {
       final personDao = database.menuDetailsDoa;
-      var result = await personDao.findAllMenuDetails();
+      List<MenuDetailsTable> result = await personDao.findAllMenuDetails();
       log("----->result-->${result.length}");
       if (result.isEmpty) {
-        fetchAllMenu();
+        await fetchAllMenu();
       } else {
-        for (var element in result) {
-          String res = element.groupData;
-          Map<String, dynamic> resultMap = json.decode(res);
-          groupModelList[element.groupName] = GroupModel.fromJson(resultMap);
-        }
-        update();
+        databaseToModel(result);
       }
     }
   }
 
-  initDatabase(String name, String data) async {
+  databaseToModel(List<MenuDetailsTable> result) {
+    for (var element in result) {
+      String res = element.groupData;
+      Map<String, dynamic> resultMap = json.decode(res);
+      groupModelList[element.groupName] = GroupModel.fromJson(resultMap);
+    }
+    update();
+  }
+
+  createDatabase(String name, String data) async {
     final database =
         await $FloorAppDatabase.databaseBuilder('app_database.db').build();
 
@@ -74,14 +70,17 @@ class MenuDetailsController extends GetxController {
     await personDao.insertGroupData(person);
   }
 
-  fetchAllMenu() async {
+  Future<void> fetchAllMenu() async {
     if (menuListModel.isNotEmpty) {
-      for (var element in menuListModel) {
+      menuListModel.removeWhere((element) => !element.webDisplay!);
+      await Future.wait(menuListModel.map((element) async {
         log("----->${element.name}");
         ApiResponse? res = await getMenu(element.code!);
-        initDatabase(
+        await createDatabase(
             element.code!, jsonEncode(res!.data[element.code!]).toString());
-      }
+      }));
+      checkForOfflineData();
+      update();
     }
   }
 
@@ -93,48 +92,12 @@ class MenuDetailsController extends GetxController {
     };
     ApiResponse? res =
         await _apiServices.postRequest(ApiEndPoints.getMenuByCode, data: data);
-
     if (res != null && res.status) {
-      // model.value = MenuGroupCodeModel.fromJson(res.toJson());
       return res;
     } else {
       showCoomonErrorDialog(title: "Error", message: res?.message ?? "");
     }
-
     return null;
-  }
-
-  getCategories() {
-    /* categories.clear();
-    if (model.value.data != null) {
-      for (var element in model.value.data!.entries) {
-        if (element.value.items != null) {
-          element.value.items?.forEach((key, value) {
-            if (value.availableCategories != null &&
-                value.availableCategories!.isNotEmpty) {
-              value.availableCategories?.forEach((element) {
-                categories.add(element.name ?? "");
-              });
-            }
-          });
-        }
-      }
-    }
-    filterCategoryList();*/
-  }
-
-  filterCategoryList() {
-    for (var categoryName in categories) {
-      categorizedRecipes[categoryName] = (model.value.data?.entries
-              .map((entry) => entry.value.items?.values)
-              .expand<RecipeDetailsModel>((items) => items ?? [])
-              .where((item) =>
-                  item.availableCategories
-                      ?.any((category) => category.name == categoryName) ==
-                  true)
-              .toList() ??
-          <RecipeDetailsModel>[]);
-    }
   }
 
   Map<String, List<RecipeDetailsModel>> fetchCategories(GroupModel model) {
@@ -151,17 +114,16 @@ class MenuDetailsController extends GetxController {
       });
     }
 
-    return filterNewCategoryList(categories,model);
+    return filterNewCategoryList(categories, model);
   }
 
   Map<String, List<RecipeDetailsModel>> filterNewCategoryList(
-      List<String> categories,GroupModel model) {
+      List<String> categories, GroupModel model) {
     Map<String, List<RecipeDetailsModel>> categorizedRecipes = {};
 
     for (var categoryName in categories) {
       categorizedRecipes[categoryName] = (model.items?.entries
               .map((entry) => entry.value)
-              //.expand<RecipeDetailsModel>((items) => items )
               .where((item) =>
                   item.availableCategories
                       ?.any((category) => category.name == categoryName) ==
@@ -169,7 +131,6 @@ class MenuDetailsController extends GetxController {
               .toList() ??
           <RecipeDetailsModel>[]);
     }
-
     return categorizedRecipes;
   }
 }

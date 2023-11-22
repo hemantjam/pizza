@@ -85,7 +85,7 @@ log("----->${e.toString()}");
       }else if(e.type==DioExceptionType.badResponse){
         showCoomonErrorDialog(
           title: "Error:",
-          message:e.response?.statusMessage ?? "",
+          message:e.response?.statusMessage ?? "Session e",
         );
       } else {
         showCoomonErrorDialog(

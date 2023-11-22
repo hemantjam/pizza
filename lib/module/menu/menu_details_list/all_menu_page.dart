@@ -1,112 +1,131 @@
+// Import statements...
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_blurhash/flutter_blurhash.dart';
-import 'package:flutter_svg/flutter_svg.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:pizza/constants/assets.dart';
-import 'package:pizza/module/menu/menu_details_list/menu_details_controller.dart';
-import 'package:pizza/module/menu/utils/calculate_tax.dart';
 import 'package:sizer/sizer.dart';
 
+import '../../../constants/assets.dart';
 import '../by_group_code/menu_by_group_code_model.dart';
 import '../menu_model.dart';
+import '../utils/calculate_tax.dart';
+import 'menu_details_controller.dart';
 
 class AllMenuPage extends GetView<MenuDetailsController> {
-  const AllMenuPage({super.key});
+  const AllMenuPage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        floatingActionButton:
-            FloatingActionButton(onPressed: controller.checkForOfflineData),
-        appBar: AppBar(
-          leadingWidth: 30,
-          title: const Text("Menu"),
-          elevation: 0,
-          leading: IconButton(
-              onPressed: () {
-                Get.back();
-              },
-              icon: const Icon(
-                Icons.arrow_back_ios_new_rounded,
-                size: 20,
-              )),
-          actions: [
-            GestureDetector(
-              onTap: () {},
-              child: Padding(
-                padding: const EdgeInsets.only(right: 10),
-                child: SvgPicture.asset(
-                  Assets.bottomCart,
-                  color: Colors.black,
-                ),
-              ),
-            )
-          ],
-        ),
+        /*floatingActionButton: FloatingActionButton(
+          onPressed: controller.checkForOfflineData,
+        ),*/
+        appBar: buildAppBar(),
         body: const MenuList(),
       ),
+    );
+  }
+
+  AppBar buildAppBar() {
+    return AppBar(
+      leadingWidth: 30,
+      title: const Text("Menu"),
+      elevation: 0,
+      leading: IconButton(
+        onPressed: () {
+          Get.back();
+        },
+        icon: const Icon(
+          Icons.arrow_back_ios_new_rounded,
+          size: 20,
+        ),
+      ),
+      actions: [
+        GestureDetector(
+          onTap: () {},
+          child: Padding(
+            padding: const EdgeInsets.only(right: 10),
+            child: SvgPicture.asset(
+              Assets.bottomCart,
+              color: Colors.black,
+            ),
+          ),
+        )
+      ],
     );
   }
 }
 
 class MenuList extends GetView<MenuDetailsController> {
-  const MenuList({super.key});
+  const MenuList({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Obx(() {
       return DefaultTabController(
-          length: controller.menuListModel.where((p0) => p0.webDisplay!).length,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              TabBar(
-                onTap: (index) {
-                  controller.selectedItemIndex.value = index;
-                },
-                labelPadding: const EdgeInsets.all(5),
-                padding: const EdgeInsets.all(0),
-                indicatorColor: Colors.transparent,
-                isScrollable: true,
-                tabs: controller.menuListModel
-                    .asMap()
-                    .entries
-                    .where((element) => element.value.webDisplay!)
-                    .map((e) => CustomTabBar(
-                          index: e.key,
-                          menuListModel: e.value,
-                        ))
-                    .toList(),
-              ),
-              Expanded(
-                child: TabBarView(
-                    physics: const NeverScrollableScrollPhysics(),
-                    children: controller.menuListModel
-                        .asMap()
-                        .entries
-                        .where((element) => element.value.webDisplay!)
-                        .map((e) {
-                      return controller.groupModelList.values.isEmpty
-                          ? SizedBox()
-                          : MenuDetails(
-                              groupModel: controller.groupModelList.entries
-                                  .firstWhere(
-                                      (element) => element.key == e.value.code)
-                                  .value);
-                    }).toList()),
-              )
-            ],
-          ));
+        length: controller.menuListModel.where((p0) => p0.webDisplay!).length,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            buildTabBar(),
+            Expanded(
+              child: buildTabBarView(),
+            )
+          ],
+        ),
+      );
     });
+  }
+
+  TabBar buildTabBar() {
+    return TabBar(
+      onTap: (index) {
+        controller.selectedItemIndex.value = index;
+      },
+      labelPadding: const EdgeInsets.all(5),
+      padding: const EdgeInsets.all(0),
+      indicatorColor: Colors.transparent,
+      isScrollable: true,
+      tabs: controller.menuListModel
+          .asMap()
+          .entries
+          .where((element) => element.value.webDisplay!)
+          .map((e) => CustomTabBar(
+                index: e.key,
+                menuListModel: e.value,
+              ))
+          .toList(),
+    );
+  }
+
+  TabBarView buildTabBarView() {
+    return TabBarView(
+      physics: const NeverScrollableScrollPhysics(),
+      children: controller.menuListModel
+          .asMap()
+          .entries
+          .where((element) => element.value.webDisplay!)
+          .map((e) {
+        return controller.groupModelList.values.isEmpty
+            ? const SizedBox(
+                child: Center(child: Text("fetching data...")),
+              )
+            : MenuDetails(
+                groupModel: controller.groupModelList.entries
+                    .firstWhere((element) => element.key == e.value.code)
+                    .value,
+              );
+      }).toList(),
+    );
   }
 }
 
 class MenuDetails extends GetView<MenuDetailsController> {
   final GroupModel groupModel;
 
-  const MenuDetails({super.key, required this.groupModel});
+  const MenuDetails({Key? key, required this.groupModel}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -114,23 +133,14 @@ class MenuDetails extends GetView<MenuDetailsController> {
       child: GetBuilder<MenuDetailsController>(builder: (logic) {
         Map<String, List<RecipeDetailsModel>> categorizedRecipes =
             controller.fetchCategories(groupModel);
-        //log("======>${categorizedRecipes.entries.first.value.length}");
         return categorizedRecipes.isEmpty
             ? Column(
                 children: groupModel.items != null
                     ? groupModel.items!.entries
                         .map((e) => MenuItemDetails(value: e.value))
                         .toList()
-                    : [],
-              ) /*SingleChildScrollView(
-              child: ListView.builder(
-                  shrinkWrap: true,
-                  itemCount: groupModel.items?.length ?? 0,
-                  itemBuilder: (context, int index) {
-                    return MenuItemDetails(
-                        value: groupModel.items!.values.toList()[index]);
-                  }),
-            )*/
+                    : [const SizedBox()],
+              )
             : Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -153,10 +163,10 @@ class MenuDetails extends GetView<MenuDetailsController> {
 
 class CustomTabBar extends GetView<MenuDetailsController> {
   const CustomTabBar({
-    super.key,
+    Key? key,
     required this.index,
     required this.menuListModel,
-  });
+  }) : super(key: key);
 
   final int index;
   final MenuListModel menuListModel;
@@ -197,7 +207,7 @@ class CustomTabBar extends GetView<MenuDetailsController> {
 class MenuItemDetails extends StatelessWidget {
   final RecipeDetailsModel value;
 
-  const MenuItemDetails({super.key, required this.value});
+  const MenuItemDetails({Key? key, required this.value}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -209,6 +219,7 @@ class MenuItemDetails extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
           children: [
+            /// image
             SizedBox(
               height: 21.h,
               child: Stack(
@@ -224,24 +235,29 @@ class MenuItemDetails extends StatelessWidget {
                     width: 100.w,
                   ),
                   Align(
-                      alignment: Alignment.bottomCenter,
-                      child: Container(
-                          decoration: BoxDecoration(
-                              color: Colors.black,
-                              borderRadius: BorderRadius.circular(20)),
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 10, vertical: 5),
-                          child: const Text(
-                            "Customize",
-                            style: TextStyle(color: Colors.white),
-                          )))
+                    alignment: Alignment.bottomCenter,
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: Colors.black,
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 10, vertical: 5),
+                      child: const Text(
+                        "Customize",
+                        style: TextStyle(color: Colors.white),
+                      ),
+                    ),
+                  ),
                 ],
               ),
             ),
             const SizedBox(height: 10),
-            DetailsWidget(
-              value: value,
-            ),
+
+            /// name , price , base, size
+            DetailsWidget(value: value),
+
+            /// quantity , add to cart
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               crossAxisAlignment: CrossAxisAlignment.end,
@@ -254,13 +270,13 @@ class MenuItemDetails extends StatelessWidget {
                   ],
                 ),
                 ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      elevation: 1,
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 50), // Adjust the padding as needed
-                    ),
-                    onPressed: () {},
-                    child: const Text("Add To Cart"))
+                  style: ElevatedButton.styleFrom(
+                    elevation: 1,
+                    padding: const EdgeInsets.symmetric(horizontal: 50),
+                  ),
+                  onPressed: () {},
+                  child: const Text("Add To Cart"),
+                ),
               ],
             ),
           ],
@@ -273,22 +289,14 @@ class MenuItemDetails extends StatelessWidget {
 class DetailsWidget extends StatefulWidget {
   final RecipeDetailsModel? value;
 
-  const DetailsWidget({super.key, required this.value});
+  const DetailsWidget({Key? key, required this.value}) : super(key: key);
 
   @override
   State<DetailsWidget> createState() => _DetailsWidgetState();
 }
 
 class _DetailsWidgetState extends State<DetailsWidget> {
-  double price = 0.0;
-
-  countPrice(double cost) {
-    Future.delayed(const Duration(milliseconds: 100), () {
-      setState(() {
-        price = cost;
-      });
-    });
-  }
+  String price = "0.0";
 
   @override
   Widget build(BuildContext context) {
@@ -326,9 +334,9 @@ class _DetailsWidgetState extends State<DetailsWidget> {
               ? SizeSelection(
                   name: "Pizza Size",
                   model: widget.value!.recipes!,
-                  onSelect: countPrice,
+                  onSelect: (d) {},
                 )
-              : SizedBox(),
+              : const SizedBox(),
           const Text("Quantity"),
         ],
       ),
@@ -336,36 +344,17 @@ class _DetailsWidgetState extends State<DetailsWidget> {
   }
 }
 
-class QuantityItem extends GetView<MenuDetailsController> {
-  final String text;
-
-  const QuantityItem({super.key, required this.text});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-        padding: const EdgeInsets.all(5),
-        margin: const EdgeInsets.all(5),
-        alignment: Alignment.center,
-        height: 30,
-        width: 30,
-        decoration: BoxDecoration(
-          border: Border.all(color: Colors.black, width: 1),
-        ),
-        child: Text(text));
-  }
-}
-
 class SizeSelection extends StatefulWidget {
   final String name;
   final List<RecipeModel> model;
-  final Function(double) onSelect;
+  final Function(String) onSelect;
 
-  const SizeSelection(
-      {super.key,
-      required this.name,
-      required this.model,
-      required this.onSelect});
+  const SizeSelection({
+    Key? key,
+    required this.name,
+    required this.model,
+    required this.onSelect,
+  }) : super(key: key);
 
   @override
   State<SizeSelection> createState() => _SizeSelectionState();
@@ -386,59 +375,68 @@ class _SizeSelectionState extends State<SizeSelection> {
         ? selectedItem = widget.model.first.size?.name ?? ""
         : null;
     return SizedBox(
-      child: widget.model.first.size != null
-          ? Row(
-              children: [
-                Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(widget.name),
-                    DropdownButton<String>(
-                        value: selectedItem,
-                        onChanged: (String? newValue) {
-                          if (newValue != null) {
-                            setState(() {
-                              selectedItem = newValue;
-                            });
-                          }
-                        },
-                        items: widget.model
-                            .map((e) => DropdownMenuItem<String>(
-                                  value: e.size?.name ?? "",
-                                  child: Text(e.size?.name ?? ""),
-                                ))
-                            .toList()),
-                  ],
-                ),
-                BaseSelection(
-                    onSelect: widget.onSelect,
-                    name: "Base",
-                    sizes: widget.model
-                        .where((element) => element.size?.name == selectedItem)
-                        .map((e) => e.base)
-                        .expand<BaseModel?>((bases) => bases ?? [])
-                        .toList())
-              ],
-            )
-          : const SizedBox(),
-    );
+        child: Row(
+      children: [
+        Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            widget.model.first.size != null
+                ? Text(widget.name)
+                : const SizedBox(),
+            widget.model.first.size != null
+                ? DropdownButton<String>(
+                    value: selectedItem,
+                    onChanged: (String? newValue) {
+                      if (newValue != null) {
+                        setState(() {
+                          selectedItem = newValue;
+                        });
+                      }
+                    },
+                    items: widget.model
+                        .map((e) => DropdownMenuItem<String>(
+                              value: e.size?.name ?? "",
+                              child: Text(e.size?.name ?? ""),
+                            ))
+                        .toList(),
+                  )
+                : const SizedBox(),
+          ],
+        ),
+        widget.model.first.size != null
+            ? BaseSelection(
+                onSelect: widget.onSelect,
+                name: "Base",
+                sizes: widget.model
+                    .where((element) => element.size?.name == selectedItem)
+                    .map((e) => e.base)
+                    .expand<BaseModel?>((bases) => bases ?? [])
+                    .toList(),
+              )
+            : BaseSelection(
+                onSelect: widget.onSelect,
+                name: "Base",
+                sizes: widget.model.first.base ?? [],
+              ),
+      ],
+    ));
   }
 }
 
 class BaseSelection extends StatelessWidget {
   final String name;
   final List<BaseModel?> sizes;
-  final Function(double) onSelect;
+  final Function(String) onSelect;
 
   BaseSelection({
-    super.key,
+    Key? key,
     required this.name,
     required this.sizes,
     required this.onSelect,
-  });
+  }) : super(key: key);
 
-  String selectedItem = "";
+  String? selectedItem = "";
 
   @override
   Widget build(BuildContext context) {
@@ -452,37 +450,62 @@ class BaseSelection extends StatelessWidget {
                   children: [
                     Text(name),
                     StatefulBuilder(
-                        builder: (BuildContext context, StateSetter setState) {
-                      if (selectedItem == "") {
-                        selectedItem = sizes.first!.name!;
-                      }
-                      return DropdownButton<String>(
+                      builder: (BuildContext context, StateSetter setState) {
+                        if (selectedItem == "") {
+                          selectedItem = sizes.first!.name!;
+                        }
+                        return DropdownButton<String>(
                           value: selectedItem,
                           onChanged: (String? newValue) {
                             if (newValue != null) {
                               setState(() {
                                 selectedItem = newValue;
                               });
-                              /*onSelect(sizes
-                                      .firstWhere((element) =>
-                                          element?.name == selectedItem &&
-                                          element?.addCost != null)
-                                      ?.addCost ??
-                                  0.0);*/
                             }
+                            // calculateTotalPrice(price, taxPercentage)
+                            onSelect(sizes
+                                    .firstWhere((element) =>
+                                        element?.name == selectedItem &&
+                                        element?.addCost != null)
+                                    ?.addCost
+                                    .toString() ??
+                                "0.0");
                           },
                           items: sizes
                               .map((e) => DropdownMenuItem<String>(
                                     value: e?.name ?? "",
                                     child: Text(e?.name ?? ""),
                                   ))
-                              .toList());
-                    })
+                              .toList(),
+                        );
+                      },
+                    ),
                   ],
                 ),
               ],
             )
           : const SizedBox(),
+    );
+  }
+}
+
+class QuantityItem extends GetView<MenuDetailsController> {
+  final String text;
+
+  const QuantityItem({Key? key, required this.text}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(5),
+      margin: const EdgeInsets.all(5),
+      alignment: Alignment.center,
+      height: 30,
+      width: 30,
+      decoration: BoxDecoration(
+        border: Border.all(color: Colors.black, width: 1),
+      ),
+      child: Text(text),
     );
   }
 }
@@ -498,7 +521,7 @@ Widget categoryTile(String category, List<RecipeDetailsModel> children) {
         Text(
           category,
           style: TextStyle(fontSize: 16.sp),
-        )
+        ),
       ],
     ),
     trailing: Text(children.length.toString()),
