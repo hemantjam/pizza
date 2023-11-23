@@ -1,4 +1,3 @@
-// Import statements...
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_blurhash/flutter_blurhash.dart';
@@ -21,8 +20,54 @@ class AllMenuPage extends GetView<MenuDetailsController> {
       child: Scaffold(
         appBar: buildAppBar(),
         body: const MenuList(),
+        bottomNavigationBar: Container(
+          padding: const EdgeInsets.symmetric(vertical: 2),
+          height: 75,
+          decoration: BoxDecoration(color: Color(0xffEEEEEE)),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              ElevatedButton(
+                  style: buildStyleFrom(186, 44),
+                  onPressed: () {},
+                  child: Row(
+                    children: [
+                      Text(
+                        "1 item",
+                        style: buildButtonTextStyle(),
+                      ),
+                      const Spacer(),
+                      Text(
+                        " \$55",
+                        style: buildButtonTextStyle(),
+                      ),
+                    ],
+                  )),
+              ElevatedButton(
+                  style: buildStyleFrom(126, 44),
+                  onPressed: () {},
+                  child: Row(
+                    children: [
+                      Text(
+                        "Checkout",
+                        style: buildButtonTextStyle(),
+                      ),
+                      const Spacer(),
+                      const Icon(Icons.arrow_forward)
+                    ],
+                  )),
+            ],
+          ),
+        ),
       ),
     );
+  }
+
+  TextStyle buildButtonTextStyle() => const TextStyle(fontSize: 16);
+
+  ButtonStyle buildStyleFrom(double width, double height) {
+    return ElevatedButton.styleFrom(
+        fixedSize: Size(width, height), elevation: 1);
   }
 
   /// app bar
@@ -329,12 +374,10 @@ class _MenuItemDetailsState extends State<MenuItemDetails> {
 
                           /// spicy flag
                           widget.value.dietary != null
-                              ? Container(
-                                  child: Image.network(
-                                    widget.value.dietary?.symbol ?? "",
-                                    height: 35.sp,
-                                    width: 35.sp,
-                                  ),
+                              ? Image.network(
+                                  widget.value.dietary?.symbol ?? "",
+                                  height: 35.sp,
+                                  width: 35.sp,
                                 )
                               : const SizedBox(),
                         ],
@@ -368,11 +411,6 @@ class _MenuItemDetailsState extends State<MenuItemDetails> {
                         style: TextStyle(fontSize: 18.sp, color: Colors.orange),
                         maxLines: 1,
                       ),
-                      /*Text(
-                        "\$${calculateTotalPrice(widget.value.recipes?.first.basePrice ?? 0, widget.value.recipes?.first.tax ?? 0)}",
-                        style: TextStyle(fontSize: 18.sp, color: Colors.orange),
-                        maxLines: 1,
-                      ),*/
                     ],
                   ),
                   const SizedBox(
@@ -497,91 +535,6 @@ class _MenuItemDetailsState extends State<MenuItemDetails> {
   }
 }
 
-/// size selection
-/*class SizeSelection extends StatefulWidget {
-  final String name;
-  final List<RecipeModel> model;
-  final Function(String) onSelect;
-
-  const SizeSelection({
-    Key? key,
-    required this.name,
-    required this.model,
-    required this.onSelect,
-  }) : super(key: key);
-
-  @override
-  State<SizeSelection> createState() => _SizeSelectionState();
-}
-
-class _SizeSelectionState extends State<SizeSelection> {
-  String selectedItem = "";
-
-  @override
-  void initState() {
-    selectedItem = widget.model.first.size?.name ?? "";
-    super.initState();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    selectedItem == ""
-        ? selectedItem = widget.model.first.size?.name ?? ""
-        : null;
-    return SizedBox(
-        child: Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            widget.model.first.size != null
-                ? Text(
-                    widget.name,
-                    style: titleStyle(),
-                  )
-                : const SizedBox(),
-            widget.model.first.size != null
-                ? DropdownButton<String>(
-                    value: selectedItem,
-                    onChanged: (String? newValue) {
-                      if (newValue != null) {
-                        setState(() {
-                          selectedItem = newValue;
-                        });
-                      }
-                    },
-                    items: widget.model
-                        .map((e) => DropdownMenuItem<String>(
-                              value: e.size?.name ?? "",
-                              child: Text(e.size?.name ?? ""),
-                            ))
-                        .toList(),
-                  )
-                : const SizedBox(),
-          ],
-        ),
-        widget.model.first.size != null
-            ? BaseSelection(
-                onSelect: widget.onSelect,
-                name: "Base",
-                sizes: widget.model
-                    .where((element) => element.size?.name == selectedItem)
-                    .map((e) => e.base)
-                    .expand<BaseModel?>((bases) => bases ?? [])
-                    .toList(),
-              )
-            : BaseSelection(
-                onSelect: widget.onSelect,
-                name: "Base",
-                sizes: widget.model.first.base ?? [],
-              ),
-      ],
-    ));
-  }
-}*/
-
 /// base selection
 class BaseSelection extends StatelessWidget {
   final List<BaseModel?> sizes;
@@ -618,7 +571,6 @@ class BaseSelection extends StatelessWidget {
                                 selectedItem = newValue;
                               });
                             }
-                            // calculateTotalPrice(price, taxPercentage)
                             onSelect(sizes
                                     .firstWhere((element) =>
                                         element?.name == selectedItem &&
@@ -667,65 +619,6 @@ class QuantityItem extends GetView<MenuDetailsController> {
 }
 
 TextStyle titleStyle() => TextStyle(color: Colors.blue.shade900, fontSize: 18);
-
-/// details widget
-/*class DetailsWidget extends StatefulWidget {
-  final RecipeDetailsModel? value;
-
-  const DetailsWidget({Key? key, required this.value}) : super(key: key);
-
-  @override
-  State<DetailsWidget> createState() => _DetailsWidgetState();
-}
-
-class _DetailsWidgetState extends State<DetailsWidget> {
-  String price = "0.0";
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Flexible(
-                child: Text(
-                  widget.value?.name ?? "",
-                  style: TextStyle(fontSize: 18.sp),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ),
-              // Text(price.toString()),
-              Text(
-                "\$${calculateTotalPrice(widget.value?.recipes?.first.basePrice ?? 0, widget.value?.recipes?.first.tax ?? 0)}",
-                style: TextStyle(fontSize: 18.sp, color: Colors.orange),
-                maxLines: 1,
-              ),
-            ],
-          ),
-          Text(
-            widget.value?.ingredients ?? "",
-            maxLines: 2,
-            overflow: TextOverflow.ellipsis,
-          ),
-          const SizedBox(height: 20),
-          widget.value != null && widget.value!.recipes != null
-              ? SizeSelection(
-                  name: "Pizza Size",
-                  model: widget.value!.recipes!,
-                  onSelect: (d) {},
-                )
-              : const SizedBox(),
-          const Text("Quantity"),
-        ],
-      ),
-    );
-  }
-}*/
 
 Widget headerDesign(String image, List<String>? categories, String code) {
   return Container(
