@@ -3,7 +3,6 @@ import 'package:get/get.dart';
 import 'package:pizza/api/api_response.dart';
 import 'package:pizza/api/api_services.dart';
 import 'package:pizza/api/end_point.dart';
-import 'package:pizza/module/user/register/register_controller.dart';
 import 'package:pizza/widgets/common_dialog.dart';
 
 import '../../../constants/route_names.dart';

@@ -49,6 +49,8 @@ class DeliveryLaterController extends GetxController {
     super.onInit();
     getShiftDetails();
     getStreetNameList();
+    dateController = TextEditingController(
+        text: DateFormat('d MMMM yyyy, EEEE').format(DateTime.now()));
     ever(allActiveController.value.streetNameList,
         (callback) => {getStreetNameList()});
     ever(outletShiftDetailsController.value.outletShiftDetailsModel,

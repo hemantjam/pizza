@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:dio/dio.dart';
 import 'package:pizza/api/end_point.dart';
+import 'package:pizza/utils/log.dart';
 import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 
 import '../widgets/common_dialog.dart';
@@ -24,6 +25,11 @@ class ApiServices {
 */
   Future<ApiResponse?> getRequest<T>(String endpoint,
       {Map<String, dynamic>? queryParameters, String data = ""}) async {
+    Map<String, dynamic> logField = {
+      "endpoint": endpoint,
+      "queryParameters": queryParameters,
+      "data": data
+    };
     try {
       _dio.options.headers['Authorization'] =
           'Bearer ${ApiEndPoints.authToken}';
@@ -31,12 +37,18 @@ class ApiServices {
           queryParameters: queryParameters, data: data);
       if (response.statusCode == 200) {
         ApiResponse apiResponse = ApiResponse<T>.fromJson(response.data);
+        logField.addAll({"response": response.toString()});
+        AppLogs.add(logField.toString());
         return apiResponse;
       } else {
         showCoomonErrorDialog(
             title: "Error", message: response.statusMessage ?? "");
+        logField.addAll({"error": "error in status code"});
+        AppLogs.add(logField.toString());
       }
     } catch (e) {
+      logField.addAll({"error": e});
+      AppLogs.add(logField.toString());
       log("error--->$endpoint");
       handleError(e);
     }
@@ -49,6 +61,11 @@ class ApiServices {
     Map<String, dynamic>? queryParameters,
     String? token,
   }) async {
+    Map<String, dynamic> logField = {
+      "endpoint": endpoint,
+      "queryParameters": queryParameters,
+      "data": data
+    };
     try {
       _dio.options.headers['Authorization'] =
           'Bearer ${ApiEndPoints.authToken}';
@@ -57,22 +74,28 @@ class ApiServices {
           data: data ?? '"' + data + '"', queryParameters: queryParameters);
       if (response.statusCode == 200) {
         ApiResponse apiResponse = ApiResponse<T>.fromJson(response.data);
+        logField.addAll({"response": response.toString()});
+        AppLogs.add(logField.toString());
         return apiResponse;
       } else {
         handleError({
           "status": response.statusCode!,
           "message": response.statusMessage ?? ""
         });
+        logField.addAll({"error": "error in response code"});
+        AppLogs.add(logField.toString());
       }
     } catch (e) {
-    //  handleError(e);
+      logField.addAll({"error": e.toString()});
+      AppLogs.add(logField.toString());
       log("error===>$endpoint");
     }
+    //  AppLogs.add(logField.toString());
     return null;
   }
 
   void handleError(dynamic e) {
-log("----->${e.toString()}");
+    log("----->${e.toString()}");
     if (e is DioException) {
       if (e.type == DioExceptionType.connectionTimeout ||
           e.type == DioExceptionType.sendTimeout ||
@@ -82,10 +105,10 @@ log("----->${e.toString()}");
           title: "Network Error",
           message: "Check your internet connection and try again.",
         );
-      }else if(e.type==DioExceptionType.badResponse){
+      } else if (e.type == DioExceptionType.badResponse) {
         showCoomonErrorDialog(
           title: "Error:",
-          message:e.response?.statusMessage ?? "Session e",
+          message: e.response?.statusMessage ?? "Session e",
         );
       } else {
         showCoomonErrorDialog(

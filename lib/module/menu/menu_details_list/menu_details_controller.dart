@@ -58,8 +58,8 @@ class MenuDetailsController extends GetxController {
     final database =
         await $FloorAppDatabase.databaseBuilder('app_database.db').build();
 
-    final personDao = database.menuDetailsDoa;
-    final person = MenuDetailsTable(
+    final menuDetailsDao = database.menuDetailsDoa;
+    final menuDetails = MenuDetailsTable(
       DateTime.now().day +
           DateTime.now().year +
           DateTime.now().month +
@@ -67,7 +67,7 @@ class MenuDetailsController extends GetxController {
       name,
       data,
     );
-    await personDao.insertGroupData(person);
+    await menuDetailsDao.insertGroupData(menuDetails);
   }
 
   Future<void> fetchAllMenu() async {

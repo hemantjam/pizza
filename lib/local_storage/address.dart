@@ -1,3 +1,4 @@
+/*
 import 'package:objectbox/objectbox.dart';
 
 @Entity()
@@ -16,3 +17,4 @@ class Address {
       required this.uid,
       required this.unitNUmber,});
 }
+*/

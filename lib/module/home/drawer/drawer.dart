@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pizza/constants/app_colors.dart';
+import 'package:pizza/utils/log.dart';
 
 class AppDrawer extends StatelessWidget {
   const AppDrawer({super.key});
@@ -49,6 +50,14 @@ class AppDrawer extends StatelessWidget {
                   Text('Contact Us', style: TextStyle(color: AppColors.black)),
               onTap: () {
                 // Handle contact navigation
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.share, color: AppColors.black),
+              title:
+                  Text('Share Log', style: TextStyle(color: AppColors.black)),
+              onTap: () {
+                AppLogs.shareLogFile();
               },
             ),
           ],

@@ -1,6 +1,7 @@
 import 'package:carousel_slider/carousel_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:pizza/module/cart/cart_page.dart';
 import 'package:pizza/module/offers/offer_view_all.dart';
 import 'package:pizza/module/user/login/login_controller.dart';
 
@@ -41,8 +42,9 @@ class HomeController extends GetxController {
   final List<Widget> pages = [
     const HomePage(),
     const OfferList(),
-    const Page(text: "half and half page will be here"),
+
     const Page(text: "quick orders will be here"),
+    const CartPage()
   ].obs;
 
   final RxInt currentIndex = 0.obs;

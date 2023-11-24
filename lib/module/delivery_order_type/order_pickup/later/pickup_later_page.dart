@@ -144,7 +144,8 @@ class PickUpLaterPage extends GetView<PickUpLaterController> {
           enable: !controller.isStoreOff.value,
           onTap: () {
             if (controller.formKey.currentState!.validate()) {
-              showCoomonErrorDialog(title: "Success", message: "Order Successful");
+              Get.back();
+              //showCoomonErrorDialog(title: "Success", message: "Order Successful");
               controller.formKey.currentState?.reset();
             }
           },

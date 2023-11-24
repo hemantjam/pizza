@@ -11,10 +11,10 @@ class MenuGroupCodeModel {
       status: json['status'],
       data: json['data'] != null
           ? Map<String, GroupModel>.from(
-              (json['data'] as Map<String, dynamic>).map(
-                (key, value) => MapEntry(key, GroupModel.fromJson(value)),
-              ),
-            )
+        (json['data'] as Map<String, dynamic>).map(
+              (key, value) => MapEntry(key, GroupModel.fromJson(value)),
+        ),
+      )
           : null,
     );
   }
@@ -33,11 +33,11 @@ class GroupModel {
           : null,
       items: json['items'] != null
           ? Map<String, RecipeDetailsModel>.from(
-              (json['items'] as Map<String, dynamic>).map(
-                (key, value) =>
-                    MapEntry(key, RecipeDetailsModel.fromJson(value)),
-              ),
-            )
+        (json['items'] as Map<String, dynamic>).map(
+              (key, value) =>
+              MapEntry(key, RecipeDetailsModel.fromJson(value)),
+        ),
+      )
           : null,
     );
   }
@@ -113,6 +113,7 @@ class RecipeDetailsModel {
   int? id;
   bool? stockAvailable;
   bool? isActive;
+  Dietary? dietary;
 
   RecipeDetailsModel({
     this.recipes,
@@ -127,51 +128,52 @@ class RecipeDetailsModel {
     this.id,
     this.stockAvailable,
     this.isActive,
+    this.dietary
     // Add other properties here
   });
 
   factory RecipeDetailsModel.fromJson(Map<String, dynamic> json) {
     return RecipeDetailsModel(
-      recipes:  json['recipes'] != null
-          ? (json['recipes'] as List<dynamic>).map(
-            (item) {
-          final Map<String, dynamic> recipeMap = item.values.first;
-          recipeMap['name'] = item.keys.first;
-          return RecipeModel.fromJson(recipeMap);
-        },
-      ).toList()
-          : null,
-      availableSizes: json['availableSizes'] != null
-          ? List<AvailableSizesModel>.from(
-              (json['availableSizes'] as List<dynamic>).map(
+        recipes: json['recipes'] != null
+            ? (json['recipes'] as List<dynamic>).map(
+              (item) {
+            final Map<String, dynamic> recipeMap = item.values.first;
+            recipeMap['name'] = item.keys.first;
+            return RecipeModel.fromJson(recipeMap);
+          },
+        ).toList()
+            : null,
+        availableSizes: json['availableSizes'] != null
+            ? List<AvailableSizesModel>.from(
+          (json['availableSizes'] as List<dynamic>).map(
                 (item) => AvailableSizesModel.fromJson(item),
-              ),
-            )
-          : null,
-      availableCategories: json['availableCategories'] != null
-          ? List<CategoryModel>.from(
-              (json['availableCategories'] as List<dynamic>).map(
+          ),
+        )
+            : null,
+        availableCategories: json['availableCategories'] != null
+            ? List<CategoryModel>.from(
+          (json['availableCategories'] as List<dynamic>).map(
                 (item) => CategoryModel.fromJson(item),
-              ),
-            )
-          : null,
-      name: json['name'],
-      shortName: json['shortName'],
-      isHnh: json['isHnh'],
-      isNew: json['isNew'],
-      image: json['image'],
-      ingredients: json['ingredients'],
-      id: json['id'],
-      stockAvailable: json['stockAvailable'],
-      isActive: json['isActive'],
-      // Add other property mappings
-    );
+          ),
+        )
+            : null,
+        name: json['name'],
+        shortName: json['shortName'],
+        isHnh: json['isHnh'],
+        isNew: json['isNew'],
+        image: json['image'],
+        ingredients: json['ingredients'],
+        id: json['id'],
+        stockAvailable: json['stockAvailable'],
+        isActive: json['isActive'],
+        dietary: json["dietary"] != null ? Dietary.fromJson(
+            json["dietary"]):null);
   }
 }
 
 class RecipeModel {
   AvailableSizesModel? size;
-  List< SauceModel>? sauce;
+  List<SauceModel>? sauce;
   List<BaseModel>? base;
   List<ToppingsModel>? toppings;
   ToppingsInfoModel? toppingsInfo;
@@ -198,11 +200,11 @@ class RecipeModel {
 
   factory RecipeModel.fromJson(Map<String, dynamic> json) {
     return RecipeModel(
-      size:json['Size'] != null
+      size: json['Size'] != null
           ? AvailableSizesModel.fromJson(json['Size'])
           : null,
 
-     /* size: json['data'] != null
+      /* size: json['data'] != null
           ? Map<String, GroupModel>.from(
         (json['data'] as Map<String, dynamic>).map(
               (key, value) => MapEntry(key, GroupModel.fromJson(value)),
@@ -211,14 +213,14 @@ class RecipeModel {
           : null,*/
 
 
-      sauce:  json['Sauce'] != null
+      sauce: json['Sauce'] != null
           ? List<SauceModel>.from(
         (json['Sauce'] as List<dynamic>).map(
               (item) => SauceModel.fromJson(item),
         ),
       )
           : null,
-      base:  json['Base'] != null
+      base: json['Base'] != null
           ? List<BaseModel>.from(
         (json['Base'] as List<dynamic>).map(
               (item) => BaseModel.fromJson(item),
@@ -227,10 +229,10 @@ class RecipeModel {
           : null,
       toppings: json['toppings'] != null
           ? List<ToppingsModel>.from(
-              (json['toppings'] as List<dynamic>).map(
-                (item) => ToppingsModel.fromJson(item),
-              ),
-            )
+        (json['toppings'] as List<dynamic>).map(
+              (item) => ToppingsModel.fromJson(item),
+        ),
+      )
           : null,
       toppingsInfo: json['toppingsInfo'] != null
           ? ToppingsInfoModel.fromJson(json['toppingsInfo'])
@@ -244,6 +246,7 @@ class RecipeModel {
     );
   }
 }
+
 class BaseModel {
   String? name;
   int? sortOrder;
@@ -386,6 +389,29 @@ class QuantityInfoModel {
     );
   }
 }
+
+class Dietary {
+  int? id;
+  String? symbol;
+  String? name;
+
+  Dietary({this.id, this.name, this.symbol});
+
+  factory Dietary.fromJson(Map<String, dynamic> json) {
+    return Dietary(
+      id: json['id'],
+      symbol: json['symbol'],
+      name: json['name'],
+    );
+  }
+} /*
+"dietary": {
+"symbol": "https://apis.pineapplepizza.com.au/POSLocalAPI/uploads/images/VLeld_medium_spicy.jpg",
+"name": "M Spicy",
+"id": 1
+},*/
+
+
 class SauceModel {
   String? name;
   bool? stockAvailable;

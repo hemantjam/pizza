@@ -3,9 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_blurhash/flutter_blurhash.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import 'package:pizza/constants/route_names.dart';
 import 'package:sizer/sizer.dart';
 
 import '../../../constants/assets.dart';
+import '../../delivery_order_type/delivery_order_type_optios.dart';
 import '../by_group_code/menu_by_group_code_model.dart';
 import '../menu_model.dart';
 import '../utils/calculate_tax.dart';
@@ -20,45 +22,49 @@ class AllMenuPage extends GetView<MenuDetailsController> {
       child: Scaffold(
         appBar: buildAppBar(),
         body: const MenuList(),
-        bottomNavigationBar: Container(
-          padding: const EdgeInsets.symmetric(vertical: 2),
-          height: 75,
-          decoration: BoxDecoration(color: Color(0xffEEEEEE)),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              ElevatedButton(
-                  style: buildStyleFrom(186, 44),
-                  onPressed: () {},
-                  child: Row(
-                    children: [
-                      Text(
-                        "1 item",
-                        style: buildButtonTextStyle(),
-                      ),
-                      const Spacer(),
-                      Text(
-                        " \$55",
-                        style: buildButtonTextStyle(),
-                      ),
-                    ],
-                  )),
-              ElevatedButton(
-                  style: buildStyleFrom(126, 44),
-                  onPressed: () {},
-                  child: Row(
-                    children: [
-                      Text(
-                        "Checkout",
-                        style: buildButtonTextStyle(),
-                      ),
-                      const Spacer(),
-                      const Icon(Icons.arrow_forward)
-                    ],
-                  )),
-            ],
-          ),
-        ),
+        bottomNavigationBar: buildBottomButton(),
+      ),
+    );
+  }
+
+  Container buildBottomButton() {
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 2),
+      height: 75,
+      decoration: const BoxDecoration(color: Color(0xffEEEEEE)),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
+          ElevatedButton(
+              style: buildStyleFrom(186, 44),
+              onPressed: () {},
+              child: Row(
+                children: [
+                  Text(
+                    "1 item",
+                    style: buildButtonTextStyle(),
+                  ),
+                  const Spacer(),
+                  Text(
+                    " \$55",
+                    style: buildButtonTextStyle(),
+                  ),
+                ],
+              )),
+          ElevatedButton(
+              style: buildStyleFrom(126, 44),
+              onPressed: () {},
+              child: Row(
+                children: [
+                  Text(
+                    "Checkout",
+                    style: buildButtonTextStyle(),
+                  ),
+                  const Spacer(),
+                  const Icon(Icons.arrow_forward)
+                ],
+              )),
+        ],
       ),
     );
   }
@@ -84,7 +90,9 @@ class AllMenuPage extends GetView<MenuDetailsController> {
       ),
       actions: [
         GestureDetector(
-          onTap: () {},
+          onTap: () {
+            Get.toNamed(RouteNames.cartPage);
+          },
           child: Padding(
             padding: const EdgeInsets.only(right: 10),
             child: SvgPicture.asset(
@@ -150,9 +158,10 @@ class MenuList extends GetView<MenuDetailsController> {
           .where((element) => element.value.webDisplay!)
           .map((e) {
         return controller.groupModelList.values.isEmpty
-            ? const SizedBox(
-                child: Center(child: Text("fetching data...")),
-              )
+            ? Center(
+                child: CircularProgressIndicator(
+                color: Colors.orange,
+              ))
             : MenuDetails(
                 image: controller.menuListModel[e.key].bigImage ?? "",
                 groupModel: controller.groupModelList.entries
@@ -292,14 +301,16 @@ class MenuItemDetails extends StatefulWidget {
 }
 
 class _MenuItemDetailsState extends State<MenuItemDetails> {
-  String? selectedItem;
+  String? selectedSize;
+  String? selectedBase;
   double basePrice = 0;
   double addOn = 0;
   double tax = 0;
+  int simpleIntInput = 0;
 
   @override
   void initState() {
-    selectedItem = widget.value.recipes?.first.size?.name;
+    selectedSize = widget.value.recipes?.first.size?.name;
     addOn = widget.value.recipes?.first.base?.first.addCost ?? 0;
     basePrice = widget.value.recipes?.first.basePrice ?? 0;
     tax = widget.value.recipes?.first.tax ?? 0;
@@ -309,20 +320,19 @@ class _MenuItemDetailsState extends State<MenuItemDetails> {
   @override
   Widget build(BuildContext context) {
     return Card(
-      margin: const EdgeInsets.all(8.0),
-      elevation: 10,
-      child: Padding(
-        padding: const EdgeInsets.only(bottom: 10),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            /// image
-            SizedBox(
-              height: 21.h,
-              child: Stack(
-                children: [
-                  CachedNetworkImage(
+      elevation: 5,
+      child: Column(
+        children: [
+          SizedBox(
+            height: 21.h,
+            child: Stack(
+              children: [
+                Container(
+                  decoration: BoxDecoration(
+                    color: Colors.black,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: CachedNetworkImage(
                     fit: BoxFit.cover,
                     imageUrl: widget.value.image ?? "",
                     placeholder: (context, url) => const SizedBox(
@@ -332,115 +342,120 @@ class _MenuItemDetailsState extends State<MenuItemDetails> {
                     height: 20.h,
                     width: 100.w,
                   ),
-                  Align(
+                ),
+                Align(
+                  alignment: Alignment.bottomCenter,
+                  child: widget.groupCode == "G1"
+                      ? Container(
+                          decoration: BoxDecoration(
+                            color: Colors.black,
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 10, vertical: 5),
+                          child: const Text(
+                            "Customize",
+                            style: TextStyle(color: Colors.white),
+                          ),
+                        )
+                      : const SizedBox(),
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 30),
+                  child: Align(
                     alignment: Alignment.bottomCenter,
-                    child: widget.groupCode == "G1"
-                        ? Container(
-                            decoration: BoxDecoration(
-                              color: Colors.black,
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 10, vertical: 5),
-                            child: const Text(
-                              "Customize",
-                              style: TextStyle(color: Colors.white),
-                            ),
-                          )
-                        : const SizedBox(),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 30),
-                    child: Align(
-                      alignment: Alignment.bottomCenter,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          /// is new flag
-                          widget.value.isNew != null && widget.value.isNew!
-                              ? Container(
-                                  decoration: BoxDecoration(
-                                    color: Colors.black,
-                                    borderRadius: BorderRadius.circular(20),
-                                  ),
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 10, vertical: 5),
-                                  child: const Text(
-                                    "New",
-                                    style: TextStyle(color: Colors.white),
-                                  ),
-                                )
-                              : const SizedBox(),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        /// is new flag
+                        widget.value.isNew != null && widget.value.isNew!
+                            ? Icon(
+                                Icons.star,
+                                color: Colors.orange,
+                                size: 35,
+                              )
+                            : const SizedBox(),
 
-                          /// spicy flag
-                          widget.value.dietary != null
-                              ? Image.network(
-                                  widget.value.dietary?.symbol ?? "",
-                                  height: 35.sp,
-                                  width: 35.sp,
-                                )
-                              : const SizedBox(),
-                        ],
-                      ),
+                        /// spicy flag
+                        widget.value.dietary != null
+                            ? Image.network(
+                                widget.value.dietary?.symbol ?? "",
+                                height: 35.sp,
+                                width: 35.sp,
+                              )
+                            : const SizedBox(),
+                      ],
                     ),
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
-            const SizedBox(height: 10),
-
-            /// name , price , base, size
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Flexible(
-                        child: Text(
-                          widget.value.name ?? "",
-                          style: TextStyle(fontSize: 18.sp),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
-                      Text(
-                        "\$${calculateTotalPrice(basePrice, addOn, tax)}",
-                        style: TextStyle(fontSize: 18.sp, color: Colors.orange),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                /// name , price , base, size
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Flexible(
+                      child: Text(
+                        widget.value.name ?? "",
+                        style: TextStyle(fontSize: 18.sp),
                         maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                       ),
-                    ],
-                  ),
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  Text(
-                    widget.value.ingredients ?? "",
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  const SizedBox(height: 20),
-                  widget.value.recipes != null
-                      ? SizedBox(
-                          child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            widget.value.recipes != null &&
-                                    widget.value.recipes?.first.size != null
-                                ? Column(
-                                    mainAxisSize: MainAxisSize.min,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text("Pizza Size", style: titleStyle()),
-                                      DropdownButton<String>(
-                                        value: selectedItem,
+                    ),
+                    Text(
+                      "\$${calculateTotalPrice(basePrice, addOn, tax)}",
+                      style: TextStyle(fontSize: 18.sp, color: Colors.orange),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 10),
+                Text(
+                  widget.value.ingredients ?? "",
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                const SizedBox(height: 10),
+                widget.value.recipes != null
+                    ? Row(
+                        mainAxisAlignment: widget.value.recipes != null &&
+                                widget.value.recipes?.first.size != null
+                            ? MainAxisAlignment.spaceBetween
+                            : MainAxisAlignment.start,
+                        children: [
+                          widget.value.recipes != null &&
+                                  widget.value.recipes?.first.size != null
+                              ? Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text("Pizza Size", style: titleStyle()),
+                                    const SizedBox(
+                                      height: 5,
+                                    ),
+                                    Container(
+                                      decoration: BoxDecoration(
+                                          border: Border.all(
+                                              width: 0.5, color: Colors.black)),
+                                      child: DropdownButton<String>(
+                                        underline: const SizedBox(),
+                                        elevation: 0,
+                                        borderRadius: BorderRadius.zero,
+                                        padding: const EdgeInsets.all(5),
+                                        isDense: true,
+                                        value: selectedSize,
                                         onChanged: (String? newValue) {
                                           if (newValue != null) {
                                             setState(() {
-                                              selectedItem = newValue;
+                                              selectedSize = newValue;
                                               basePrice = widget.value.recipes!
                                                       .where((element) =>
                                                           element.size?.name ==
@@ -457,79 +472,102 @@ class _MenuItemDetailsState extends State<MenuItemDetails> {
                                                       ?.first
                                                       .addCost ??
                                                   0.0;
+                                              selectedBase = null;
                                             });
                                           }
                                         },
                                         items: widget.value.recipes!
-                                            .map((e) =>
-                                                DropdownMenuItem<String>(
-                                                  value: e.size?.name ?? "",
-                                                  child:
-                                                      Text(e.size?.name ?? ""),
-                                                ))
+                                            .map(
+                                                (e) => DropdownMenuItem<String>(
+                                                      value: e.size?.name ?? "",
+                                                      child: SizedBox(
+                                                        width: 35.w,
+                                                        child: Text(
+                                                          e.size?.name ?? "",
+                                                          overflow: TextOverflow
+                                                              .ellipsis,
+                                                          maxLines: 1,
+                                                        ),
+                                                      ),
+                                                    ))
                                             .toList(),
-                                      )
-                                    ],
-                                  )
-                                : const SizedBox(),
-                            widget.value.recipes != null &&
-                                    widget.value.recipes?.first.size != null
-                                ? BaseSelection(
-                                    onSelect: (d) {
-                                      setState(() {
-                                        addOn = d;
-                                      });
-                                    },
-                                    //  name: "Base",
-                                    sizes: widget.value.recipes!
-                                        .where((element) =>
-                                            element.size?.name == selectedItem)
-                                        .map((e) => e.base)
-                                        .expand<BaseModel?>(
-                                            (bases) => bases ?? [])
-                                        .toList(),
-                                  )
-                                : BaseSelection(
-                                    onSelect: (d) {
-                                      setState(() {
-                                        addOn = d;
-                                      });
-                                    },
-                                    sizes:
-                                        widget.value.recipes?.first.base ?? [],
-                                  ),
-                          ],
-                        ))
-                      : const SizedBox(),
-                  Text("Quantity", style: titleStyle()),
-                ],
-              ),
-            ),
+                                      ),
+                                    )
+                                  ],
+                                )
+                              : const SizedBox.shrink(),
+                          widget.value.recipes != null &&
+                                  widget.value.recipes?.first.size != null
+                              ? BaseSelection(
+                                  onSelect: (d, item) {
+                                    setState(() {
+                                      addOn = d;
+                                      selectedBase = item;
+                                    });
+                                  },
+                                  sizes: widget.value.recipes!
+                                      .where((element) =>
+                                          element.size?.name == selectedSize)
+                                      .map((e) => e.base)
+                                      .expand<BaseModel?>(
+                                          (bases) => bases ?? [])
+                                      .toList(),
+                                  selectedBase: selectedBase,
+                                )
+                              : BaseSelection(
+                                  onSelect: (addon, item) {
+                                    setState(() {
+                                      addOn = addon;
+                                      selectedBase = item;
+                                    });
+                                  },
+                                  sizes: widget.value.recipes?.first.base ?? [],
+                                  selectedBase: selectedBase,
+                                ),
+                        ],
+                      )
+                    : const SizedBox.shrink(),
+                const SizedBox(height: 10),
 
-            /// quantity , add to cart
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                const Row(
+                /// quantity , add to cart
+                Text("Quantity", style: titleStyle()),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    QuantityItem(text: "-"),
-                    QuantityItem(text: "1"),
-                    QuantityItem(text: "+"),
+                    const QuantitySelector(),
+
+                    /// add to cart
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        elevation: 1,
+                        padding: const EdgeInsets.symmetric(horizontal: 50),
+                      ),
+                      onPressed: () {
+                        showModalBottomSheet(
+                            useSafeArea: true,
+                            shape: const RoundedRectangleBorder(
+                                borderRadius: BorderRadius.only(
+                                    topLeft: Radius.circular(20),
+                                    topRight: Radius.circular(20))),
+                            showDragHandle: true,
+                            context: context,
+                            builder: (context) {
+                              return const Padding(
+                                padding: EdgeInsets.only(bottom: 10),
+                                child: OrderDeliveryTypeOption(
+                                  elevation: 0,
+                                ),
+                              );
+                            });
+                      },
+                      child: const Text("Add To Cart"),
+                    ),
                   ],
-                ),
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    elevation: 1,
-                    padding: const EdgeInsets.symmetric(horizontal: 50),
-                  ),
-                  onPressed: () {},
-                  child: const Text("Add To Cart"),
                 ),
               ],
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
@@ -538,32 +576,55 @@ class _MenuItemDetailsState extends State<MenuItemDetails> {
 /// base selection
 class BaseSelection extends StatelessWidget {
   final List<BaseModel?> sizes;
-  final Function(double) onSelect;
+  final Function(double, String?) onSelect;
+  final String? selectedBase;
 
-  const BaseSelection({Key? key, required this.sizes, required this.onSelect})
+  const BaseSelection(
+      {Key? key,
+      required this.sizes,
+      required this.onSelect,
+      required this.selectedBase})
       : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    String? selectedItem = "";
-    return SizedBox(
-      child: sizes.isNotEmpty
-          ? Row(
-              children: [
-                Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      "Base",
-                      style: titleStyle(),
-                    ),
-                    StatefulBuilder(
-                      builder: (BuildContext context, StateSetter setState) {
-                        if (selectedItem == "") {
-                          selectedItem = sizes.first!.name!;
-                        }
-                        return DropdownButton<String>(
+    return sizes.isNotEmpty
+        ? Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    "Base",
+                    style: titleStyle(),
+                  ),
+                  const SizedBox(
+                    height: 5,
+                  ),
+                  StatefulBuilder(
+                    builder: (BuildContext context, StateSetter setState) {
+                      String? selectedItem = selectedBase;
+
+                      if (selectedBase == null) {
+                        selectedItem = sizes.first!.name!;
+                      }
+                      if (sizes
+                          .any((element) => element!.name == selectedBase)) {
+                        selectedItem = selectedBase;
+                      } else {
+                        selectedItem = sizes.first!.name!;
+                      }
+                      return Container(
+                        decoration: BoxDecoration(
+                            border:
+                                Border.all(width: 0.5, color: Colors.black)),
+                        child: DropdownButton<String>(
+                          underline: const SizedBox(),
+                          elevation: 0,
+                          padding: const EdgeInsets.all(5),
+                          isDense: true,
                           value: selectedItem,
                           onChanged: (String? newValue) {
                             if (newValue != null) {
@@ -571,50 +632,37 @@ class BaseSelection extends StatelessWidget {
                                 selectedItem = newValue;
                               });
                             }
-                            onSelect(sizes
-                                    .firstWhere((element) =>
-                                        element?.name == selectedItem &&
-                                        element?.addCost != null)
-                                    ?.addCost ??
-                                0.0);
+                            onSelect(
+                              sizes
+                                      .firstWhere((element) =>
+                                          element?.name == selectedItem &&
+                                          element?.addCost != null)
+                                      ?.addCost ??
+                                  0.0,
+                              selectedItem,
+                            );
                           },
                           items: sizes
                               .map((e) => DropdownMenuItem<String>(
                                     value: e?.name ?? "",
-                                    child: Text(e?.name ?? ""),
+                                    child: SizedBox(
+                                        width: 35.w,
+                                        child: Text(
+                                          e?.name ?? "",
+                                          overflow: TextOverflow.ellipsis,
+                                          maxLines: 1,
+                                        )),
                                   ))
                               .toList(),
-                        );
-                      },
-                    ),
-                  ],
-                ),
-              ],
-            )
-          : const SizedBox(),
-    );
-  }
-}
-
-/// quantity
-class QuantityItem extends GetView<MenuDetailsController> {
-  final String text;
-
-  const QuantityItem({Key? key, required this.text}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(5),
-      margin: const EdgeInsets.all(5),
-      alignment: Alignment.center,
-      height: 30,
-      width: 30,
-      decoration: BoxDecoration(
-        border: Border.all(color: Colors.black, width: 1),
-      ),
-      child: Text(text),
-    );
+                        ),
+                      );
+                    },
+                  ),
+                ],
+              ),
+            ],
+          )
+        : const SizedBox();
   }
 }
 
@@ -646,7 +694,7 @@ Widget headerDesign(String image, List<String>? categories, String code) {
                         border: Border.all(color: Colors.orange, width: 5)),
                     child: image.isNotEmpty
                         ? SvgPicture.network(
-                            image ?? "",
+                            image,
                             fit: BoxFit.contain,
                             height: 36.sp,
                             width: 36.sp,
@@ -710,4 +758,82 @@ Widget headerDesign(String image, List<String>? categories, String code) {
       ],
     ),
   );
+}
+
+class QuantitySelector extends StatefulWidget {
+  const QuantitySelector({super.key});
+
+  @override
+  QuantitySelectorState createState() => QuantitySelectorState();
+}
+
+class QuantitySelectorState extends State<QuantitySelector> {
+  int quantity = 1;
+
+  void increaseQuantity() {
+    setState(() {
+      quantity++;
+    });
+  }
+
+  void decreaseQuantity() {
+    if (quantity > 1) {
+      setState(() {
+        quantity--;
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        GestureDetector(
+            onTap: decreaseQuantity,
+            child: _buildButton(
+              "-",
+            )),
+        _buildText(quantity.toString()),
+        GestureDetector(
+            onTap: increaseQuantity,
+            child: _buildButton(
+              "+",
+            )),
+      ],
+    );
+  }
+
+  Widget _buildButton(String text) {
+    return Container(
+      height: 4.h,
+      width: 10.w,
+      decoration: BoxDecoration(
+        border: Border.all(color: Colors.black, width: 1),
+      ),
+      child: Center(
+        child: Text(
+          text,
+          style: const TextStyle(fontSize: 20),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildText(String text) {
+    return Container(
+      alignment: Alignment.center,
+      height: 4.h,
+      width: 10.w,
+      decoration: const BoxDecoration(
+        border: Border.symmetric(
+            horizontal: BorderSide(color: Colors.black, width: 1)),
+      ),
+      child: Center(
+        child: Text(
+          text,
+          style: const TextStyle(fontSize: 16),
+        ),
+      ),
+    );
+  }
 }

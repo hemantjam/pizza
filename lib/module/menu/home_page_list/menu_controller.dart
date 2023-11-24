@@ -2,7 +2,6 @@ import 'package:get/get.dart';
 import 'package:pizza/module/menu/menu_repository.dart';
 
 import '../by_group_code/menu_by_group_code_model.dart';
-import '../menu_details_list/menu_details_controller.dart';
 import '../menu_model.dart';
 
 class OutletMenuController extends GetxController {

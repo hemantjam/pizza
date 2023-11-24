@@ -1,4 +1,6 @@
 import 'package:get/get.dart';
+import 'package:pizza/module/cart/cart_binding.dart';
+import 'package:pizza/module/cart/cart_page.dart';
 import 'package:pizza/module/delivery_order_type/order_pickup/later/pickup_later_binding.dart';
 import 'package:pizza/module/delivery_order_type/order_pickup/now/pickup_now_binding.dart';
 import 'package:pizza/module/delivery_order_type/order_pickup/order_pick_up_binding.dart';
@@ -87,6 +89,13 @@ class RouteGenerator {
       binding: RegisterBinding(),
     ),
 
+    /// cart
+    GetPage(
+      name: RouteNames.cartPage,
+      page: () => const CartPage(),
+      binding: CartBinding(),
+    ),
+
     /// MainPage
     GetPage(
       name: RouteNames.homePage,
@@ -103,10 +112,9 @@ class RouteGenerator {
 
     /// pizza menu page
     GetPage(
-      name: RouteNames.pizzaMenuPage,
-      page: () => const AllMenuPage(),
-      binding: MenuDetailsBinding(),
-      arguments: Get.arguments
-    )
+        name: RouteNames.pizzaMenuPage,
+        page: () => const AllMenuPage(),
+        binding: MenuDetailsBinding(),
+        arguments: Get.arguments)
   ];
 }

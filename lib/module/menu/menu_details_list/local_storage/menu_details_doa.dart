@@ -2,7 +2,6 @@
 
 import 'package:floor/floor.dart';
 
-import '../all_menu_page.dart';
 import 'menu_details.dart';
 @dao
 abstract class MenuDetailsDoa {

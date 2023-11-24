@@ -6,15 +6,16 @@ import '../../constants/assets.dart';
 import '../../constants/route_names.dart';
 
 class OrderDeliveryTypeOption extends StatelessWidget {
-  const OrderDeliveryTypeOption({super.key});
+ final  double? elevation;
+   const OrderDeliveryTypeOption({super.key,this.elevation});
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: EdgeInsets.symmetric(horizontal: 2.w),
+      margin: EdgeInsets.symmetric(horizontal: 1.w),
       child: IntrinsicHeight(
         child: Card(
-          elevation: 5,
+          elevation: elevation??5,
           child: Row(
             children: <Widget>[
               Expanded(
