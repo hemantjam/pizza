@@ -227,9 +227,9 @@ class RecipeModel {
         ),
       )
           : null,
-      toppings: json['toppings'] != null
+      toppings: json['Toppings'] != null
           ? List<ToppingsModel>.from(
-        (json['toppings'] as List<dynamic>).map(
+        (json['Toppings'] as List<dynamic>).map(
               (item) => ToppingsModel.fromJson(item),
         ),
       )

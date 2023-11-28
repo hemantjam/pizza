@@ -7,6 +7,7 @@ import 'package:sizer/sizer.dart';
 import '../../../constants/assets.dart';
 import '../../delivery_order_type/delivery_order_type_optios.dart';
 import '../by_group_code/menu_by_group_code_model.dart';
+import '../menu_details_list/all_menu_page.dart';
 import '../utils/calculate_tax.dart';
 import 'customize_controller.dart';
 
@@ -37,84 +38,92 @@ class CustomizePizzaPage extends GetView<CustomizePizzaController> {
               color: Colors.grey,
               thickness: 1,
             ),
-            Text(
-              "Selected Toppings",
-              style: TextStyle(fontSize: 18.sp),
+            Obx(
+              () => _buildToppingsList(
+                  controller.allToppings.where((p0) => p0.isSelected).toList(),
+                  onTap: (ToppingsSelection toppings) {
+                controller.addTopping(toppings);
+              },
+                  title: "Selected Toppings",
+                  subtitle:
+                      "you can add upto ${controller.recipeModel.value?.toppingsInfo?.toppings?.maximumQuantity?.toStringAsFixed(0)} toppings"),
             ),
-
-            Obx(() {
-              return Text(
-                "you can add upto ${controller.recipeModel.value?.toppingsInfo?.toppings?.maximumQuantity?.toStringAsFixed(0)} toppings",
-                style: TextStyle(fontSize: 14.sp, color: Colors.grey),
-              );
-            }),
+            const Divider(color: Colors.grey, thickness: 1),
+            Obx(() => _buildToppingsList(
+                    controller.allToppings
+                        .where((p0) => !p0.isSelected)
+                        .toList(), onTap: (ToppingsSelection toppings) {
+                  controller.addTopping(toppings);
+                },
+                    title: "Available Toppings",
+                    subtitle: "Please select from Toppings list")),
             const Divider(
               color: Colors.grey,
               thickness: 1,
             ),
-            /*  Obx(() => _buildToppingsList(
-                "Selected Toppings", controller.recipeDetailsModel.recipes)),
-            */
-            Obx(() => _buildToppingsList(
-                    "Available Toppings", controller.recipeModel.value?.toppings,
-                    onTap: (Topping topping) {
-                  controller.addTopping(topping);
-                })),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildToppingsList(String title, List<ToppingsModel>? toppings,
-      {Function(Topping)? onTap}) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.start,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          title,
-          style: TextStyle(fontSize: 18.sp),
-        ),
-        ListView.builder(
-          shrinkWrap: true,
-          itemCount: toppings?.length,
-          itemBuilder: (context, index) {
-            return ListTile(
-              title: Text(toppings?[index].name??""),
-              onTap: () {
-                if (onTap != null) {
-                 // onTap(toppings?[index]??0);
-                }
+  Widget _buildToppingsList(List<ToppingsSelection>? toppings,
+      {required Function(ToppingsSelection) onTap,
+      required String title,
+      required String subtitle}) {
+    Map<int, int?> selectedQuantities = {}; // Map to store selected quantities
+
+    return ExpansionTile(
+      initiallyExpanded: true,
+      title: Text(
+        title,
+        style: TextStyle(fontSize: 18.sp, color: Colors.black),
+      ),
+      subtitle: Text(
+        subtitle,
+        style: TextStyle(fontSize: 14.sp, color: Colors.grey),
+      ),
+      children: toppings?.asMap().entries.map((e) {
+            return StatefulBuilder(
+              builder: (BuildContext context, StateSetter setState) {
+                return ListTile(
+                  title: Text(toppings[e.key].toppingName ?? ""),
+                  trailing: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: List.generate(
+                      int.parse(e.value.maximumQuantity.toStringAsFixed(0)),
+                      (index) => Radio(
+                        toggleable: true,
+                        value: index,
+                        groupValue:
+                            selectedQuantities[toppings[e.key].toppingId] ??
+                                toppings[e.key].selectedQuantity,
+                        onChanged: (value) {
+                          setState(() {
+                            selectedQuantities[toppings[e.key].toppingId!] =
+                                value;
+                          });
+                          controller.addTopping(ToppingsSelection(
+                            addCost: toppings[e.key].addCost,
+                            maximumQuantity: toppings[e.key].maximumQuantity,
+                            isSelected:
+                                selectedQuantities[toppings[e.key].toppingId] !=
+                                    null,
+                            toppingName: toppings[e.key].toppingName,
+                            toppingId: toppings[e.key].toppingId,
+                            selectedQuantity:
+                                selectedQuantities[toppings[e.key].toppingId] ??
+                                    toppings[e.key].selectedQuantity,
+                          ));
+                        },
+                      ),
+                    ),
+                  ),
+                );
               },
-              trailing: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Radio(
-                    value: 1,
-                    groupValue: 1,
-                    onChanged: (_) {
-                    /*  if (toppings[index].minQuantity == 1) {
-                       // onTap?.call(toppings[index]);
-                      }*/
-                    },
-                  ),
-                  const Radio(
-                    value: 2,
-                    groupValue: 1,
-                    onChanged: null,
-                  ),
-                  const Radio(
-                    value: 3,
-                    groupValue: 1,
-                    onChanged: null,
-                  ),
-                ],
-              ),
             );
-          },
-        ),
-      ],
+          }).toList() ??
+          [],
     );
   }
 }
@@ -132,6 +141,7 @@ class ItemDetails extends StatefulWidget {
 }
 
 class _ItemDetailsState extends State<ItemDetails> {
+  CustomizePizzaController controller = Get.find<CustomizePizzaController>();
   String? selectedSize;
   String? selectedBase;
   double basePrice = 0;
@@ -145,7 +155,8 @@ class _ItemDetailsState extends State<ItemDetails> {
     RecipeModel? recipeModel = widget.value.recipes
         ?.where((element) => element.size?.name == "$selectedSize")
         .first;
-    //widget.getRecipe!(recipeModel);
+
+    widget.getRecipe!(recipeModel);
     addOn = widget.value.recipes?.first.base?.first.addCost ?? 0;
     basePrice = widget.value.recipes?.first.basePrice ?? 0;
     tax = widget.value.recipes?.first.tax ?? 0;
@@ -170,42 +181,11 @@ class _ItemDetailsState extends State<ItemDetails> {
                   imageUrl: widget.value.image ?? "",
                   placeholder: (context, url) => const SizedBox(
                       child: BlurHash(hash: Assets.homeBannerBlur)),
-                  errorWidget: (context, url, error) =>
-                      const Icon(Icons.error),
+                  errorWidget: (context, url, error) => const Icon(Icons.error),
                   height: 25.h,
                   width: 100.w,
                 ),
               ),
-
-              /// flags
-              /*  Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 30),
-                child: Align(
-                  alignment: Alignment.bottomCenter,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      /// is new flag
-                      widget.value.isNew != null && widget.value.isNew!
-                          ? const Icon(
-                              Icons.star,
-                              color: Colors.orange,
-                              size: 35,
-                            )
-                          : const SizedBox(),
-
-                      /// spicy flag
-                      widget.value.dietary != null
-                          ? Image.network(
-                              widget.value.dietary?.symbol ?? "",
-                              height: 35.sp,
-                              width: 35.sp,
-                            )
-                          : const SizedBox(),
-                    ],
-                  ),
-                ),
-              ),*/
             ],
           ),
         ),
@@ -227,12 +207,14 @@ class _ItemDetailsState extends State<ItemDetails> {
                       overflow: TextOverflow.ellipsis,
                     ),
                   ),
-                  Text(
-                    "\$${calculateTotalPrice(basePrice, addOn, tax)}",
-                    style: TextStyle(fontSize: 18.sp, color: Colors.orange),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
+                  Obx(() {
+                    return Text(
+                      "\$${int.parse(calculateTotalPrice(basePrice, addOn, tax)) + controller.allToppings.where((element) => element.isSelected).fold(0, (sum, topping) => sum + topping.addCost.toInt()).ceil()}",
+                      style: TextStyle(fontSize: 18.sp, color: Colors.orange),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    );
+                  }),
                 ],
               ),
               const SizedBox(height: 10),
@@ -301,19 +283,18 @@ class _ItemDetailsState extends State<ItemDetails> {
                                         }
                                       },
                                       items: widget.value.recipes!
-                                          .map(
-                                              (e) => DropdownMenuItem<String>(
-                                                    value: e.size?.name ?? "",
-                                                    child: SizedBox(
-                                                      width: 35.w,
-                                                      child: Text(
-                                                        e.size?.name ?? "",
-                                                        overflow: TextOverflow
-                                                            .ellipsis,
-                                                        maxLines: 1,
-                                                      ),
-                                                    ),
-                                                  ))
+                                          .map((e) => DropdownMenuItem<String>(
+                                                value: e.size?.name ?? "",
+                                                child: SizedBox(
+                                                  width: 35.w,
+                                                  child: Text(
+                                                    e.size?.name ?? "",
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                    maxLines: 1,
+                                                  ),
+                                                ),
+                                              ))
                                           .toList(),
                                     ),
                                   )
@@ -333,8 +314,7 @@ class _ItemDetailsState extends State<ItemDetails> {
                                     .where((element) =>
                                         element.size?.name == selectedSize)
                                     .map((e) => e.base)
-                                    .expand<BaseModel?>(
-                                        (bases) => bases ?? [])
+                                    .expand<BaseModel?>((bases) => bases ?? [])
                                     .toList(),
                                 selectedBase: selectedBase,
                               )
@@ -395,7 +375,7 @@ class _ItemDetailsState extends State<ItemDetails> {
 }
 
 /// base selection
-class BaseSelection extends StatelessWidget {
+/*class BaseSelection extends StatelessWidget {
   final List<BaseModel?> sizes;
   final Function(double, String?) onSelect;
   final String? selectedBase;
@@ -485,10 +465,10 @@ class BaseSelection extends StatelessWidget {
           )
         : const SizedBox();
   }
-}
+}*/
 
-TextStyle titleStyle() => TextStyle(color: Colors.blue.shade900, fontSize: 18);
-
+//TextStyle titleStyle() => TextStyle(color: Colors.blue.shade900, fontSize: 18);
+/*
 class QuantitySelector extends StatefulWidget {
   const QuantitySelector({super.key});
 
@@ -565,4 +545,4 @@ class QuantitySelectorState extends State<QuantitySelector> {
       ),
     );
   }
-}
+}*/

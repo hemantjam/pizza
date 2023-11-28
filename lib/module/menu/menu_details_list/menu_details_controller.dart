@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:developer';
 
 import 'package:get/get.dart';
 import 'package:pizza/api/api_response.dart';
@@ -14,7 +13,7 @@ import 'local_storage/menu_details_database.dart';
 
 class MenuDetailsController extends GetxController {
   RxMap<String, GroupModel> groupModelList = <String, GroupModel>{}.obs;
-
+  MenuGroupCodeModel buildYourPizzaModel=MenuGroupCodeModel();
   final ApiServices _apiServices = ApiServices();
   RxList<MenuListModel> menuListModel = <MenuListModel>[].obs;
 
@@ -27,8 +26,23 @@ class MenuDetailsController extends GetxController {
     menuListModel.where((p0) => p0.webDisplay!);
     super.onInit();
     checkForOfflineData();
+buildYourPizza();
   }
-
+buildYourPizza()async{
+  var data = {
+    "groupCodes": ["G8"],
+    "outletCode": "RJT01",
+    "systemCode": "PIZZAPORTAL"
+  };
+  ApiResponse? res =
+  await _apiServices.postRequest(ApiEndPoints.getMenuByCode, data: data);
+  if (res != null && res.status) {
+    buildYourPizzaModel=MenuGroupCodeModel.fromJson(res.toJson());
+  } else {
+    showCoomonErrorDialog(title: "Error", message: res?.message ?? "");
+  }
+  return null;
+}
   checkForOfflineData() async {
     AppDatabase? database =
         await $FloorAppDatabase.databaseBuilder('app_database.db').build();
@@ -36,7 +50,6 @@ class MenuDetailsController extends GetxController {
     if (!database.isBlank!) {
       final personDao = database.menuDetailsDoa;
       List<MenuDetailsTable> result = await personDao.findAllMenuDetails();
-      log("----->result-->${result.length}");
       if (result.isEmpty) {
         await fetchAllMenu();
       } else {
@@ -74,7 +87,6 @@ class MenuDetailsController extends GetxController {
     if (menuListModel.isNotEmpty) {
       menuListModel.removeWhere((element) => !element.webDisplay!);
       await Future.wait(menuListModel.map((element) async {
-        log("----->${element.name}");
         ApiResponse? res = await getMenu(element.code!);
         await createDatabase(
             element.code!, jsonEncode(res!.data[element.code!]).toString());

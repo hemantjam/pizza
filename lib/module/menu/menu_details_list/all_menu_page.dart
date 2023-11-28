@@ -234,10 +234,11 @@ class MenuDetails extends GetView<MenuDetailsController> {
         return Column(
           children: [
             headerDesign(
-              image,
-              categorizedRecipes.entries.map((e) => e.key).toList(),
-              groupModel.group?.itemGroupCode ?? "",
-            ),
+                image,
+                categorizedRecipes.entries.map((e) => e.key).toList(),
+                groupModel.group?.itemGroupCode ?? "",
+                controller.buildYourPizzaModel.data?.entries.first.value.items
+                    ?.values.first),
             categorizedRecipes.isEmpty
                 ? Column(
                     children: groupModel.items != null
@@ -674,7 +675,8 @@ class BaseSelection extends StatelessWidget {
 
 TextStyle titleStyle() => TextStyle(color: Colors.blue.shade900, fontSize: 18);
 
-Widget headerDesign(String image, List<String>? categories, String code) {
+Widget headerDesign(String image, List<String>? categories, String code,
+    RecipeDetailsModel? recipeDetailsModel) {
   return Container(
     height: 12.h,
     color: Colors.white,
@@ -738,11 +740,17 @@ Widget headerDesign(String image, List<String>? categories, String code) {
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                SvgPicture.asset(
-                                  Assets.bottomBuildYourPizza,
-                                  height: 26.sp,
-                                  width: 26.sp,
-                                  color: Colors.black,
+                                GestureDetector(
+                                  onTap: () {
+                                    Get.toNamed(RouteNames.customizePizza,
+                                        arguments: recipeDetailsModel??RecipeDetailsModel());
+                                  },
+                                  child: SvgPicture.asset(
+                                    Assets.bottomBuildYourPizza,
+                                    height: 26.sp,
+                                    width: 26.sp,
+                                    color: Colors.black,
+                                  ),
                                 ),
                                 SvgPicture.asset(
                                   Assets.bottomHalfHalf,
