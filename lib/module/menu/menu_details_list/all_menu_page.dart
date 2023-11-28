@@ -158,7 +158,7 @@ class MenuList extends GetView<MenuDetailsController> {
           .where((element) => element.value.webDisplay!)
           .map((e) {
         return controller.groupModelList.values.isEmpty
-            ? Center(
+            ? const Center(
                 child: CircularProgressIndicator(
                 color: Colors.orange,
               ))
@@ -343,22 +343,28 @@ class _MenuItemDetailsState extends State<MenuItemDetails> {
                     width: 100.w,
                   ),
                 ),
-                Align(
-                  alignment: Alignment.bottomCenter,
-                  child: widget.groupCode == "G1"
-                      ? Container(
-                          decoration: BoxDecoration(
-                            color: Colors.black,
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 10, vertical: 5),
-                          child: const Text(
-                            "Customize",
-                            style: TextStyle(color: Colors.white),
-                          ),
-                        )
-                      : const SizedBox(),
+                GestureDetector(
+                  onTap: () {
+                    Get.toNamed(RouteNames.customizePizza,
+                        arguments: widget.value);
+                  },
+                  child: Align(
+                    alignment: Alignment.bottomCenter,
+                    child: widget.groupCode == "G1"
+                        ? Container(
+                            decoration: BoxDecoration(
+                              color: Colors.black,
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 10, vertical: 5),
+                            child: const Text(
+                              "Customize",
+                              style: TextStyle(color: Colors.white),
+                            ),
+                          )
+                        : const SizedBox(),
+                  ),
                 ),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 30),
@@ -369,7 +375,7 @@ class _MenuItemDetailsState extends State<MenuItemDetails> {
                       children: [
                         /// is new flag
                         widget.value.isNew != null && widget.value.isNew!
-                            ? Icon(
+                            ? const Icon(
                                 Icons.star,
                                 color: Colors.orange,
                                 size: 35,

@@ -5,6 +5,7 @@ import 'package:pizza/module/delivery_order_type/order_pickup/later/pickup_later
 import 'package:pizza/module/delivery_order_type/order_pickup/now/pickup_now_binding.dart';
 import 'package:pizza/module/delivery_order_type/order_pickup/order_pick_up_binding.dart';
 import 'package:pizza/module/home/home_binding.dart';
+import 'package:pizza/module/menu/customize/customize_page.dart';
 import 'package:pizza/module/menu/home_page_list/menu_binding.dart';
 import 'package:pizza/module/offers/offer_binding.dart';
 import 'package:pizza/module/offers/offer_view_all.dart';
@@ -21,6 +22,7 @@ import 'module/delivery_order_type/order_delivery/order_delivery_options_page.da
 import 'module/delivery_order_type/order_pickup/order_pickup_options_page.dart';
 import 'module/geography/all_active_binding.dart';
 import 'module/home/main_page.dart';
+import 'module/menu/customize/customize_binding.dart';
 import 'module/menu/menu_details_list/all_menu_page.dart';
 import 'module/menu/menu_details_list/menu_details_binding.dart';
 import 'module/outlet_details/outlet/outlet_binding.dart';
@@ -87,6 +89,14 @@ class RouteGenerator {
       name: RouteNames.register,
       page: () => const RegisterPage(),
       binding: RegisterBinding(),
+    ),
+
+    /// customize pizza
+    GetPage(
+      name: RouteNames.customizePizza,
+      page: () => CustomizePizzaPage(),
+      binding: CustomizePizzaBinding(),
+        arguments: Get.arguments
     ),
 
     /// cart
