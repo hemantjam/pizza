@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_blurhash/flutter_blurhash.dart';
@@ -276,7 +274,7 @@ Widget categoryTile(
     title: Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-       // Icon(Icons.keyboard_arrow_down, size: 22.sp),
+        // Icon(Icons.keyboard_arrow_down, size: 22.sp),
         const SizedBox(width: 5),
         Text(
           category,
@@ -284,7 +282,7 @@ Widget categoryTile(
         ),
       ],
     ),
-   // trailing: Text(children.length.toString()),
+    // trailing: Text(children.length.toString()),
     children: children
         .map((e) => MenuItemDetails(value: e, groupCode: groupCode))
         .toList(),
@@ -311,9 +309,13 @@ class _MenuItemDetailsState extends State<MenuItemDetails> {
   double addOn = 0;
   double tax = 0;
   int simpleIntInput = 0;
-onTap(int quantity){
-  log("---->${quantity}");
-}
+  int defaultQuantity = 1;
+
+  onTap(int quantity) {
+    defaultQuantity = quantity;
+    setState(() {});
+  }
+
   @override
   void initState() {
     selectedSize = widget.value.recipes?.first.size?.name;
@@ -351,10 +353,9 @@ onTap(int quantity){
                 ),
                 GestureDetector(
                   onTap: () {
-                    Map<String, dynamic>arguments={
-                      "model":widget.value,
-                      "isBuildYourOwn":false,
-
+                    Map<String, dynamic> arguments = {
+                      "model": widget.value,
+                      "isBuildYourOwn": false,
                     };
                     Get.toNamed(RouteNames.customizePizza,
                         arguments: arguments);
@@ -427,7 +428,7 @@ onTap(int quantity){
                       ),
                     ),
                     Text(
-                      "\$${calculateTotalPrice(basePrice, addOn, tax)}",
+                      "\$${calculateTotalPrice(basePrice, addOn, tax) * defaultQuantity}",
                       style: TextStyle(fontSize: 18.sp, color: Colors.orange),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
@@ -551,7 +552,7 @@ onTap(int quantity){
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                     QuantitySelector(onTap:onTap),
+                    QuantitySelector(onTap: onTap),
 
                     /// add to cart
                     ElevatedButton(
@@ -752,14 +753,14 @@ Widget headerDesign(String image, List<String>? categories, String code,
                               children: [
                                 GestureDetector(
                                   onTap: () {
-                                    Map<String, dynamic>arguments={
-                                      "model":recipeDetailsModel,
-                                      "isBuildYourOwn":true,
-
+                                    Map<String, dynamic> arguments = {
+                                      "model": recipeDetailsModel,
+                                      "isBuildYourOwn": true,
                                     };
-                                    recipeDetailsModel!=null?
-                                    Get.toNamed(RouteNames.customizePizza,
-                                        arguments: arguments):null;
+                                    recipeDetailsModel != null
+                                        ? Get.toNamed(RouteNames.customizePizza,
+                                            arguments: arguments)
+                                        : null;
                                   },
                                   child: SvgPicture.asset(
                                     Assets.bottomBuildYourPizza,
@@ -791,8 +792,10 @@ Widget headerDesign(String image, List<String>? categories, String code,
 }
 
 class QuantitySelector extends StatefulWidget {
-  const QuantitySelector({super.key,required this.onTap});
-final Function(int value)onTap;
+  const QuantitySelector({super.key, required this.onTap});
+
+  final Function(int value) onTap;
+
   @override
   QuantitySelectorState createState() => QuantitySelectorState();
 }
@@ -802,7 +805,8 @@ class QuantitySelectorState extends State<QuantitySelector> {
 
   void increaseQuantity() {
     setState(() {
-      quantity++;widget.onTap(quantity);
+      quantity++;
+      widget.onTap(quantity);
     });
   }
 
@@ -839,7 +843,7 @@ class QuantitySelectorState extends State<QuantitySelector> {
       height: 4.h,
       width: 10.w,
       decoration: BoxDecoration(
-        border: Border.all(color: Colors.black, width: 1),
+        border: Border.all(color: Colors.black, width: 0.5),
       ),
       child: Center(
         child: Text(
@@ -857,7 +861,7 @@ class QuantitySelectorState extends State<QuantitySelector> {
       width: 10.w,
       decoration: const BoxDecoration(
         border: Border.symmetric(
-            horizontal: BorderSide(color: Colors.black, width: 1)),
+            horizontal: BorderSide(color: Colors.black, width: 0.5)),
       ),
       child: Center(
         child: Text(

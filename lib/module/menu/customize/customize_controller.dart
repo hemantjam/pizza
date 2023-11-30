@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:get/get.dart';
 
 import '../by_group_code/menu_by_group_code_model.dart';
@@ -11,6 +13,7 @@ class CustomizePizzaController extends GetxController {
   RxList<ToppingsSelection> allToppings = <ToppingsSelection>[].obs;
   Rx<RecipeModel?> recipeModel = RecipeModel().obs;
   late RxBool isBuildYourOwnPizza;
+  RxInt addOnToppings = 0.obs;
 
   @override
   void onInit() {
@@ -20,8 +23,8 @@ class CustomizePizzaController extends GetxController {
     super.onInit();
   }
 
-
   void addTopping(ToppingsSelection toppingsSelection) {
+    log("--->${toppingsSelection.isDefault}");
     int index = allToppings
         .indexWhere((p0) => p0.toppingId == toppingsSelection.toppingId);
     allToppings.removeAt(index);
@@ -32,11 +35,18 @@ class CustomizePizzaController extends GetxController {
     allToppings.clear();
     recipeValue.toppings?.forEach((element) {
       ToppingsSelection toppingsSelection = ToppingsSelection(
-          addCost: element.addCost ?? 0,
-          toppingName: element.name,
+        defaultQuantity: element.defaultQuantity??0,
+          totalSelected: element.defaultQuantity ?? 0,
+          isDefault:
+              element.defaultQuantity != null && element.defaultQuantity != 0.0,
+          addCost:
+              element.defaultQuantity != null && element.defaultQuantity != 0
+                  ? element.addCost!
+                  : 0,
+          toppingName: element.name ?? "",
           isSelected:
               element.defaultQuantity != null && element.defaultQuantity != 0,
-          toppingId: element.id,
+          toppingId: element.id ?? 0,
           selectedQuantity: 0,
           maximumQuantity: element.maximumQuantity?.toInt() ?? 0);
       allToppings.add(toppingsSelection);
@@ -49,21 +59,33 @@ class CustomizePizzaController extends GetxController {
     recipeModel.value != null ? getAllToppingList(recipeValue!) : null;
     update();
   }
+
+
+
 }
 
 class ToppingsSelection {
-  int? toppingId;
-  String? toppingName;
+  int toppingId;
+  String toppingName;
   bool isSelected;
+  bool isDefault;
   int selectedQuantity;
   int maximumQuantity;
   double addCost;
+  double totalSelected;
+  double defaultQuantity;
 
-  ToppingsSelection(
-      {required this.toppingName,
-      required this.isSelected,
-      required this.toppingId,
-      required this.selectedQuantity,
-      required this.addCost,
-      required this.maximumQuantity});
+  ToppingsSelection({
+    required this.defaultQuantity,
+    required this.isDefault,
+    required this.totalSelected,
+    required this.toppingName,
+    required this.isSelected,
+    required this.toppingId,
+    required this.selectedQuantity,
+    required this.addCost,
+    required this.maximumQuantity,
+  });
+
+
 }

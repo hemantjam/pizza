@@ -1,4 +1,4 @@
-String calculateTotalPrice(double price, double addOn, double taxPercentage) {
+int calculateTotalPrice(double price, double addOn, double taxPercentage) {
   double totalPrice =
       (price + addOn) + ((price + addOn) * (taxPercentage / 100));
 
@@ -6,5 +6,5 @@ String calculateTotalPrice(double price, double addOn, double taxPercentage) {
 
   formattedTotalPrice = formattedTotalPrice.replaceAll(RegExp(r'\.0*$'), '');
 
-  return formattedTotalPrice;
+  return int.parse(formattedTotalPrice);
 }
