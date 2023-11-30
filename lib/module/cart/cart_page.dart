@@ -59,8 +59,8 @@ class CartPage extends StatelessWidget {
                     children: [
                       Container(
                         alignment: Alignment.center,
-                        padding: EdgeInsets.all(10),
-                        decoration: BoxDecoration(color: Colors.blueGrey),
+                        padding: const EdgeInsets.all(10),
+                        decoration: const BoxDecoration(color: Colors.blueGrey),
                         child: const Text(
                           'Your Cart has: 0 Items',
                           style: TextStyle(
@@ -106,14 +106,14 @@ class CartPage extends StatelessWidget {
                         decoration: BoxDecoration(
                             color: Colors.white70,
                             border: Border.all(color: Colors.black),
-                            boxShadow: [
-                              BoxShadow(
+                            boxShadow: const [
+                               BoxShadow(
                                   offset: Offset(1, 1),
                                   color: Colors.grey,
                                   spreadRadius: 5,
                               blurRadius: 10)
                             ]),
-                        padding: EdgeInsets.all(10),
+                        padding: const EdgeInsets.all(10),
                         child: const Column(
                           children: [
                             Row(

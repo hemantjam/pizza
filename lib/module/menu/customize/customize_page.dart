@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_blurhash/flutter_blurhash.dart';
@@ -24,16 +26,22 @@ class CustomizePizzaPage extends GetView<CustomizePizzaController> {
             Get.back();
           },
         ),
-        title: const Text('Customize Pizza'),
+        title: Obx(() {
+          return Text(controller.isBuildYourOwnPizza.value
+              ? "Build Your Own Pizza"
+              : "Customize Pizza");
+        }),
       ),
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            ItemDetails(
-              value: controller.recipeDetailsModel,
-              getRecipe: controller.toggleRecipeModel,
-            ),
+            controller.recipeDetailsModel != null
+                ? ItemDetails(
+                    value: controller.recipeDetailsModel!,
+                    getRecipe: controller.toggleRecipeModel,
+                  )
+                : SizedBox(),
             const Divider(
               color: Colors.grey,
               thickness: 1,
@@ -44,12 +52,14 @@ class CustomizePizzaPage extends GetView<CustomizePizzaController> {
                   onTap: (ToppingsSelection toppings) {
                 controller.addTopping(toppings);
               },
+                  initialExpand: true,
                   title: "Selected Toppings",
                   subtitle:
                       "you can add upto ${controller.recipeModel.value?.toppingsInfo?.toppings?.maximumQuantity?.toStringAsFixed(0)} toppings"),
             ),
             const Divider(color: Colors.grey, thickness: 1),
             Obx(() => _buildToppingsList(
+                    initialExpand: false,
                     controller.allToppings
                         .where((p0) => !p0.isSelected)
                         .toList(), onTap: (ToppingsSelection toppings) {
@@ -70,11 +80,12 @@ class CustomizePizzaPage extends GetView<CustomizePizzaController> {
   Widget _buildToppingsList(List<ToppingsSelection>? toppings,
       {required Function(ToppingsSelection) onTap,
       required String title,
-      required String subtitle}) {
+      required String subtitle,
+      required bool initialExpand}) {
     Map<int, int?> selectedQuantities = {}; // Map to store selected quantities
 
     return ExpansionTile(
-      initiallyExpanded: true,
+      initiallyExpanded: initialExpand,
       title: Text(
         title,
         style: TextStyle(fontSize: 18.sp, color: Colors.black),
@@ -147,7 +158,15 @@ class _ItemDetailsState extends State<ItemDetails> {
   double basePrice = 0;
   double addOn = 0;
   double tax = 0;
+  int defaultQuantity = 1;
   int simpleIntInput = 0;
+
+  onTap(int newQuantity) {
+    setState(() {
+      defaultQuantity = newQuantity;
+    });
+    log("---->${newQuantity}");
+  }
 
   @override
   void initState() {
@@ -207,9 +226,10 @@ class _ItemDetailsState extends State<ItemDetails> {
                       overflow: TextOverflow.ellipsis,
                     ),
                   ),
+                  // Text("${basePrice.ceil() * defaultQuantity}"),
                   Obx(() {
                     return Text(
-                      "\$${int.parse(calculateTotalPrice(basePrice, addOn, tax)) + controller.allToppings.where((element) => element.isSelected).fold(0, (sum, topping) => sum + topping.addCost.toInt()).ceil()}",
+                      "\$${(int.parse(calculateTotalPrice(basePrice, addOn, tax)) + controller.allToppings.where((element) => element.isSelected).fold(0, (sum, topping) => sum + topping.addCost.toInt()).ceil()) * defaultQuantity}",
                       style: TextStyle(fontSize: 18.sp, color: Colors.orange),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
@@ -334,38 +354,171 @@ class _ItemDetailsState extends State<ItemDetails> {
               const SizedBox(height: 10),
 
               /// quantity , add to cart
-              Text("Quantity", style: titleStyle()),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const QuantitySelector(),
+                  controller.isBuildYourOwnPizza.value
+                      ? Column(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text("Sauce", style: titleStyle()),
+                            const SizedBox(height: 5),
+                            Container(
+                              decoration: BoxDecoration(
+                                  border: Border.all(
+                                      width: 0.5, color: Colors.black)),
+                              child: DropdownButton<String>(
+                                underline: const SizedBox(),
+                                elevation: 0,
+                                borderRadius: BorderRadius.zero,
+                                padding: const EdgeInsets.all(5),
+                                isDense: true,
+                                value: selectedSize,
+                                onChanged: (String? newValue) {
+                                  if (newValue != null) {
+                                    setState(() {
+                                      selectedSize = newValue;
+                                      basePrice = widget.value.recipes!
+                                              .where((element) =>
+                                                  element.size?.name ==
+                                                  newValue)
+                                              .first
+                                              .basePrice ??
+                                          0.0;
+                                      addOn = widget.value.recipes!
+                                              .where((element) =>
+                                                  element.size?.name ==
+                                                  newValue)
+                                              .first
+                                              .base
+                                              ?.first
+                                              .addCost ??
+                                          0.0;
+                                      selectedBase = null;
+                                      widget.getRecipe!(widget.value.recipes
+                                          ?.where((element) =>
+                                              element.size?.name ==
+                                              "$selectedSize")
+                                          .first);
+                                    });
+                                  }
+                                },
+                                items: widget.value.recipes!
+                                    .map((e) => DropdownMenuItem<String>(
+                                          value: e.size?.name ?? "",
+                                          child: SizedBox(
+                                            width: 35.w,
+                                            child: Text(
+                                              e.size?.name ?? "",
+                                              overflow: TextOverflow.ellipsis,
+                                              maxLines: 1,
+                                            ),
+                                          ),
+                                        ))
+                                    .toList(),
+                              ),
+                            )
+                          ],
+                        )
+                      : SizedBox.shrink(),
+                  Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text("Quantity", style: titleStyle()),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          QuantitySelector(onTap: onTap),
 
-                  /// add to cart
-                  ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      elevation: 1,
-                      padding: const EdgeInsets.symmetric(horizontal: 50),
-                    ),
-                    onPressed: () {
-                      showModalBottomSheet(
-                          useSafeArea: true,
-                          shape: const RoundedRectangleBorder(
-                              borderRadius: BorderRadius.only(
-                                  topLeft: Radius.circular(20),
-                                  topRight: Radius.circular(20))),
-                          showDragHandle: true,
-                          context: context,
-                          builder: (context) {
-                            return const Padding(
-                              padding: EdgeInsets.only(bottom: 10),
-                              child: OrderDeliveryTypeOption(elevation: 0),
-                            );
-                          });
-                    },
-                    child: const Text("Add To Cart"),
+                          /// add to cart
+                          controller.isBuildYourOwnPizza.value
+                              ? SizedBox.shrink()
+                              : Obx(() {
+                                  return ElevatedButton(
+                                    style: ElevatedButton.styleFrom(
+                                      elevation: 1,
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 50),
+                                      foregroundColor: Colors.white,
+                                      backgroundColor: !controller.allToppings
+                                              .any((element) =>
+                                                  element.isSelected)
+                                          ? Colors.grey.shade700
+                                          : Colors.orange,
+                                    ),
+                                    onPressed: () {
+                                      if (controller.allToppings.any(
+                                          (element) => element.isSelected)) {
+                                        showModalBottomSheet(
+                                            useSafeArea: true,
+                                            shape: const RoundedRectangleBorder(
+                                                borderRadius: BorderRadius.only(
+                                                    topLeft:
+                                                        Radius.circular(20),
+                                                    topRight:
+                                                        Radius.circular(20))),
+                                            showDragHandle: true,
+                                            context: context,
+                                            builder: (context) {
+                                              return const Padding(
+                                                padding:
+                                                    EdgeInsets.only(bottom: 10),
+                                                child: OrderDeliveryTypeOption(
+                                                    elevation: 0),
+                                              );
+                                            });
+                                      }
+                                    },
+                                    child: const Text("Add To Cart"),
+                                  );
+                                }),
+                        ],
+                      ),
+                    ],
                   ),
                 ],
               ),
+              !controller.isBuildYourOwnPizza.value
+                  ? SizedBox.shrink()
+                  : Obx(() {
+                      return SizedBox(
+                        width: 100.w,
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            elevation: 1,
+                            padding: const EdgeInsets.symmetric(horizontal: 50),
+                            foregroundColor: Colors.white,
+                            backgroundColor: !controller.allToppings
+                                    .any((element) => element.isSelected)
+                                ? Colors.grey.shade700
+                                : Colors.orange,
+                          ),
+                          onPressed: () {
+                            if (controller.allToppings
+                                .any((element) => element.isSelected)) {
+                              showModalBottomSheet(
+                                  useSafeArea: true,
+                                  shape: const RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.only(
+                                          topLeft: Radius.circular(20),
+                                          topRight: Radius.circular(20))),
+                                  showDragHandle: true,
+                                  context: context,
+                                  builder: (context) {
+                                    return const Padding(
+                                      padding: EdgeInsets.only(bottom: 10),
+                                      child:
+                                          OrderDeliveryTypeOption(elevation: 0),
+                                    );
+                                  });
+                            }
+                          },
+                          child: const Text("Add To Cart"),
+                        ),
+                      );
+                    })
             ],
           ),
         ),

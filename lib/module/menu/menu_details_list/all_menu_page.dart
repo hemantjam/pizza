@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_blurhash/flutter_blurhash.dart';
@@ -269,11 +271,12 @@ class MenuDetails extends GetView<MenuDetailsController> {
 Widget categoryTile(
     String category, List<RecipeDetailsModel> children, String groupCode) {
   return ExpansionTile(
+    initiallyExpanded: true,
     maintainState: true,
     title: Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Icon(Icons.keyboard_arrow_down, size: 22.sp),
+       // Icon(Icons.keyboard_arrow_down, size: 22.sp),
         const SizedBox(width: 5),
         Text(
           category,
@@ -281,7 +284,7 @@ Widget categoryTile(
         ),
       ],
     ),
-    trailing: Text(children.length.toString()),
+   // trailing: Text(children.length.toString()),
     children: children
         .map((e) => MenuItemDetails(value: e, groupCode: groupCode))
         .toList(),
@@ -308,7 +311,9 @@ class _MenuItemDetailsState extends State<MenuItemDetails> {
   double addOn = 0;
   double tax = 0;
   int simpleIntInput = 0;
-
+onTap(int quantity){
+  log("---->${quantity}");
+}
   @override
   void initState() {
     selectedSize = widget.value.recipes?.first.size?.name;
@@ -346,8 +351,13 @@ class _MenuItemDetailsState extends State<MenuItemDetails> {
                 ),
                 GestureDetector(
                   onTap: () {
+                    Map<String, dynamic>arguments={
+                      "model":widget.value,
+                      "isBuildYourOwn":false,
+
+                    };
                     Get.toNamed(RouteNames.customizePizza,
-                        arguments: widget.value);
+                        arguments: arguments);
                   },
                   child: Align(
                     alignment: Alignment.bottomCenter,
@@ -541,7 +551,7 @@ class _MenuItemDetailsState extends State<MenuItemDetails> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    const QuantitySelector(),
+                     QuantitySelector(onTap:onTap),
 
                     /// add to cart
                     ElevatedButton(
@@ -742,8 +752,14 @@ Widget headerDesign(String image, List<String>? categories, String code,
                               children: [
                                 GestureDetector(
                                   onTap: () {
+                                    Map<String, dynamic>arguments={
+                                      "model":recipeDetailsModel,
+                                      "isBuildYourOwn":true,
+
+                                    };
+                                    recipeDetailsModel!=null?
                                     Get.toNamed(RouteNames.customizePizza,
-                                        arguments: recipeDetailsModel??RecipeDetailsModel());
+                                        arguments: arguments):null;
                                   },
                                   child: SvgPicture.asset(
                                     Assets.bottomBuildYourPizza,
@@ -775,8 +791,8 @@ Widget headerDesign(String image, List<String>? categories, String code,
 }
 
 class QuantitySelector extends StatefulWidget {
-  const QuantitySelector({super.key});
-
+  const QuantitySelector({super.key,required this.onTap});
+final Function(int value)onTap;
   @override
   QuantitySelectorState createState() => QuantitySelectorState();
 }
@@ -786,7 +802,7 @@ class QuantitySelectorState extends State<QuantitySelector> {
 
   void increaseQuantity() {
     setState(() {
-      quantity++;
+      quantity++;widget.onTap(quantity);
     });
   }
 
@@ -794,6 +810,7 @@ class QuantitySelectorState extends State<QuantitySelector> {
     if (quantity > 1) {
       setState(() {
         quantity--;
+        widget.onTap(quantity);
       });
     }
   }

@@ -6,7 +6,6 @@ import 'package:pizza/module/delivery_order_type/widgets/order_button.dart';
 import 'package:sizer/sizer.dart';
 
 import '../../../../constants/app_colors.dart';
-import '../../../../widgets/common_dialog.dart';
 
 class PickUpNowPage extends GetView<PickUpNowController> {
   const PickUpNowPage({super.key});

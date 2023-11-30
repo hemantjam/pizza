@@ -94,7 +94,7 @@ class RouteGenerator {
     /// customize pizza
     GetPage(
       name: RouteNames.customizePizza,
-      page: () => CustomizePizzaPage(),
+      page: () => const CustomizePizzaPage(),
       binding: CustomizePizzaBinding(),
         arguments: Get.arguments
     ),
