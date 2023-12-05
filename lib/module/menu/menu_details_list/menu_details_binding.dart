@@ -8,7 +8,8 @@ class MenuDetailsBinding extends Bindings {
 
   @override
   void dependencies() {
-    final RxList<MenuListModel> model = Get.arguments as RxList<MenuListModel>;
-    Get.put(MenuDetailsController(model));
+    //final RxList<MenuListModel> model = Get.arguments as RxList<MenuListModel>;
+    final Map<String,dynamic>arguments=Get.arguments;
+    Get.put(MenuDetailsController(arguments));
   }
 }

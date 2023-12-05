@@ -43,8 +43,12 @@ class MenusPage extends GetView<OutletMenuController> {
                       .entries
                       .map((e) => GestureDetector(
                           onTap: () {
+                            Map<String,dynamic>arguments={
+                            "modelList":controller.menuListModel,
+                            "selectedIndex":e.key
+                            };
                             Get.toNamed(RouteNames.pizzaMenuPage,
-                                arguments: controller.menuListModel);
+                                arguments: arguments);
                           },
                           child: MenuItem(item: e.value)))
                       .toList(),

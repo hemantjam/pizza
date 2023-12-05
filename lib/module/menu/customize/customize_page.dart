@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_blurhash/flutter_blurhash.dart';
@@ -8,7 +6,7 @@ import 'package:pizza/widgets/common_dialog.dart';
 import 'package:sizer/sizer.dart';
 
 import '../../../constants/assets.dart';
-import '../../delivery_order_type/delivery_order_type_optios.dart';
+import '../../delivery_order_type/delivery_order_type_options.dart';
 import '../by_group_code/menu_by_group_code_model.dart';
 import '../menu_details_list/all_menu_page.dart';
 import '../utils/calculate_tax.dart';
@@ -20,6 +18,11 @@ class CustomizePizzaPage extends GetView<CustomizePizzaController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          controller.calculateToppingsPrice();
+        },
+      ),
       appBar: AppBar(
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios_new_rounded),
@@ -38,10 +41,7 @@ class CustomizePizzaPage extends GetView<CustomizePizzaController> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             controller.recipeDetailsModel != null
-                ? ItemDetails(
-                    value: controller.recipeDetailsModel!,
-                    getRecipe: controller.toggleRecipeModel,
-                  )
+                ? const ItemDetails()
                 : const SizedBox(),
             const Divider(
               color: Colors.grey,
@@ -49,35 +49,17 @@ class CustomizePizzaPage extends GetView<CustomizePizzaController> {
             ),
             Obx(
               () => _buildToppingsList(
-                  controller.allToppings.where((p0) => p0.isSelected).toList(),
-                  totalSlots: controller.recipeModel.value?.toppingsInfo
-                          ?.toppings?.maximumQuantity
-                          ?.ceil() ??
-                      0, onTap: (ToppingsSelection toppings) {
-                controller.addTopping(toppings);
-              },
-                  initialExpand: true,
-                  title:
-                      "Selected Toppings (${controller.allToppings.fold(0, (sum, topping) => sum + topping.totalSelected.ceil())})",
-                  subtitle:
-                      "you can add up to ${"${controller.recipeModel.value?.toppingsInfo?.toppings?.maximumQuantity?.ceil() ?? 0}"} toppings. "
-                  //"Available slots: ${"${controller.allToppings.fold(0, (sum, topping) => sum + topping.totalSelected.ceil())}"}",
-                  ),
+                selected: controller.filledSlots,
+                controller.allToppings.where((p0) => p0.isSelected).toList(),
+                isSelectedList: true,
+              ),
             ),
             const Divider(color: Colors.grey, thickness: 1),
             Obx(() => _buildToppingsList(
-                    totalSlots: controller.recipeModel.value?.toppingsInfo
-                            ?.toppings?.maximumQuantity
-                            ?.ceil() ??
-                        0,
-                    initialExpand: false,
-                    controller.allToppings
-                        .where((p0) => !p0.isSelected)
-                        .toList(), onTap: (ToppingsSelection toppings) {
-                  controller.addTopping(toppings);
-                },
-                    title: "Available Toppings",
-                    subtitle: "Please select from Toppings list")),
+                  selected: controller.filledSlots,
+                  isSelectedList: false,
+                  controller.allToppings.where((p0) => !p0.isSelected).toList(),
+                )),
             const Divider(
               color: Colors.grey,
               thickness: 1,
@@ -89,88 +71,69 @@ class CustomizePizzaPage extends GetView<CustomizePizzaController> {
   }
 
   Widget _buildToppingsList(List<ToppingsSelection>? toppings,
-      {required Function(ToppingsSelection) onTap,
-      required String title,
-      required String subtitle,
-      required bool initialExpand,
-      required int totalSlots}) {
-    Map<int, int?> selectedQuantities = {}; // Map to store selected quantities
-
+      {required bool isSelectedList, required int selected}) {
     return ExpansionTile(
-      initiallyExpanded: initialExpand,
+      initiallyExpanded: isSelectedList,
       title: Text(
-        title,
+        isSelectedList
+            ? "Selected Toppings (${controller.filledSlots})"
+            : "Available Toppings",
         style: TextStyle(fontSize: 18.sp, color: Colors.black),
       ),
       subtitle: Text(
-        subtitle,
+        isSelectedList
+            ? "you can add up to ${controller.maxSlots} toppings. "
+            : "Please select from Toppings list",
         style: TextStyle(fontSize: 14.sp, color: Colors.grey),
       ),
       children: toppings?.asMap().entries.map((e) {
-            return StatefulBuilder(
-              builder: (BuildContext context, StateSetter setState) {
-                return ListTile(
-                  title: Text(toppings[e.key].toppingName),
-                  trailing: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: List.generate(
-                      int.parse(e.value.maximumQuantity.toStringAsFixed(0)),
-                      (index) => Radio(
-                        toggleable: true,
-                        value: index,
-                        groupValue:
-                            selectedQuantities[toppings[e.key].toppingId] ??
-                                toppings[e.key].selectedQuantity,
-                        onChanged: (value) {
-                          if (controller.allToppings.fold(
-                                  0,
-                                  (sum, topping) =>
-                                      sum + topping.totalSelected.ceil()) <=
-                              totalSlots) {
-                            /*if (toppings[e.key].isDefault&&toppings[e.key].selectedQuantity>1
-                                ) {
-                              controller.addOnToppings.value=toppings[e.key].addCost.ceil()*toppings[e.key].selectedQuantity;
-                            } else {
-                              log("here000");
-                            }*/
-                            setState(() {
-                              selectedQuantities[toppings[e.key].toppingId] =
-                                  value;
-                            });
-                            controller.addTopping(ToppingsSelection(
-                              defaultQuantity: toppings[e.key].defaultQuantity,
-                              totalSelected: selectedQuantities[
-                                          toppings[e.key].toppingId] !=
-                                      null
-                                  ? selectedQuantities[
-                                          toppings[e.key].toppingId]! +
-                                      1
-                                  : 0,
-                              isDefault: toppings[e.key].isDefault,
-                              addCost: toppings[e.key].selectedQuantity != 0
-                                  ? toppings[e.key].addCost
-                                  : 0,
-                              maximumQuantity: toppings[e.key].maximumQuantity,
-                              isSelected: selectedQuantities[
-                                      toppings[e.key].toppingId] !=
-                                  null,
-                              toppingName: toppings[e.key].toppingName,
-                              toppingId: toppings[e.key].toppingId,
-                              selectedQuantity: selectedQuantities[
-                                      toppings[e.key].toppingId] ??
-                                  toppings[e.key].selectedQuantity,
-                            ));
-                          } else {
-                            showCoomonErrorDialog(
-                                title: title, message: "Slots are full");
-                          }
-                        },
+            ToppingsSelection topping = toppings[e.key];
+            return ListTile(
+                title: Text(topping.toppingName),
+                trailing: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: List.generate(topping.maximumQuantity, (index) {
+                    return Checkbox(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20),
                       ),
-                    ),
-                  ),
-                );
-              },
-            );
+                      value: topping.values[index],
+                      onChanged: (value) {
+                        int currentIn=topping.values.where((value) => value).length;
+                        int totalFilledSlots = (controller.filledSlots-currentIn) +
+                           ( index+1);
+                        if(totalFilledSlots>controller.maxSlots) {
+                          showCoomonErrorDialog(title: "Toopings Alert",
+                              message: "Max toppings reached");
+                          return;
+                        }
+                        else{
+                        topping.defaultQuantity=topping.values.where((value) => value).length;
+                        topping.values = List.generate(
+                          topping.maximumQuantity.ceil(),
+                          (oldIndex) => oldIndex < (index + 1).toInt(),
+                        );
+                        if (isSelectedList) {
+                          if (topping.canRemove &&
+                              index == 0 &&
+                              (topping.values[0] &&
+                                  !topping.values[1] &&
+                                  !topping.values[2])) {
+                            topping.isSelected = false;
+                            topping.values = topping.values.map((element) => false).toList();
+                          }
+                          topping.canRemove = index == 0;
+                          controller.addTopping(topping);
+                        }
+                        else if (!isSelectedList) {
+                          topping.isSelected = true;
+                          controller.addTopping(topping);
+                          topping.canRemove = false;
+                        }}
+                      },
+                    );
+                  }),
+                ));
           }).toList() ??
           [],
     );
@@ -179,11 +142,9 @@ class CustomizePizzaPage extends GetView<CustomizePizzaController> {
 
 /// menu item details
 class ItemDetails extends StatefulWidget {
-  final RecipeDetailsModel value;
-  final Function(RecipeModel?)? getRecipe;
-
-  const ItemDetails({Key? key, required this.value, required this.getRecipe})
-      : super(key: key);
+  const ItemDetails({
+    Key? key,
+  }) : super(key: key);
 
   @override
   State<ItemDetails> createState() => _ItemDetailsState();
@@ -209,31 +170,19 @@ class _ItemDetailsState extends State<ItemDetails> {
 
   @override
   void initState() {
-    selectedSize = widget.value.recipes?.first.size?.name;
-    selectedSauce = widget.value.recipes?.first.sauce?.first.name;
-    RecipeModel? recipeModel = widget.value.recipes
+    selectedSize = controller.recipeDetailsModel?.recipes?.first.size?.name;
+    selectedSauce =
+        controller.recipeDetailsModel?.recipes?.first.sauce?.first.name;
+    RecipeModel? recipeModel = controller.recipeDetailsModel?.recipes
         ?.where((element) => element.size?.name == "$selectedSize")
         .first;
 
-    widget.getRecipe!(recipeModel);
-    addOn = widget.value.recipes?.first.base?.first.addCost ?? 0;
-    basePrice = widget.value.recipes?.first.basePrice ?? 0;
-    tax = widget.value.recipes?.first.tax ?? 0;
+    controller.toggleRecipeModel(recipeModel);
+    addOn =
+        controller.recipeDetailsModel?.recipes?.first.base?.first.addCost ?? 0;
+    basePrice = controller.recipeDetailsModel?.recipes?.first.basePrice ?? 0;
+    tax = controller.recipeDetailsModel?.recipes?.first.tax ?? 0;
     super.initState();
-  }
-
-  double calculateAddonPrice() {
-    double addonPrice = controller.addOnToppings.value.toDouble();
-
-    for (ToppingsSelection topping in controller.allToppings) {
-      if (topping.isSelected && topping.isDefault) {
-        log("quanitty---->${topping.selectedQuantity}");
-        addonPrice += (topping.defaultQuantity > 1) ? topping.addCost : 0;
-      } else if (topping.isSelected && !topping.isDefault) {
-        addonPrice += topping.addCost;
-      }
-    }
-    return addonPrice;
   }
 
   @override
@@ -251,7 +200,7 @@ class _ItemDetailsState extends State<ItemDetails> {
                 ),
                 child: CachedNetworkImage(
                   fit: BoxFit.cover,
-                  imageUrl: widget.value.image ?? "",
+                  imageUrl: controller.recipeDetailsModel?.image ?? "",
                   placeholder: (context, url) => const SizedBox(
                       child: BlurHash(hash: Assets.homeBannerBlur)),
                   errorWidget: (context, url, error) => const Icon(Icons.error),
@@ -274,7 +223,7 @@ class _ItemDetailsState extends State<ItemDetails> {
                 children: [
                   Flexible(
                     child: Text(
-                      widget.value.name ?? "",
+                      controller.recipeDetailsModel?.name ?? "",
                       style: TextStyle(fontSize: 18.sp),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
@@ -283,7 +232,7 @@ class _ItemDetailsState extends State<ItemDetails> {
                   Obx(() {
                     return Text(
                       "\$${(calculateTotalPrice(basePrice, /* controller.addOnToppings.value, tax) + controller.allToppings.where((element) => element.isSelected && !element.isDefault).fold(0, (sum, topping) => sum + topping.addCost.toInt()).ceil()*/
-                          calculateAddonPrice(), tax)) * defaultQuantity}",
+                          controller.calculateToppingsPrice(), tax)) * defaultQuantity}",
                       style: TextStyle(fontSize: 18.sp, color: Colors.orange),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
@@ -293,17 +242,19 @@ class _ItemDetailsState extends State<ItemDetails> {
               ),
               const SizedBox(height: 10),
               Text(
-                widget.value.ingredients ?? "",
+                controller.recipeDetailsModel?.ingredients ?? "",
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
               ),
               const SizedBox(height: 10),
-              widget.value.recipes != null
+              controller.recipeDetailsModel?.recipes != null
                   ? Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        widget.value.recipes != null &&
-                                widget.value.recipes?.first.size != null
+                        controller.recipeDetailsModel?.recipes != null &&
+                                controller.recipeDetailsModel?.recipes?.first
+                                        .size !=
+                                    null
                             ? Column(
                                 mainAxisSize: MainAxisSize.min,
                                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -327,14 +278,18 @@ class _ItemDetailsState extends State<ItemDetails> {
                                         if (newValue != null) {
                                           setState(() {
                                             selectedSize = newValue;
-                                            basePrice = widget.value.recipes!
+                                            basePrice = controller
+                                                    .recipeDetailsModel
+                                                    ?.recipes!
                                                     .where((element) =>
                                                         element.size?.name ==
                                                         newValue)
                                                     .first
                                                     .basePrice ??
                                                 0.0;
-                                            addOn = widget.value.recipes!
+                                            addOn = controller
+                                                    .recipeDetailsModel
+                                                    ?.recipes!
                                                     .where((element) =>
                                                         element.size?.name ==
                                                         newValue)
@@ -344,16 +299,18 @@ class _ItemDetailsState extends State<ItemDetails> {
                                                     .addCost ??
                                                 0.0;
                                             selectedBase = null;
-                                            widget.getRecipe!(widget
-                                                .value.recipes
-                                                ?.where((element) =>
-                                                    element.size?.name ==
-                                                    "$selectedSize")
-                                                .first);
+                                            controller.toggleRecipeModel(
+                                                controller
+                                                    .recipeDetailsModel?.recipes
+                                                    ?.where((element) =>
+                                                        element.size?.name ==
+                                                        "$selectedSize")
+                                                    .first);
                                           });
                                         }
                                       },
-                                      items: widget.value.recipes!
+                                      items: controller
+                                          .recipeDetailsModel?.recipes!
                                           .map((e) => DropdownMenuItem<String>(
                                                 value: e.size?.name ?? "",
                                                 child: SizedBox(
@@ -372,8 +329,10 @@ class _ItemDetailsState extends State<ItemDetails> {
                                 ],
                               )
                             : const SizedBox.shrink(),
-                        widget.value.recipes != null &&
-                                widget.value.recipes?.first.size != null
+                        controller.recipeDetailsModel?.recipes != null &&
+                                controller.recipeDetailsModel?.recipes?.first
+                                        .size !=
+                                    null
                             ? BaseSelection(
                                 onSelect: (d, item) {
                                   setState(() {
@@ -381,7 +340,7 @@ class _ItemDetailsState extends State<ItemDetails> {
                                     selectedBase = item;
                                   });
                                 },
-                                sizes: widget.value.recipes!
+                                sizes: controller.recipeDetailsModel!.recipes!
                                     .where((element) =>
                                         element.size?.name == selectedSize)
                                     .map((e) => e.base)
@@ -396,7 +355,9 @@ class _ItemDetailsState extends State<ItemDetails> {
                                     selectedBase = item;
                                   });
                                 },
-                                sizes: widget.value.recipes?.first.base ?? [],
+                                sizes: controller.recipeDetailsModel?.recipes
+                                        ?.first.base ??
+                                    [],
                                 selectedBase: selectedBase,
                               ),
                       ],
@@ -433,24 +394,10 @@ class _ItemDetailsState extends State<ItemDetails> {
                                   if (newValue != null) {
                                     setState(() {
                                       selectedSauce = newValue;
-                                      /* basePrice = widget.value.recipes!
-                                              .where((element) =>
-                                                  element.size?.name ==
-                                                  newValue)
-                                              .first
-                                              .basePrice ??
-                                          0.0;*/
-                                      /* addOn = widget.value.recipes!
-                                              .where((element) =>
-                                                  element.size?.name ==
-                                                  newValue)
-                                              .first
-                                              .base
-                                              ?.first
-                                              .addCost ??
-                                          0.0;*/
+
                                       selectedBase = null;
-                                      widget.getRecipe!(widget.value.recipes
+                                      controller.toggleRecipeModel(controller
+                                          .recipeDetailsModel?.recipes
                                           ?.where((element) =>
                                               element.size?.name ==
                                               "$selectedSize")
@@ -458,7 +405,8 @@ class _ItemDetailsState extends State<ItemDetails> {
                                     });
                                   }
                                 },
-                                items: widget.value.recipes?.first.sauce!
+                                items: controller
+                                    .recipeDetailsModel?.recipes?.first.sauce!
                                     .map((e) => DropdownMenuItem<String>(
                                           value: e.name ?? "",
                                           child: SizedBox(

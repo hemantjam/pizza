@@ -12,37 +12,43 @@ import '../menu_model.dart';
 import 'local_storage/menu_details_database.dart';
 
 class MenuDetailsController extends GetxController {
+  final Map<String, dynamic> arguments;
+
   RxMap<String, GroupModel> groupModelList = <String, GroupModel>{}.obs;
-  MenuGroupCodeModel buildYourPizzaModel=MenuGroupCodeModel();
+  Rx<MenuGroupCodeModel> buildYourPizzaModel = MenuGroupCodeModel().obs;
   final ApiServices _apiServices = ApiServices();
   RxList<MenuListModel> menuListModel = <MenuListModel>[].obs;
 
-  MenuDetailsController(this.menuListModel);
+  MenuDetailsController(this.arguments);
 
   RxInt selectedItemIndex = 0.obs;
 
   @override
   void onInit() {
+    menuListModel=arguments["modelList"];
+    selectedItemIndex.value=arguments["selectedIndex"];
     menuListModel.where((p0) => p0.webDisplay!);
     super.onInit();
     checkForOfflineData();
-buildYourPizza();
+    buildYourPizza();
   }
-buildYourPizza()async{
-  var data = {
-    "groupCodes": ["G8"],
-    "outletCode": "RJT01",
-    "systemCode": "PIZZAPORTAL"
-  };
-  ApiResponse? res =
-  await _apiServices.postRequest(ApiEndPoints.getMenuByCode, data: data);
-  if (res != null && res.status) {
-    buildYourPizzaModel=MenuGroupCodeModel.fromJson(res.toJson());
-  } else {
-    showCoomonErrorDialog(title: "Error", message: res?.message ?? "");
+
+  buildYourPizza() async {
+    var data = {
+      "groupCodes": ["G8"],
+      "outletCode": "RJT01",
+      "systemCode": "PIZZAPORTAL"
+    };
+    ApiResponse? res =
+        await _apiServices.postRequest(ApiEndPoints.getMenuByCode, data: data);
+    if (res != null && res.status) {
+      buildYourPizzaModel.value = MenuGroupCodeModel.fromJson(res.toJson());
+    } else {
+      showCoomonErrorDialog(title: "Error", message: res?.message ?? "");
+    }
+    return null;
   }
-  return null;
-}
+
   checkForOfflineData() async {
     AppDatabase? database =
         await $FloorAppDatabase.databaseBuilder('app_database.db').build();

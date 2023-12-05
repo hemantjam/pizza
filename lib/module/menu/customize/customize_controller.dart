@@ -15,6 +15,17 @@ class CustomizePizzaController extends GetxController {
   late RxBool isBuildYourOwnPizza;
   RxInt addOnToppings = 0.obs;
 
+  int get maxSlots =>
+      recipeModel.value?.toppingsInfo?.toppings?.maximumQuantity?.ceil() ?? 0;
+
+  int get filledSlots =>
+      allToppings
+          .where((p0) => p0.isSelected)
+          .map((element) => element.values.fold(0, (sum, value) => sum + (value ? 1 : 0)))
+          .toList()
+          .fold(0, (sum, count) => sum + count);
+
+
   @override
   void onInit() {
     isBuildYourOwnPizza = RxBool(false);
@@ -22,9 +33,32 @@ class CustomizePizzaController extends GetxController {
     isBuildYourOwnPizza.value = arguments["isBuildYourOwn"] ?? false;
     super.onInit();
   }
+  double calculateToppingsPrice() {
+    double toppingPrice = 0.0;
+
+    for (var topping in allToppings) {
+      if (topping.isSelected) {
+        int quantity = topping.values.where((value) => value).length;
+
+        log("\n---->${topping.toppingName}----->${topping.addCost}");
+        log("---->${topping.isDefault}----->${quantity}\n\n");
+
+        if (topping.isDefault && quantity > 1) {
+          // If default topping and quantity > 1, calculate addon price for additional quantities
+          int additionalQuantity = quantity - 1;
+          toppingPrice += topping.addCost * additionalQuantity;
+        } else if (!topping.isDefault) {
+          // For non-default toppings, add cost for each quantity
+          toppingPrice += topping.addCost * quantity;
+        }
+      }
+    }
+
+    return toppingPrice;
+  }
+
 
   void addTopping(ToppingsSelection toppingsSelection) {
-    log("--->${toppingsSelection.isDefault}");
     int index = allToppings
         .indexWhere((p0) => p0.toppingId == toppingsSelection.toppingId);
     allToppings.removeAt(index);
@@ -35,20 +69,21 @@ class CustomizePizzaController extends GetxController {
     allToppings.clear();
     recipeValue.toppings?.forEach((element) {
       ToppingsSelection toppingsSelection = ToppingsSelection(
-        defaultQuantity: element.defaultQuantity??0,
-          totalSelected: element.defaultQuantity ?? 0,
+          canRemove: element.defaultQuantity?.ceil() == 1.0,
+          values: List.generate(
+            element.maximumQuantity?.ceil() ?? 0,
+            (index) => index < (element.defaultQuantity?.ceil() ?? 0).toInt(),
+          ),
+          defaultQuantity: element.defaultQuantity?.ceil() ?? 0,
           isDefault:
               element.defaultQuantity != null && element.defaultQuantity != 0.0,
-          addCost:
-              element.defaultQuantity != null && element.defaultQuantity != 0
-                  ? element.addCost!
-                  : 0,
+          addCost: element.addCost ?? 0,
           toppingName: element.name ?? "",
           isSelected:
               element.defaultQuantity != null && element.defaultQuantity != 0,
           toppingId: element.id ?? 0,
-          selectedQuantity: 0,
-          maximumQuantity: element.maximumQuantity?.toInt() ?? 0);
+          itemQuantity: element.itemQuantity?.ceil() ?? 0,
+          maximumQuantity: element.maximumQuantity?.ceil() ?? 0);
       allToppings.add(toppingsSelection);
     });
     update();
@@ -59,9 +94,6 @@ class CustomizePizzaController extends GetxController {
     recipeModel.value != null ? getAllToppingList(recipeValue!) : null;
     update();
   }
-
-
-
 }
 
 class ToppingsSelection {
@@ -69,23 +101,23 @@ class ToppingsSelection {
   String toppingName;
   bool isSelected;
   bool isDefault;
-  int selectedQuantity;
+  int itemQuantity;
+  List<bool> values;
+  int defaultQuantity;
   int maximumQuantity;
   double addCost;
-  double totalSelected;
-  double defaultQuantity;
+  bool canRemove;
 
   ToppingsSelection({
+    required this.canRemove,
+    required this.values,
     required this.defaultQuantity,
     required this.isDefault,
-    required this.totalSelected,
     required this.toppingName,
     required this.isSelected,
     required this.toppingId,
-    required this.selectedQuantity,
+    required this.itemQuantity,
     required this.addCost,
     required this.maximumQuantity,
   });
-
-
 }

@@ -7,7 +7,7 @@ import 'package:pizza/constants/route_names.dart';
 import 'package:sizer/sizer.dart';
 
 import '../../../constants/assets.dart';
-import '../../delivery_order_type/delivery_order_type_optios.dart';
+import '../../delivery_order_type/delivery_order_type_options.dart';
 import '../by_group_code/menu_by_group_code_model.dart';
 import '../menu_model.dart';
 import '../utils/calculate_tax.dart';
@@ -113,8 +113,12 @@ class MenuList extends GetView<MenuDetailsController> {
   @override
   Widget build(BuildContext context) {
     return Obx(() {
+      final visibleMenuList = controller.menuListModel
+          .where((p0) => p0.webDisplay!)
+          .toList();
       return DefaultTabController(
-        length: controller.menuListModel.where((p0) => p0.webDisplay!).length,
+        initialIndex: controller.selectedItemIndex.value,
+        length: visibleMenuList.length,
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -237,8 +241,8 @@ class MenuDetails extends GetView<MenuDetailsController> {
                 image,
                 categorizedRecipes.entries.map((e) => e.key).toList(),
                 groupModel.group?.itemGroupCode ?? "",
-                controller.buildYourPizzaModel.data?.entries.first.value.items
-                    ?.values.first),
+                controller.buildYourPizzaModel.value.data?.entries.first.value
+                    .items?.values.first),
             categorizedRecipes.isEmpty
                 ? Column(
                     children: groupModel.items != null
@@ -722,24 +726,27 @@ Widget headerDesign(String image, List<String>? categories, String code,
                   ),
                 ),
                 categories != null && categories.isNotEmpty
-                    ? Wrap(
-                        children: categories
-                            .map(
-                              (e) => Padding(
-                                padding:
-                                    const EdgeInsets.only(right: 5, left: 5),
-                                child: Text(
-                                  e,
-                                  style: TextStyle(
-                                    textBaseline: TextBaseline.alphabetic,
-                                    fontSize: 14.sp,
-                                    color: Colors.orangeAccent,
+                    ? SingleChildScrollView(
+                   scrollDirection : Axis.horizontal,
+                      child: Row(
+                          children: categories
+                              .map(
+                                (e) => Padding(
+                                  padding:
+                                      const EdgeInsets.only(right: 5, left: 5),
+                                  child: Text(
+                                    e,
+                                    style: TextStyle(
+                                      textBaseline: TextBaseline.alphabetic,
+                                      fontSize: 14.sp,
+                                      color: Colors.orangeAccent,
+                                    ),
                                   ),
                                 ),
-                              ),
-                            )
-                            .toList(),
-                      )
+                              )
+                              .toList(),
+                        ),
+                    )
                     : const SizedBox(),
                 code == "G1"
                     ? Expanded(

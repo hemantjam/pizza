@@ -8,7 +8,7 @@ import 'package:pizza/module/home/home_controller.dart';
 import 'package:sizer/sizer.dart';
 
 import '../../widgets/header.dart';
-import '../delivery_order_type/delivery_order_type_optios.dart';
+import '../delivery_order_type/delivery_order_type_options.dart';
 import '../menu/home_page_list/menu_page.dart';
 
 class HomePage extends GetView<HomeController> {
