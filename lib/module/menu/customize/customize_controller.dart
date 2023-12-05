@@ -40,9 +40,6 @@ class CustomizePizzaController extends GetxController {
       if (topping.isSelected) {
         int quantity = topping.values.where((value) => value).length;
 
-        log("\n---->${topping.toppingName}----->${topping.addCost}");
-        log("---->${topping.isDefault}----->${quantity}\n\n");
-
         if (topping.isDefault && quantity > 1) {
           // If default topping and quantity > 1, calculate addon price for additional quantities
           int additionalQuantity = quantity - 1;

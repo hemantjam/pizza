@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:pizza/api/api_response.dart';
 import 'package:pizza/api/api_services.dart';
@@ -11,7 +12,9 @@ import '../by_group_code/menu_by_group_code_model.dart';
 import '../menu_model.dart';
 import 'local_storage/menu_details_database.dart';
 
-class MenuDetailsController extends GetxController {
+class MenuDetailsController extends GetxController{
+  MenuDetailsController(this.arguments);
+
   final Map<String, dynamic> arguments;
 
   RxMap<String, GroupModel> groupModelList = <String, GroupModel>{}.obs;
@@ -19,14 +22,23 @@ class MenuDetailsController extends GetxController {
   final ApiServices _apiServices = ApiServices();
   RxList<MenuListModel> menuListModel = <MenuListModel>[].obs;
 
-  MenuDetailsController(this.arguments);
-
+  ExpansionTileController tileController = ExpansionTileController();
   RxInt selectedItemIndex = 0.obs;
+  RxString expandedCateName = "".obs;
+  RxBool isExpanded = false.obs;
+
+  toggleCateExpName(bool value, String newCate) {
+    if (value) {
+      expandedCateName.value = newCate;
+    } else {
+      expandedCateName.value = "";
+    }
+  }
 
   @override
   void onInit() {
-    menuListModel=arguments["modelList"];
-    selectedItemIndex.value=arguments["selectedIndex"];
+    menuListModel = arguments["modelList"];
+    selectedItemIndex.value = arguments["selectedIndex"];
     menuListModel.where((p0) => p0.webDisplay!);
     super.onInit();
     checkForOfflineData();

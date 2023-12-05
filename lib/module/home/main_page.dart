@@ -34,33 +34,28 @@ class MainPage extends GetView<HomeController> {
                     ),
                   ),
                 ),
-                GetBuilder<LoginController>(
-                    init: Get.put(LoginController()),
-                    builder: (LoginController loginController) {
-                      return GestureDetector(
-                        onTap: () {
-                          Get.toNamed(RouteNames.login);
-                        },
-                        child: Center(
-                            child: Row(
-                          children: [
-                            // Text("${controller.userName.value}"),
-                            loginController.userName.value.isNotEmpty
-                                ? Row(
-                                    children: [
-                                      const Icon(Icons.person),
-                                      Text(loginController.userName.value)
-                                    ],
-                                  )
-                                : const Text("Sign in",
-                                    style: TextStyle(
-                                      decoration: TextDecoration.underline,
-                                      fontWeight: FontWeight.w400,
-                                    )),
-                          ],
-                        )),
-                      );
-                    })
+                GestureDetector(
+                  onTap: () {
+                    Get.toNamed(RouteNames.login);
+                  },
+                  child: Center(
+                      child: Row(
+                        children: [
+                          controller.userName.value.isNotEmpty
+                              ? Row(
+                            children: [
+                              const Icon(Icons.person),
+                              Text(controller.userName.value)
+                            ],
+                          )
+                              : const Text("Sign in",
+                              style: TextStyle(
+                                decoration: TextDecoration.underline,
+                                fontWeight: FontWeight.w400,
+                              )),
+                        ],
+                      )),
+                )
               ],
             ),
           ),
@@ -101,7 +96,7 @@ class BottomTabBarItem extends GetView<HomeController> {
   @override
   Widget build(BuildContext context) {
     return Obx(
-      () {
+          () {
         return GestureDetector(
           onTap: () {
             controller.changeIndex(index);
@@ -121,15 +116,15 @@ class BottomTabBarItem extends GetView<HomeController> {
               children: [
                 index == 0
                     ? Image.asset(
-                        image,
-                        height: 24.sp,
-                        width: 24.sp,
-                      )
+                  image,
+                  height: 24.sp,
+                  width: 24.sp,
+                )
                     : SvgPicture.asset(
-                        image,
-                        height: 24.sp,
-                        width: 24.sp,
-                      ),
+                  image,
+                  height: 24.sp,
+                  width: 24.sp,
+                ),
                 const SizedBox(height: 5),
                 Text(
                   label,

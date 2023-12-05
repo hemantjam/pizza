@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:pizza/constants/route_names.dart';
 import 'package:pizza/local_storage/shared_pref.dart';
+import 'package:pizza/module/user/login/login_controller.dart';
 import 'package:pizza/module/user/register/register_model.dart';
+import 'package:pizza/widgets/common_dialog.dart';
 
 import '../../../api/api_response.dart';
 import '../../../api/api_services.dart';
@@ -12,6 +14,7 @@ import '../../../api/end_point.dart';
 class RegisterController extends GetxController {
   ApiServices apiServices = ApiServices();
   Rx<RegisterModel> registerModel = Get.put(RegisterModel()).obs;
+  LoginController loginController=Get.put(LoginController());
 
   final TextEditingController firstNameController = TextEditingController();
   final TextEditingController lastNameController = TextEditingController();
@@ -54,7 +57,7 @@ class RegisterController extends GetxController {
         "system": "PIZZAPORTAL"
       },
     );
-    //log("register response-->${res.toJson()}");
+
     if (res!=null&&res.status) {
       showLoading.value = false;
       if (registerModel.value.data != null) {
@@ -64,11 +67,14 @@ class RegisterController extends GetxController {
         SharedPref.saveString(
             "token", registerModel.value.data?.login?.jwtToken ?? "");
       }
-      handleNavigate();
+      loginController.login(emailController.text.trim(),cPassController.text.trim());
+     // handleNavigate();
     } else {
       Future.delayed(const Duration(seconds: 3), () {
         showLoading.value = false;
       });
+      showCoomonErrorDialog(title: "Register Failed", message:"Something went wrong ");
+
     }
     Future.delayed(const Duration(seconds: 3), () {
       showLoading.value = false;

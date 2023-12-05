@@ -56,10 +56,18 @@ class AllMenuPage extends GetView<MenuDetailsController> {
               onPressed: () {},
               child: Row(
                 children: [
-                  Text(
-                    "Checkout",
-                    style: buildButtonTextStyle(),
-                  ),
+                  Obx(() {
+                    return Text(
+                      controller.selectedItemIndex.value ==
+                              controller.menuListModel
+                                      .where((p0) => p0.webDisplay!)
+                                      .length -
+                                  1
+                          ? "Checkout"
+                          : "next",
+                      style: buildButtonTextStyle(),
+                    );
+                  }),
                   const Spacer(),
                   const Icon(Icons.arrow_forward)
                 ],
@@ -113,9 +121,8 @@ class MenuList extends GetView<MenuDetailsController> {
   @override
   Widget build(BuildContext context) {
     return Obx(() {
-      final visibleMenuList = controller.menuListModel
-          .where((p0) => p0.webDisplay!)
-          .toList();
+      final visibleMenuList =
+          controller.menuListModel.where((p0) => p0.webDisplay!).toList();
       return DefaultTabController(
         initialIndex: controller.selectedItemIndex.value,
         length: visibleMenuList.length,
@@ -235,14 +242,28 @@ class MenuDetails extends GetView<MenuDetailsController> {
       child: GetBuilder<MenuDetailsController>(builder: (logic) {
         Map<String, List<RecipeDetailsModel>> categorizedRecipes =
             controller.fetchCategories(groupModel);
+        if (categorizedRecipes.isNotEmpty) {
+          Future.delayed(const Duration(milliseconds: 10), () {
+            controller.toggleCateExpName(
+                true, categorizedRecipes.entries.first.key);
+          });
+        }
         return Column(
           children: [
-            headerDesign(
-                image,
-                categorizedRecipes.entries.map((e) => e.key).toList(),
-                groupModel.group?.itemGroupCode ?? "",
-                controller.buildYourPizzaModel.value.data?.entries.first.value
-                    .items?.values.first),
+            Obx(() {
+              return headerDesign(
+                  image,
+                  categorizedRecipes.entries.map((e) => e.key).toList(),
+                  groupModel.group?.itemGroupCode ?? "",
+                  controller.buildYourPizzaModel.value.data?.entries.first.value
+                      .items?.values.first,
+                  controller.expandedCateName.value, (value) {
+                controller.toggleCateExpName(true, value);
+              });
+            }),
+            const SizedBox(
+              height: 20,
+            ),
             categorizedRecipes.isEmpty
                 ? Column(
                     children: groupModel.items != null
@@ -256,10 +277,13 @@ class MenuDetails extends GetView<MenuDetailsController> {
                   )
                 : Column(
                     children: categorizedRecipes.entries
-                        .map((e) => categoryTile(
-                            e.key,
-                            e.value.map((e) => e).toList(),
-                            groupModel.group?.itemGroupCode ?? ""))
+                        .map((e) => CategoryTile(
+                            category: e.key,
+                            children: e.value.map((e) => e).toList(),
+                            groupCode: groupModel.group?.itemGroupCode ?? "",
+                            onExpand: controller.toggleCateExpName,
+                            expand:
+                                e.key == categorizedRecipes.entries.first.key))
                         .toList(),
                   ),
           ],
@@ -270,27 +294,40 @@ class MenuDetails extends GetView<MenuDetailsController> {
 }
 
 /// category tile
-Widget categoryTile(
-    String category, List<RecipeDetailsModel> children, String groupCode) {
-  return ExpansionTile(
-    initiallyExpanded: true,
-    maintainState: true,
-    title: Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        // Icon(Icons.keyboard_arrow_down, size: 22.sp),
-        const SizedBox(width: 5),
-        Text(
-          category,
-          style: TextStyle(fontSize: 16.sp),
-        ),
-      ],
-    ),
-    // trailing: Text(children.length.toString()),
-    children: children
-        .map((e) => MenuItemDetails(value: e, groupCode: groupCode))
-        .toList(),
-  );
+///
+class CategoryTile extends StatelessWidget {
+  final List<RecipeDetailsModel> children;
+  final String groupCode;
+  final Function(bool, String) onExpand;
+  final bool expand;
+  final String category;
+
+  const CategoryTile(
+      {super.key,
+      required this.category,
+      required this.children,
+      required this.expand,
+      required this.onExpand,
+      required this.groupCode});
+
+  @override
+  Widget build(BuildContext context) {
+    // onExpand(expand,category);
+    return ExpansionTile(
+      onExpansionChanged: (bool value) {
+        onExpand(value, category);
+      },
+      initiallyExpanded: expand,
+      maintainState: true,
+      title: Text(
+        category,
+        style: TextStyle(fontSize: 14.sp),
+      ),
+      children: children
+          .map((e) => MenuItemDetails(value: e, groupCode: groupCode))
+          .toList(),
+    );
+  }
 }
 
 /// menu item details
@@ -369,6 +406,7 @@ class _MenuItemDetailsState extends State<MenuItemDetails> {
                     child: widget.groupCode == "G1"
                         ? Container(
                             decoration: BoxDecoration(
+                              border: Border.all(color: Colors.white),
                               color: Colors.black,
                               borderRadius: BorderRadius.circular(20),
                             ),
@@ -432,7 +470,7 @@ class _MenuItemDetailsState extends State<MenuItemDetails> {
                       ),
                     ),
                     Text(
-                      "\$${calculateTotalPrice(basePrice, addOn, tax) * defaultQuantity}",
+                      "\$${((calculateTotalPrice(basePrice, tax) + addOn) * defaultQuantity).toStringAsFixed(2)}",
                       style: TextStyle(fontSize: 18.sp, color: Colors.orange),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
@@ -690,8 +728,13 @@ class BaseSelection extends StatelessWidget {
 
 TextStyle titleStyle() => TextStyle(color: Colors.blue.shade900, fontSize: 18);
 
-Widget headerDesign(String image, List<String>? categories, String code,
-    RecipeDetailsModel? recipeDetailsModel) {
+Widget headerDesign(
+    String image,
+    List<String>? categories,
+    String code,
+    RecipeDetailsModel? recipeDetailsModel,
+    String selectedCate,
+    Function(String) onTap) {
   return Container(
     height: 12.h,
     color: Colors.white,
@@ -725,70 +768,74 @@ Widget headerDesign(String image, List<String>? categories, String code,
                         : const SizedBox(),
                   ),
                 ),
-                categories != null && categories.isNotEmpty
-                    ? SingleChildScrollView(
-                   scrollDirection : Axis.horizontal,
+                if (categories != null && categories.isNotEmpty)
+                  Expanded(
+                    child: SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
                       child: Row(
-                          children: categories
-                              .map(
-                                (e) => Padding(
+                        children: categories
+                            .map(
+                              (e) => GestureDetector(
+                                onTap: () => onTap(e),
+                                child: Padding(
                                   padding:
                                       const EdgeInsets.only(right: 5, left: 5),
                                   child: Text(
                                     e,
                                     style: TextStyle(
+                                      decoration: TextDecoration.underline,
                                       textBaseline: TextBaseline.alphabetic,
                                       fontSize: 14.sp,
-                                      color: Colors.orangeAccent,
+                                      color: e == selectedCate
+                                          ? Colors.orangeAccent
+                                          : Colors.black,
                                     ),
                                   ),
                                 ),
-                              )
-                              .toList(),
-                        ),
-                    )
-                    : const SizedBox(),
-                code == "G1"
-                    ? Expanded(
-                        child: Align(
-                          alignment: Alignment.topRight,
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 5, vertical: 5),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                GestureDetector(
-                                  onTap: () {
-                                    Map<String, dynamic> arguments = {
-                                      "model": recipeDetailsModel,
-                                      "isBuildYourOwn": true,
-                                    };
-                                    recipeDetailsModel != null
-                                        ? Get.toNamed(RouteNames.customizePizza,
-                                            arguments: arguments)
-                                        : null;
-                                  },
-                                  child: SvgPicture.asset(
-                                    Assets.bottomBuildYourPizza,
-                                    height: 26.sp,
-                                    width: 26.sp,
-                                    color: Colors.black,
-                                  ),
-                                ),
-                                SvgPicture.asset(
-                                  Assets.bottomHalfHalf,
-                                  height: 26.sp,
-                                  width: 26.sp,
-                                  color: Colors.black,
-                                ),
-                                const SizedBox(width: 10),
-                              ],
+                              ),
+                            )
+                            .toList(),
+                      ),
+                    ),
+                  ),
+                if (code == "G1")
+                  Align(
+                    alignment: Alignment.topRight,
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 5, vertical: 5),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          GestureDetector(
+                            onTap: () {
+                              Map<String, dynamic> arguments = {
+                                "model": recipeDetailsModel,
+                                "isBuildYourOwn": true,
+                              };
+                              recipeDetailsModel != null
+                                  ? Get.toNamed(RouteNames.customizePizza,
+                                      arguments: arguments)
+                                  : null;
+                            },
+                            child: SvgPicture.asset(
+                              Assets.bottomBuildYourPizza,
+                              height: 26.sp,
+                              width: 26.sp,
+                              color: Colors.black,
                             ),
                           ),
-                        ),
-                      )
-                    : const SizedBox()
+                          SvgPicture.asset(
+                            Assets.bottomHalfHalf,
+                            height: 26.sp,
+                            width: 26.sp,
+                            color: Colors.black,
+                          ),
+                          const SizedBox(width: 10),
+                        ],
+                      ),
+                    ),
+                  ),
               ],
             ),
           ),

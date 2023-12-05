@@ -148,7 +148,8 @@ class LogInPage extends GetView<LoginController> {
                   //  controller.showLoading.value = !controller.showLoading.value;
                   //controller.login();
                   if (controller.formKey.currentState!.validate()) {
-                    controller.login();
+                    controller.login(controller.emailController.text.trim(),
+                        controller.passController.text.trim());
                   }
                 },
                 enable: true,

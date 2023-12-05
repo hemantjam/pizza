@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:pizza/constants/app_colors.dart';
+import 'package:pizza/module/home/home_controller.dart';
 import 'package:pizza/utils/log.dart';
 
-class AppDrawer extends StatelessWidget {
+class AppDrawer extends GetView<HomeController> {
   const AppDrawer({super.key});
 
   @override
@@ -12,29 +14,28 @@ class AppDrawer extends StatelessWidget {
         color: AppColors.grey400.withOpacity(0.5), // Background color
         child: ListView(
           children: [
-            UserAccountsDrawerHeader(
-              accountName: const Text('John Doe'),
-              accountEmail: const Text('johndoe@example.com'),
-              currentAccountPicture: const CircleAvatar(
-                backgroundImage: AssetImage('assets/profile_image.jpg'),
-              ),
-              decoration: BoxDecoration(color: AppColors.grey400),
-            ),
+            Obx(() {
+              return UserAccountsDrawerHeader(
+                accountName: Text(controller.userName.value),
+                accountEmail: Text(controller
+                        .loggedInUserModel.data?.customerMST?.primaryEmail ??
+                    ""),
+                currentAccountPicture: const CircleAvatar(
+                  child: Icon(Icons.person),
+                ),
+                decoration: BoxDecoration(color: AppColors.grey400),
+              );
+            }),
             ListTile(
               leading: Icon(Icons.home, color: AppColors.black),
-              // Icon color
               title: Text('Home', style: TextStyle(color: AppColors.black)),
-              // Text color
-              onTap: () {
-                // Handle home navigation
-              },
+              onTap: () {},
             ),
             Divider(color: AppColors.white), // Divider color
             ListTile(
               leading: Icon(Icons.restaurant_menu, color: AppColors.black),
               title: Text('Menu', style: TextStyle(color: AppColors.black)),
               onTap: () {
-                // Handle menu navigation
               },
             ),
             ListTile(

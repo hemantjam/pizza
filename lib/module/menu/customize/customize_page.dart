@@ -18,11 +18,11 @@ class CustomizePizzaPage extends GetView<CustomizePizzaController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      floatingActionButton: FloatingActionButton(
+      /*  floatingActionButton: FloatingActionButton(
         onPressed: () {
           controller.calculateToppingsPrice();
         },
-      ),
+      ),*/
       appBar: AppBar(
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios_new_rounded),
@@ -48,14 +48,17 @@ class CustomizePizzaPage extends GetView<CustomizePizzaController> {
               thickness: 1,
             ),
             Obx(
-              () => _buildToppingsList(
-                selected: controller.filledSlots,
-                controller.allToppings.where((p0) => p0.isSelected).toList(),
-                isSelectedList: true,
-              ),
+                  () =>
+                  _buildToppingsList(
+                    selected: controller.filledSlots,
+                    controller.allToppings.where((p0) => p0.isSelected)
+                        .toList(),
+                    isSelectedList: true,
+                  ),
             ),
             const Divider(color: Colors.grey, thickness: 1),
-            Obx(() => _buildToppingsList(
+            Obx(() =>
+                _buildToppingsList(
                   selected: controller.filledSlots,
                   isSelectedList: false,
                   controller.allToppings.where((p0) => !p0.isSelected).toList(),
@@ -86,55 +89,65 @@ class CustomizePizzaPage extends GetView<CustomizePizzaController> {
             : "Please select from Toppings list",
         style: TextStyle(fontSize: 14.sp, color: Colors.grey),
       ),
-      children: toppings?.asMap().entries.map((e) {
-            ToppingsSelection topping = toppings[e.key];
-            return ListTile(
-                title: Text(topping.toppingName),
-                trailing: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: List.generate(topping.maximumQuantity, (index) {
-                    return Checkbox(
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      value: topping.values[index],
-                      onChanged: (value) {
-                        int currentIn=topping.values.where((value) => value).length;
-                        int totalFilledSlots = (controller.filledSlots-currentIn) +
-                           ( index+1);
-                        if(totalFilledSlots>controller.maxSlots) {
-                          showCoomonErrorDialog(title: "Toopings Alert",
-                              message: "Max toppings reached");
-                          return;
+      children: toppings
+          ?.asMap()
+          .entries
+          .map((e) {
+        ToppingsSelection topping = toppings[e.key];
+        return ListTile(
+            title: Text(topping.toppingName),
+            trailing: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: List.generate(topping.maximumQuantity, (index) {
+                return Checkbox(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  value: topping.values[index],
+                  onChanged: (value) {
+                    int currentIn = topping.values
+                        .where((value) => value)
+                        .length;
+                    int totalFilledSlots = (controller.filledSlots -
+                        currentIn) +
+                        (index + 1);
+                    if (totalFilledSlots > controller.maxSlots) {
+                      showCoomonErrorDialog(title: "Toopings Alert",
+                          message: "Max toppings reached");
+                      return;
+                    }
+                    else {
+                      topping.defaultQuantity = topping.values
+                          .where((value) => value)
+                          .length;
+                      topping.values = List.generate(
+                        topping.maximumQuantity.ceil(),
+                            (oldIndex) => oldIndex < (index + 1).toInt(),
+                      );
+                      if (isSelectedList) {
+                        if (topping.canRemove &&
+                            index == 0 &&
+                            (topping.values[0] &&
+                                !topping.values[1] &&
+                                !topping.values[2])) {
+                          topping.isSelected = false;
+                          topping.values =
+                              topping.values.map((element) => false).toList();
                         }
-                        else{
-                        topping.defaultQuantity=topping.values.where((value) => value).length;
-                        topping.values = List.generate(
-                          topping.maximumQuantity.ceil(),
-                          (oldIndex) => oldIndex < (index + 1).toInt(),
-                        );
-                        if (isSelectedList) {
-                          if (topping.canRemove &&
-                              index == 0 &&
-                              (topping.values[0] &&
-                                  !topping.values[1] &&
-                                  !topping.values[2])) {
-                            topping.isSelected = false;
-                            topping.values = topping.values.map((element) => false).toList();
-                          }
-                          topping.canRemove = index == 0;
-                          controller.addTopping(topping);
-                        }
-                        else if (!isSelectedList) {
-                          topping.isSelected = true;
-                          controller.addTopping(topping);
-                          topping.canRemove = false;
-                        }}
-                      },
-                    );
-                  }),
-                ));
-          }).toList() ??
+                        topping.canRemove = index == 0;
+                        controller.addTopping(topping);
+                      }
+                      else if (!isSelectedList) {
+                        topping.isSelected = true;
+                        controller.addTopping(topping);
+                        topping.canRemove = false;
+                      }
+                    }
+                  },
+                );
+              }),
+            ));
+      }).toList() ??
           [],
     );
   }
@@ -201,7 +214,8 @@ class _ItemDetailsState extends State<ItemDetails> {
                 child: CachedNetworkImage(
                   fit: BoxFit.cover,
                   imageUrl: controller.recipeDetailsModel?.image ?? "",
-                  placeholder: (context, url) => const SizedBox(
+                  placeholder: (context, url) =>
+                  const SizedBox(
                       child: BlurHash(hash: Assets.homeBannerBlur)),
                   errorWidget: (context, url, error) => const Icon(Icons.error),
                   height: 25.h,
@@ -217,6 +231,7 @@ class _ItemDetailsState extends State<ItemDetails> {
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
             children: [
+
               /// name , price , base, size
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -231,8 +246,9 @@ class _ItemDetailsState extends State<ItemDetails> {
                   ),
                   Obx(() {
                     return Text(
-                      "\$${(calculateTotalPrice(basePrice, /* controller.addOnToppings.value, tax) + controller.allToppings.where((element) => element.isSelected && !element.isDefault).fold(0, (sum, topping) => sum + topping.addCost.toInt()).ceil()*/
-                          controller.calculateToppingsPrice(), tax)) * defaultQuantity}",
+                      "\$${(((calculateTotalPrice(basePrice,
+                          tax)+addOn) + controller.calculateToppingsPrice())*
+                          defaultQuantity).toStringAsFixed(2)}",
                       style: TextStyle(fontSize: 18.sp, color: Colors.orange),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
@@ -245,123 +261,125 @@ class _ItemDetailsState extends State<ItemDetails> {
                 controller.recipeDetailsModel?.ingredients ?? "",
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
+                style: TextStyle(color: Color(0xff999999)),
               ),
               const SizedBox(height: 10),
               controller.recipeDetailsModel?.recipes != null
                   ? Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        controller.recipeDetailsModel?.recipes != null &&
-                                controller.recipeDetailsModel?.recipes?.first
-                                        .size !=
-                                    null
-                            ? Column(
-                                mainAxisSize: MainAxisSize.min,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text("Pizza Size", style: titleStyle()),
-                                  const SizedBox(
-                                    height: 5,
-                                  ),
-                                  Container(
-                                    decoration: BoxDecoration(
-                                        border: Border.all(
-                                            width: 0.5, color: Colors.black)),
-                                    child: DropdownButton<String>(
-                                      underline: const SizedBox(),
-                                      elevation: 0,
-                                      borderRadius: BorderRadius.zero,
-                                      padding: const EdgeInsets.all(5),
-                                      isDense: true,
-                                      value: selectedSize,
-                                      onChanged: (String? newValue) {
-                                        if (newValue != null) {
-                                          setState(() {
-                                            selectedSize = newValue;
-                                            basePrice = controller
-                                                    .recipeDetailsModel
-                                                    ?.recipes!
-                                                    .where((element) =>
-                                                        element.size?.name ==
-                                                        newValue)
-                                                    .first
-                                                    .basePrice ??
-                                                0.0;
-                                            addOn = controller
-                                                    .recipeDetailsModel
-                                                    ?.recipes!
-                                                    .where((element) =>
-                                                        element.size?.name ==
-                                                        newValue)
-                                                    .first
-                                                    .base
-                                                    ?.first
-                                                    .addCost ??
-                                                0.0;
-                                            selectedBase = null;
-                                            controller.toggleRecipeModel(
-                                                controller
-                                                    .recipeDetailsModel?.recipes
-                                                    ?.where((element) =>
-                                                        element.size?.name ==
-                                                        "$selectedSize")
-                                                    .first);
-                                          });
-                                        }
-                                      },
-                                      items: controller
-                                          .recipeDetailsModel?.recipes!
-                                          .map((e) => DropdownMenuItem<String>(
-                                                value: e.size?.name ?? "",
-                                                child: SizedBox(
-                                                  width: 35.w,
-                                                  child: Text(
-                                                    e.size?.name ?? "",
-                                                    overflow:
-                                                        TextOverflow.ellipsis,
-                                                    maxLines: 1,
-                                                  ),
-                                                ),
-                                              ))
-                                          .toList(),
-                                    ),
-                                  )
-                                ],
-                              )
-                            : const SizedBox.shrink(),
-                        controller.recipeDetailsModel?.recipes != null &&
-                                controller.recipeDetailsModel?.recipes?.first
-                                        .size !=
-                                    null
-                            ? BaseSelection(
-                                onSelect: (d, item) {
-                                  setState(() {
-                                    addOn = d;
-                                    selectedBase = item;
-                                  });
-                                },
-                                sizes: controller.recipeDetailsModel!.recipes!
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  controller.recipeDetailsModel?.recipes != null &&
+                      controller.recipeDetailsModel?.recipes?.first
+                          .size !=
+                          null
+                      ? Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text("Pizza Size", style: titleStyle()),
+                      const SizedBox(
+                        height: 5,
+                      ),
+                      Container(
+                        decoration: BoxDecoration(
+                            border: Border.all(
+                                width: 0.5, color: Colors.black)),
+                        child: DropdownButton<String>(
+                          underline: const SizedBox(),
+                          elevation: 0,
+                          borderRadius: BorderRadius.zero,
+                          padding: const EdgeInsets.all(5),
+                          isDense: true,
+                          value: selectedSize,
+                          onChanged: (String? newValue) {
+                            if (newValue != null) {
+                              setState(() {
+                                selectedSize = newValue;
+                                basePrice = controller
+                                    .recipeDetailsModel
+                                    ?.recipes!
                                     .where((element) =>
-                                        element.size?.name == selectedSize)
-                                    .map((e) => e.base)
-                                    .expand<BaseModel?>((bases) => bases ?? [])
-                                    .toList(),
-                                selectedBase: selectedBase,
-                              )
-                            : BaseSelection(
-                                onSelect: (addon, item) {
-                                  setState(() {
-                                    addOn = addon;
-                                    selectedBase = item;
-                                  });
-                                },
-                                sizes: controller.recipeDetailsModel?.recipes
-                                        ?.first.base ??
-                                    [],
-                                selectedBase: selectedBase,
-                              ),
-                      ],
-                    )
+                                element.size?.name ==
+                                    newValue)
+                                    .first
+                                    .basePrice ??
+                                    0.0;
+                                addOn = controller
+                                    .recipeDetailsModel
+                                    ?.recipes!
+                                    .where((element) =>
+                                element.size?.name ==
+                                    newValue)
+                                    .first
+                                    .base
+                                    ?.first
+                                    .addCost ??
+                                    0.0;
+                                selectedBase = null;
+                                controller.toggleRecipeModel(
+                                    controller
+                                        .recipeDetailsModel?.recipes
+                                        ?.where((element) =>
+                                    element.size?.name ==
+                                        "$selectedSize")
+                                        .first);
+                              });
+                            }
+                          },
+                          items: controller
+                              .recipeDetailsModel?.recipes!
+                              .map((e) =>
+                              DropdownMenuItem<String>(
+                                value: e.size?.name ?? "",
+                                child: SizedBox(
+                                  width: 35.w,
+                                  child: Text(
+                                    e.size?.name ?? "",
+                                    overflow:
+                                    TextOverflow.ellipsis,
+                                    maxLines: 1,
+                                  ),
+                                ),
+                              ))
+                              .toList(),
+                        ),
+                      )
+                    ],
+                  )
+                      : const SizedBox.shrink(),
+                  controller.recipeDetailsModel?.recipes != null &&
+                      controller.recipeDetailsModel?.recipes?.first
+                          .size !=
+                          null
+                      ? BaseSelection(
+                    onSelect: (d, item) {
+                      setState(() {
+                        addOn = d;
+                        selectedBase = item;
+                      });
+                    },
+                    sizes: controller.recipeDetailsModel!.recipes!
+                        .where((element) =>
+                    element.size?.name == selectedSize)
+                        .map((e) => e.base)
+                        .expand<BaseModel?>((bases) => bases ?? [])
+                        .toList(),
+                    selectedBase: selectedBase,
+                  )
+                      : BaseSelection(
+                    onSelect: (addon, item) {
+                      setState(() {
+                        addOn = addon;
+                        selectedBase = item;
+                      });
+                    },
+                    sizes: controller.recipeDetailsModel?.recipes
+                        ?.first.base ??
+                        [],
+                    selectedBase: selectedBase,
+                  ),
+                ],
+              )
                   : const SizedBox.shrink(),
               const SizedBox(height: 5),
               Text(!controller.isBuildYourOwnPizza.value ? "Quantity" : "",
@@ -371,111 +389,112 @@ class _ItemDetailsState extends State<ItemDetails> {
               SizedBox(height: controller.isBuildYourOwnPizza.value ? 10 : 0),
               controller.isBuildYourOwnPizza.value
                   ? Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Column(
-                          mainAxisSize: MainAxisSize.min,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text("Sauce", style: titleStyle()),
-                            const SizedBox(height: 5),
-                            Container(
-                              decoration: BoxDecoration(
-                                  border: Border.all(
-                                      width: 0.5, color: Colors.black)),
-                              child: DropdownButton<String>(
-                                underline: const SizedBox(),
-                                elevation: 0,
-                                borderRadius: BorderRadius.zero,
-                                padding: const EdgeInsets.all(5),
-                                isDense: true,
-                                value: selectedSauce,
-                                onChanged: (String? newValue) {
-                                  if (newValue != null) {
-                                    setState(() {
-                                      selectedSauce = newValue;
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text("Sauce", style: titleStyle()),
+                      const SizedBox(height: 5),
+                      Container(
+                        decoration: BoxDecoration(
+                            border: Border.all(
+                                width: 0.5, color: Colors.black)),
+                        child: DropdownButton<String>(
+                          underline: const SizedBox(),
+                          elevation: 0,
+                          borderRadius: BorderRadius.zero,
+                          padding: const EdgeInsets.all(5),
+                          isDense: true,
+                          value: selectedSauce,
+                          onChanged: (String? newValue) {
+                            if (newValue != null) {
+                              setState(() {
+                                selectedSauce = newValue;
 
-                                      selectedBase = null;
-                                      controller.toggleRecipeModel(controller
-                                          .recipeDetailsModel?.recipes
-                                          ?.where((element) =>
-                                              element.size?.name ==
-                                              "$selectedSize")
-                                          .first);
-                                    });
-                                  }
-                                },
-                                items: controller
-                                    .recipeDetailsModel?.recipes?.first.sauce!
-                                    .map((e) => DropdownMenuItem<String>(
-                                          value: e.name ?? "",
-                                          child: SizedBox(
-                                            width: 35.w,
-                                            child: Text(
-                                              e.name ?? "",
-                                              overflow: TextOverflow.ellipsis,
-                                              maxLines: 1,
-                                            ),
-                                          ),
-                                        ))
-                                    .toList(),
-                              ),
-                            )
+                                selectedBase = null;
+                                controller.toggleRecipeModel(controller
+                                    .recipeDetailsModel?.recipes
+                                    ?.where((element) =>
+                                element.size?.name ==
+                                    "$selectedSize")
+                                    .first);
+                              });
+                            }
+                          },
+                          items: controller
+                              .recipeDetailsModel?.recipes?.first.sauce!
+                              .map((e) =>
+                              DropdownMenuItem<String>(
+                                value: e.name ?? "",
+                                child: SizedBox(
+                                  width: 35.w,
+                                  child: Text(
+                                    e.name ?? "",
+                                    overflow: TextOverflow.ellipsis,
+                                    maxLines: 1,
+                                  ),
+                                ),
+                              ))
+                              .toList(),
+                        ),
+                      )
+                    ],
+                  ),
+                  SizedBox(
+                    width: 45.w,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text("Quantity", style: titleStyle()),
+                        const SizedBox(
+                          height: 5,
+                        ),
+                        Row(
+                          mainAxisAlignment:
+                          MainAxisAlignment.spaceBetween,
+                          children: [
+                            QuantitySelector(onTap: onTap),
+
+                            /// add to cart
+                            controller.isBuildYourOwnPizza.value
+                                ? const SizedBox.shrink()
+                                : Obx(() {
+                              return buildElevatedButton(
+                                  context, 0);
+                            }),
                           ],
                         ),
-                        SizedBox(
-                          width: 45.w,
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text("Quantity", style: titleStyle()),
-                              const SizedBox(
-                                height: 5,
-                              ),
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  QuantitySelector(onTap: onTap),
-
-                                  /// add to cart
-                                  controller.isBuildYourOwnPizza.value
-                                      ? const SizedBox.shrink()
-                                      : Obx(() {
-                                          return buildElevatedButton(
-                                              context, 0);
-                                        }),
-                                ],
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    )
-                  : Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        QuantitySelector(onTap: onTap),
-
-                        /// add to cart
-                        Obx(() {
-                          return buildElevatedButton(context, 55.w);
-                        }),
                       ],
                     ),
+                  ),
+                ],
+              )
+                  : Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  QuantitySelector(onTap: onTap),
+
+                  /// add to cart
+                  Obx(() {
+                    return buildElevatedButton(context, 55.w);
+                  }),
+                ],
+              ),
               const SizedBox(height: 5),
               !controller.isBuildYourOwnPizza.value
                   ? const SizedBox.shrink()
                   : Obx(() {
-                      return SizedBox(
-                        // width: 100.w,
-                        child: buildElevatedButton(
-                          context,
-                          100.w,
-                        ),
-                      );
-                    })
+                return SizedBox(
+                  // width: 100.w,
+                  child: buildElevatedButton(
+                    context,
+                    100.w,
+                  ),
+                );
+              })
             ],
           ),
         ),
@@ -491,9 +510,9 @@ class _ItemDetailsState extends State<ItemDetails> {
         padding: const EdgeInsets.symmetric(horizontal: 50),
         foregroundColor: Colors.white,
         backgroundColor:
-            !controller.allToppings.any((element) => element.isSelected)
-                ? Colors.grey.shade700
-                : Colors.orange,
+        !controller.allToppings.any((element) => element.isSelected)
+            ? Colors.grey.shade700
+            : Colors.orange,
       ),
       onPressed: () {
         if (controller.allToppings.any((element) => element.isSelected)) {

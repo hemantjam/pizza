@@ -1,8 +1,8 @@
-int calculateTotalPrice(double price, double addOn, double taxPercentage) {
+int calculateTotalPrice(double price, double taxPercentage) {
   double totalPrice =
-      (price + addOn) + ((price + addOn) * (taxPercentage / 100));
+      (price) + (price  * (taxPercentage / 100));
 
-  String formattedTotalPrice = totalPrice.ceil().toString();
+  String formattedTotalPrice = totalPrice.ceil().toStringAsFixed(2);
 
   formattedTotalPrice = formattedTotalPrice.replaceAll(RegExp(r'\.0*$'), '');
 

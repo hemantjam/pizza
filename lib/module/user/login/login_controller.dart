@@ -27,17 +27,8 @@ class LoginController extends GetxController {
 
   @override
   void onInit() {
-    log("====>$userName");
-    getusername();
-    log("====>$userName");
     super.onInit();
-    ever(loggedInUserModel.obs, (callback) => getusername());
     getSavedCredential();
-  }
-
-  getusername() {
-    userName.value =
-        loggedInUserModel.data?.customerMST?.customerFirstName ?? "";
   }
 
   getSavedCredential() async {
@@ -57,7 +48,7 @@ class LoginController extends GetxController {
     SharedPref.deleteData("login_creds");
   }
 
-  void login() async {
+  void login(String email, String password) async {
     if (rememberMe.value) {
       saveLoginCreds();
     }
@@ -67,13 +58,8 @@ class LoginController extends GetxController {
     showLoading.value = true;
     ApiResponse? res = await apiServices.postRequest(
       ApiEndPoints.userLogin,
-      data: {
-        "userName": emailController.text.trim(),
-        "password": passController.text.trim(),
-        "system": "PIZZAPORTAL"
-      },
+      data: {"userName": email, "password": password, "system": "PIZZAPORTAL"},
     );
-    log("login response-->${res?.toJson()}");
     if (res != null && res.status) {
       userDataModel = UserDataModel.fromJson(res.toJson());
       if (userDataModel.data != null) {

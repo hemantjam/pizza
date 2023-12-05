@@ -32,7 +32,7 @@ class ApiServices {
     };
     try {
       _dio.options.headers['Authorization'] =
-          'Bearer ${ApiEndPoints.authToken}';
+      'Bearer ${ApiEndPoints.authToken}';
       final response = await _dio.get(endpoint + data,
           queryParameters: queryParameters, data: data);
       if (response.statusCode == 200) {
@@ -47,6 +47,7 @@ class ApiServices {
         AppLogs.add(logField.toString());
       }
     } catch (e) {
+      log("get=========>${e.toString()}");
       logField.addAll({"error": e});
       AppLogs.add(logField.toString());
       log("error--->$endpoint");
@@ -55,8 +56,7 @@ class ApiServices {
     return null;
   }
 
-  Future<ApiResponse?> postRequest<T>(
-    String endpoint, {
+  Future<ApiResponse?> postRequest<T>(String endpoint, {
     dynamic data,
     Map<String, dynamic>? queryParameters,
     String? token,
@@ -68,7 +68,7 @@ class ApiServices {
     };
     try {
       _dio.options.headers['Authorization'] =
-          'Bearer ${ApiEndPoints.authToken}';
+      'Bearer ${ApiEndPoints.authToken}';
 
       final response = await _dio.post(endpoint,
           data: data ?? '"' + data + '"', queryParameters: queryParameters);
@@ -79,18 +79,19 @@ class ApiServices {
         return apiResponse;
       } else {
         handleError({
-          "status": response.statusCode!,
-          "message": response.statusMessage ?? ""
+          "status": "Error",
+          "message":response.data["message"]
         });
         logField.addAll({"error": "error in response code"});
         AppLogs.add(logField.toString());
       }
     } catch (e) {
+      log("post=========>${e.toString()}");
       logField.addAll({"error": e.toString()});
       AppLogs.add(logField.toString());
       log("error===>$endpoint");
+      handleError(e);
     }
-    //  AppLogs.add(logField.toString());
     return null;
   }
 
@@ -105,12 +106,20 @@ class ApiServices {
           title: "Network Error",
           message: "Check your internet connection and try again.",
         );
-      } else if (e.type == DioExceptionType.badResponse) {
+      }
+      else if(e.type==DioExceptionType.badResponse){
         showCoomonErrorDialog(
           title: "Error:",
-          message: e.response?.statusMessage ?? "Session e",
+          message:e.response!.data["message"],
         );
-      } else {
+      }
+      else
+        {
+        showCoomonErrorDialog(
+          title: "Error:",
+          message: e.response?.statusMessage ?? "Session expired",
+        );
+      } /* else {
         showCoomonErrorDialog(
           title: "Something Went Wrong !!",
           message: e.response?.statusMessage ?? "",
@@ -122,10 +131,11 @@ class ApiServices {
         title: "Something Went Wrong !",
         message: e.message ?? "",
       );
+    }*/
     }
-  }
 
-  void close() {
-    _dio.close();
+    void close() {
+      _dio.close();
+    }
   }
 }

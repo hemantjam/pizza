@@ -3,46 +3,31 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:pizza/module/cart/cart_page.dart';
 import 'package:pizza/module/offers/offer_view_all.dart';
+import 'package:pizza/module/user/logged_in_user/logged_in_user_model.dart';
 import 'package:pizza/module/user/login/login_controller.dart';
 
+import '../splash/splash_controller.dart';
 import 'home_page.dart';
 
 class HomeController extends GetxController {
   RxBool showHeader = false.obs;
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
-  PageController indicatorController = PageController();
+ // PageController indicatorController = PageController();
   CarouselController carouselController = CarouselController();
-  LoginController loginController = Get.put(LoginController());
+//  LoginController loginController = Get.put(LoginController());
   RxString userName = "".obs;
- // SplashController splashController=Get.find(tag:SplashController);
-
+  SplashController splashController = Get.find<SplashController>();
+LoggedInUserModel loggedInUserModel=LoggedInUserModel();
   @override
   void onInit() {
-    changeUserName();
     super.onInit();
-    ever(loginController.userName, (callback) {
-      changeUserName();
-    });
-  }
-
-  @override
-  void onReady() {
-    changeUserName();
-    super.onReady();
-    ever(loginController.userName, (callback) {
-      changeUserName();
-    });
-  }
-
-  changeUserName() {
-    userName.value = loginController.userName.value;
-    update();
+loggedInUserModel=splashController.loggedInUserModel.value;
+    userName.value = splashController.userName.value;
   }
 
   final List<Widget> pages = [
     const HomePage(),
     const OfferList(),
-
     const Page(text: "quick orders will be here"),
     const CartPage()
   ].obs;

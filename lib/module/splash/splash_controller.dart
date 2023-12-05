@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:get/get.dart';
 import 'package:pizza/api/end_point.dart';
 import 'package:pizza/constants/route_names.dart';
@@ -41,16 +43,13 @@ class SplashController extends GetxController {
     String? token = await getOfflineToken();
     ApiEndPoints.authToken = token ?? "";
     ApiResponse? res = await apiServices.getRequest(ApiEndPoints.userLoggedIn);
-    //log("${res!.toJson()}");
+    //log("logged in response------>${res!.toJson()}");
     if (res != null && res.status) {
-      //  loginController.userName.value = "assigned";
       loggedInUserModel.value = LoggedInUserModel.fromJson(res.toJson());
-      // log("=====>Logged in model->${loggedInUserModel.value.data?.userMST?.userName.toString()}");
-      //log("=====>Logged in model->${loggedInUserModel.value.data?.customerMST.toString()}");
-      //loginController.userName.value = "assigned";
-      userName.value =
-          loggedInUserModel.value.data?.customerMST?.customerFirstName ?? "";
-      //loggedInUserModel.value.data?.customerMST?.customerFirstName ?? "";
+      if (!loggedInUserModel.value.data!.userMST!.ipUser!) {
+        userName.value =
+            loggedInUserModel.value.data?.customerMST?.customerFirstName ?? "";
+      }
       loading.value = false;
     } else {
       loginByIp();

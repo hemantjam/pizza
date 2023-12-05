@@ -1,0 +1,85 @@
+{
+  message: SuccessFul,
+  status: true,
+  data: {
+    customerMST: {
+      customerMSTId: 1b72989c-d732-4cb7-ab3a-bb638ad11a4e,
+      customerCode: hjhj1@gmail.com,
+      customerFirstName: hj,
+      customerLastName: hj,
+      customerGroupMSTId: 5,
+      customerGroupMST: {
+        customerGroupMSTId: 5,
+        customerGroupCode: G1,
+        customerGroupName: System
+        Customer
+        Group,
+        sortOrder: null
+      },
+      gender: null,
+      birthDate: null,
+      anniversary: null,
+      primaryEmail: hjhj1@gmail.com,
+      primaryContact: 9855478547,
+      emailSubscription: false,
+      smsSubscription: false,
+      ledgerBalance: null,
+      customerAddressDTLList: [],
+      storeInstruction: null,
+      userMSTId: 14513,
+      userMST: null,
+      aggregator: false
+    },
+    userMST: {
+      userMSTId: 14513,
+      userCode: hjhj1@gmail.com,
+      userName: hjhj1@gmail.com,
+      userExternalCode: null,
+      userGroupMSTId: 3,
+      userGroupMST: {
+        userGroupMSTId: 3,
+        groupCode: G1,
+        groupName: System
+        Customer
+        Group,
+        sortOrder: null,
+        systemData: false
+      },
+      userRoleMSTId: 5,
+      userRoleMST: {
+        userRoleMSTId: 5,
+        roleCode: R5,
+        roleName: Customer
+        Guest,
+        sortOrder: 5,
+        systemData: false
+      },
+      userGroupManagerMSTId: 2,
+      userGroupManagerMST: {
+        userGroupMSTId: 2,
+        groupCode: G2,
+        groupName: System
+        Customer
+        Group
+        Management,
+        sortOrder: null,
+        systemData: false
+      },
+      gender: null,
+      primaryContactNumber: 9855478547,
+      secondaryContactNumber: null,
+      primaryEmailId: hjhj1@gmail.com,
+      secondaryEmailId: null,
+      profileImage: null,
+      invoiceDiscountLimit: null,
+      dueBalance: null,
+      ipAddress: null,
+      userOutletAccessDTLList: [],
+      userAddressMSTList: [],
+      lock: null,
+      ipUser: false,
+      deliveryPerson: null,
+      signUp: true
+    }
+  }
+}
