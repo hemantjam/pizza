@@ -249,6 +249,7 @@ class MenuDetails extends GetView<MenuDetailsController> {
           });
         }
         return Column(
+          mainAxisSize: MainAxisSize.min,
           children: [
             Obx(() {
               return headerDesign(
@@ -258,7 +259,8 @@ class MenuDetails extends GetView<MenuDetailsController> {
                   controller.buildYourPizzaModel.value.data?.entries.first.value
                       .items?.values.first,
                   controller.expandedCateName.value, (value) {
-                controller.toggleCateExpName(true, value);
+                controller.toggleCateExpName(
+                    controller.expandedCateName.value != value, value);
               });
             }),
             const SizedBox(
@@ -275,17 +277,21 @@ class MenuDetails extends GetView<MenuDetailsController> {
                             .toList()
                         : [const SizedBox()],
                   )
-                : Column(
-                    children: categorizedRecipes.entries
-                        .map((e) => CategoryTile(
-                            category: e.key,
-                            children: e.value.map((e) => e).toList(),
-                            groupCode: groupModel.group?.itemGroupCode ?? "",
-                            onExpand: controller.toggleCateExpName,
-                            expand:
-                                e.key == categorizedRecipes.entries.first.key))
-                        .toList(),
-                  ),
+                : Obx(() {
+                    return Column(
+                      children: categorizedRecipes.entries
+                          .map((e) => CustomCateTile(
+                                isExpand:
+                                    e.key == controller.expandedCateName.value,
+                                category: e.key,
+                                children: e.value.map((e) => e).toList(),
+                                groupCode:
+                                    groupModel.group?.itemGroupCode ?? "",
+                                onExpand: controller.toggleCateExpName,
+                              ))
+                          .toList(),
+                    );
+                  }),
           ],
         );
       }),
@@ -293,39 +299,55 @@ class MenuDetails extends GetView<MenuDetailsController> {
   }
 }
 
-/// category tile
-///
-class CategoryTile extends StatelessWidget {
+class CustomCateTile extends StatelessWidget {
   final List<RecipeDetailsModel> children;
   final String groupCode;
   final Function(bool, String) onExpand;
-  final bool expand;
   final String category;
+  final bool isExpand;
 
-  const CategoryTile(
-      {super.key,
-      required this.category,
-      required this.children,
-      required this.expand,
-      required this.onExpand,
-      required this.groupCode});
+  const CustomCateTile({
+    super.key,
+    required this.isExpand,
+    required this.children,
+    required this.groupCode,
+    required this.onExpand,
+    required this.category,
+  });
 
   @override
   Widget build(BuildContext context) {
-    // onExpand(expand,category);
-    return ExpansionTile(
-      onExpansionChanged: (bool value) {
-        onExpand(value, category);
-      },
-      initiallyExpanded: expand,
-      maintainState: true,
-      title: Text(
-        category,
-        style: TextStyle(fontSize: 14.sp),
-      ),
-      children: children
-          .map((e) => MenuItemDetails(value: e, groupCode: groupCode))
-          .toList(),
+    return Column(
+      children: [
+        ListTile(
+          onTap: () => onExpand(!isExpand, category),
+          title: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(
+                isExpand ? Icons.keyboard_arrow_up : Icons.keyboard_arrow_down,
+              ),
+              const SizedBox(
+                width: 10,
+              ),
+              Text(category,
+                  style: TextStyle(
+                    fontSize: 14.sp,
+                  )),
+            ],
+          ),
+        ),
+        Visibility(
+          maintainAnimation: true,
+          maintainState: true,
+          visible: isExpand,
+          child: Column(
+            children: children
+                .map((e) => MenuItemDetails(value: e, groupCode: groupCode))
+                .toList(),
+          ),
+        )
+      ],
     );
   }
 }

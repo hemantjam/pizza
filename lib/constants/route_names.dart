@@ -9,5 +9,6 @@ class RouteNames {
   static const String orderPickUpOptions = "/orderPickUpOptions";
   static const String pizzaMenuPage="/allMenuPage";
   static const String cartPage="/cartPage";
+  static const String testPage="/testPage";
   static const String customizePizza="/customizePizza";
 }

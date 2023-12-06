@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -26,6 +27,7 @@ class MenuDetailsController extends GetxController{
   RxInt selectedItemIndex = 0.obs;
   RxString expandedCateName = "".obs;
   RxBool isExpanded = false.obs;
+  ExpansionTileController? controller;
 
   toggleCateExpName(bool value, String newCate) {
     if (value) {

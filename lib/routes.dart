@@ -13,6 +13,7 @@ import 'package:pizza/module/splash/splash_binding.dart';
 import 'package:pizza/module/user/forgot_password/forgot_pass_binding.dart';
 import 'package:pizza/module/user/login/login_binding.dart';
 import 'package:pizza/module/user/login/login_page.dart';
+import 'package:pizza/test.dart';
 
 import 'constants/route_names.dart';
 import 'module/delivery_order_type/order_delivery/later/delivery_later_binding.dart';
@@ -34,6 +35,13 @@ import 'module/user/register/register_binding.dart';
 
 class RouteGenerator {
   static List<GetPage> routes = [
+    /// test
+    GetPage(
+      name: RouteNames.testPage,
+      page: () => const TestPage(),
+     // binding: RegisterBinding(),
+    ),
+
     /// splash
     GetPage(
       name: RouteNames.initial,

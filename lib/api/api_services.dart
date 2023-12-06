@@ -117,7 +117,7 @@ class ApiServices {
         {
         showCoomonErrorDialog(
           title: "Error:",
-          message: e.response?.statusMessage ?? "Session expired",
+          message: e.response!.data["error"],
         );
       } /* else {
         showCoomonErrorDialog(
