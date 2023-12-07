@@ -1,7 +1,7 @@
-import 'dart:developer';
-
 import 'package:get/get.dart';
 
+import '../../../local_storage/app_database.dart';
+import '../../../local_storage/entity/cart_items_entity.dart';
 import '../by_group_code/menu_by_group_code_model.dart';
 
 class CustomizePizzaController extends GetxController {
@@ -18,13 +18,12 @@ class CustomizePizzaController extends GetxController {
   int get maxSlots =>
       recipeModel.value?.toppingsInfo?.toppings?.maximumQuantity?.ceil() ?? 0;
 
-  int get filledSlots =>
-      allToppings
-          .where((p0) => p0.isSelected)
-          .map((element) => element.values.fold(0, (sum, value) => sum + (value ? 1 : 0)))
-          .toList()
-          .fold(0, (sum, count) => sum + count);
-
+  int get filledSlots => allToppings
+      .where((p0) => p0.isSelected)
+      .map((element) =>
+          element.values.fold(0, (sum, value) => sum + (value ? 1 : 0)))
+      .toList()
+      .fold(0, (sum, count) => sum + count);
 
   @override
   void onInit() {
@@ -33,6 +32,7 @@ class CustomizePizzaController extends GetxController {
     isBuildYourOwnPizza.value = arguments["isBuildYourOwn"] ?? false;
     super.onInit();
   }
+
   double calculateToppingsPrice() {
     double toppingPrice = 0.0;
 
@@ -53,7 +53,6 @@ class CustomizePizzaController extends GetxController {
 
     return toppingPrice;
   }
-
 
   void addTopping(ToppingsSelection toppingsSelection) {
     int index = allToppings
@@ -90,6 +89,30 @@ class CustomizePizzaController extends GetxController {
     recipeModel.value = recipeValue;
     recipeModel.value != null ? getAllToppingList(recipeValue!) : null;
     update();
+  }
+
+  addToLocalDb({
+  required String recipeDetailsModel,
+  required String name,
+  required int quantity,
+  required int addon,
+  required int total,
+  required String selectedBase,
+  required String selectedSize,}) async {
+    final database =
+        await $FloorAppDatabase.databaseBuilder('app_database.db').build();
+
+    final cartItemsDoa = database.cartItemsDoa;
+    CartItemsEntity entity = CartItemsEntity(
+        itemModel: recipeDetailsModel,
+        itemName: name,
+        itemQuantity: quantity,
+        selectedBase: selectedBase,
+        selectedSize: selectedSize,
+        addon: addon,
+        total: total);
+
+    await cartItemsDoa.insertCartItem(entity);
   }
 }
 

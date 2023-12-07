@@ -29,7 +29,7 @@ loggedInUserModel=splashController.loggedInUserModel.value;
     const HomePage(),
     const OfferList(),
     const Page(text: "quick orders will be here"),
-    const CartPage()
+     CartPage()
   ].obs;
 
   final RxInt currentIndex = 0.obs;

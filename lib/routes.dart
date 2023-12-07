@@ -102,7 +102,7 @@ class RouteGenerator {
     /// cart
     GetPage(
       name: RouteNames.cartPage,
-      page: () => const CartPage(),
+      page: () =>  CartPage(),
       binding: CartBinding(),
     ),
 

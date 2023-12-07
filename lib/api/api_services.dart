@@ -96,8 +96,10 @@ class ApiServices {
   }
 
   void handleError(dynamic e) {
+
     log("----->${e.toString()}");
     if (e is DioException) {
+      log("respinse code-->${e.response?.statusCode}");
       if (e.type == DioExceptionType.connectionTimeout ||
           e.type == DioExceptionType.sendTimeout ||
           e.type == DioExceptionType.receiveTimeout ||
@@ -137,5 +139,6 @@ class ApiServices {
     void close() {
       _dio.close();
     }
+   // return null;
   }
 }

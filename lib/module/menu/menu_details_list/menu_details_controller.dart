@@ -1,19 +1,19 @@
 import 'dart:convert';
-import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:pizza/api/api_response.dart';
 import 'package:pizza/api/api_services.dart';
 import 'package:pizza/api/end_point.dart';
-import 'package:pizza/module/menu/menu_details_list/local_storage/menu_details.dart';
+import 'package:pizza/local_storage/entity/menu_details_entity.dart';
 
+import '../../../local_storage/app_database.dart';
+import '../../../local_storage/entity/cart_items_entity.dart';
 import '../../../widgets/common_dialog.dart';
 import '../by_group_code/menu_by_group_code_model.dart';
 import '../menu_model.dart';
-import 'local_storage/menu_details_database.dart';
 
-class MenuDetailsController extends GetxController{
+class MenuDetailsController extends GetxController {
   MenuDetailsController(this.arguments);
 
   final Map<String, dynamic> arguments;
@@ -22,6 +22,7 @@ class MenuDetailsController extends GetxController{
   Rx<MenuGroupCodeModel> buildYourPizzaModel = MenuGroupCodeModel().obs;
   final ApiServices _apiServices = ApiServices();
   RxList<MenuListModel> menuListModel = <MenuListModel>[].obs;
+  Rx<RecipeModel?> recipeModel = RecipeModel().obs;
 
   ExpansionTileController tileController = ExpansionTileController();
   RxInt selectedItemIndex = 0.obs;
@@ -47,6 +48,12 @@ class MenuDetailsController extends GetxController{
     buildYourPizza();
   }
 
+  toggleRecipeModel(RecipeModel? recipeValue) {
+    recipeModel.value = recipeValue;
+    // recipeModel.value != null ? getAllToppingList(recipeValue!) : null;
+    //update();
+  }
+
   buildYourPizza() async {
     var data = {
       "groupCodes": ["G8"],
@@ -68,8 +75,9 @@ class MenuDetailsController extends GetxController{
         await $FloorAppDatabase.databaseBuilder('app_database.db').build();
 
     if (!database.isBlank!) {
-      final personDao = database.menuDetailsDoa;
-      List<MenuDetailsTable> result = await personDao.findAllMenuDetails();
+      final menuDetailsDao = database.menuDetailsDoa;
+      List<MenuDetailsEntity> result =
+          await menuDetailsDao.findAllMenuDetails();
       if (result.isEmpty) {
         await fetchAllMenu();
       } else {
@@ -78,7 +86,7 @@ class MenuDetailsController extends GetxController{
     }
   }
 
-  databaseToModel(List<MenuDetailsTable> result) {
+  databaseToModel(List<MenuDetailsEntity> result) {
     for (var element in result) {
       String res = element.groupData;
       Map<String, dynamic> resultMap = json.decode(res);
@@ -92,13 +100,14 @@ class MenuDetailsController extends GetxController{
         await $FloorAppDatabase.databaseBuilder('app_database.db').build();
 
     final menuDetailsDao = database.menuDetailsDoa;
-    final menuDetails = MenuDetailsTable(
-      DateTime.now().day +
+    final menuDetails = MenuDetailsEntity(
+      /*  DateTime.now().day +
           DateTime.now().year +
           DateTime.now().month +
-          DateTime.now().millisecond,
-      name,
-      data,
+          DateTime.now().millisecond,*/
+
+      groupName: name,
+      groupData: data,
     );
     await menuDetailsDao.insertGroupData(menuDetails);
   }
@@ -164,5 +173,31 @@ class MenuDetailsController extends GetxController{
           <RecipeDetailsModel>[]);
     }
     return categorizedRecipes;
+  }
+
+  addToLocalDb({
+    required String recipeDetailsModel,
+    required String name,
+    required int quantity,
+    required int addon,
+    required int total,
+    required String selectedBase,
+    required String selectedSize,
+  }) async {
+    final database =
+        await $FloorAppDatabase.databaseBuilder('app_database.db').build();
+
+    final cartItemsDoa = database.cartItemsDoa;
+    CartItemsEntity entity = CartItemsEntity(
+      itemModel: recipeDetailsModel,
+      itemName: name,
+      itemQuantity: quantity,
+      selectedBase: selectedBase,
+      selectedSize: selectedSize,
+      addon: addon,
+      total: total,
+    );
+
+    await cartItemsDoa.insertCartItem(entity);
   }
 }

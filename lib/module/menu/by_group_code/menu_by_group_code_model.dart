@@ -11,12 +11,20 @@ class MenuGroupCodeModel {
       status: json['status'],
       data: json['data'] != null
           ? Map<String, GroupModel>.from(
-        (json['data'] as Map<String, dynamic>).map(
-              (key, value) => MapEntry(key, GroupModel.fromJson(value)),
-        ),
-      )
+              (json['data'] as Map<String, dynamic>).map(
+                (key, value) => MapEntry(key, GroupModel.fromJson(value)),
+              ),
+            )
           : null,
     );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'message': message,
+      'status': status,
+      'data': data?.map((key, value) => MapEntry(key, value?.toJson())),
+    };
   }
 }
 
@@ -33,13 +41,20 @@ class GroupModel {
           : null,
       items: json['items'] != null
           ? Map<String, RecipeDetailsModel>.from(
-        (json['items'] as Map<String, dynamic>).map(
-              (key, value) =>
-              MapEntry(key, RecipeDetailsModel.fromJson(value)),
-        ),
-      )
+              (json['items'] as Map<String, dynamic>).map(
+                (key, value) =>
+                    MapEntry(key, RecipeDetailsModel.fromJson(value)),
+              ),
+            )
           : null,
     );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'group': group?.toJson(),
+      'items': items?.map((key, value) => MapEntry(key, value?.toJson())),
+    };
   }
 }
 
@@ -75,6 +90,18 @@ class GroupDetailsModel {
       sortOrder: json['sortOrder'],
     );
   }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'itemGroupMSTId': itemGroupMSTId,
+      'itemDivisionMSTId': itemDivisionMSTId,
+      'itemDivisionMST': itemDivisionMST?.toJson(),
+      'itemGroupCode': itemGroupCode,
+      'itemGroupName': itemGroupName,
+      'webDisplay': webDisplay,
+      'sortOrder': sortOrder,
+    };
+  }
 }
 
 class ItemDivisionModel {
@@ -98,6 +125,15 @@ class ItemDivisionModel {
       sortOrder: json['sortOrder'],
     );
   }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'itemDivisionMSTId': itemDivisionMSTId,
+      'itemDivisionCode': itemDivisionCode,
+      'itemDivisionName': itemDivisionName,
+      'sortOrder': sortOrder,
+    };
+  }
 }
 
 class RecipeDetailsModel {
@@ -115,47 +151,45 @@ class RecipeDetailsModel {
   bool? isActive;
   Dietary? dietary;
 
-  RecipeDetailsModel({
-    this.recipes,
-    this.availableSizes,
-    this.availableCategories,
-    this.name,
-    this.shortName,
-    this.isHnh,
-    this.isNew,
-    this.image,
-    this.ingredients,
-    this.id,
-    this.stockAvailable,
-    this.isActive,
-    this.dietary
-    // Add other properties here
-  });
+  RecipeDetailsModel(
+      {this.recipes,
+      this.availableSizes,
+      this.availableCategories,
+      this.name,
+      this.shortName,
+      this.isHnh,
+      this.isNew,
+      this.image,
+      this.ingredients,
+      this.id,
+      this.stockAvailable,
+      this.isActive,
+      this.dietary});
 
   factory RecipeDetailsModel.fromJson(Map<String, dynamic> json) {
     return RecipeDetailsModel(
         recipes: json['recipes'] != null
             ? (json['recipes'] as List<dynamic>).map(
-              (item) {
-            final Map<String, dynamic> recipeMap = item.values.first;
-            recipeMap['name'] = item.keys.first;
-            return RecipeModel.fromJson(recipeMap);
-          },
-        ).toList()
+                (item) {
+                  final Map<String, dynamic> recipeMap = item.values.first;
+                  recipeMap['name'] = item.keys.first;
+                  return RecipeModel.fromJson(recipeMap);
+                },
+              ).toList()
             : null,
         availableSizes: json['availableSizes'] != null
             ? List<AvailableSizesModel>.from(
-          (json['availableSizes'] as List<dynamic>).map(
-                (item) => AvailableSizesModel.fromJson(item),
-          ),
-        )
+                (json['availableSizes'] as List<dynamic>).map(
+                  (item) => AvailableSizesModel.fromJson(item),
+                ),
+              )
             : null,
         availableCategories: json['availableCategories'] != null
             ? List<CategoryModel>.from(
-          (json['availableCategories'] as List<dynamic>).map(
-                (item) => CategoryModel.fromJson(item),
-          ),
-        )
+                (json['availableCategories'] as List<dynamic>).map(
+                  (item) => CategoryModel.fromJson(item),
+                ),
+              )
             : null,
         name: json['name'],
         shortName: json['shortName'],
@@ -166,8 +200,27 @@ class RecipeDetailsModel {
         id: json['id'],
         stockAvailable: json['stockAvailable'],
         isActive: json['isActive'],
-        dietary: json["dietary"] != null ? Dietary.fromJson(
-            json["dietary"]):null);
+        dietary:
+            json["dietary"] != null ? Dietary.fromJson(json["dietary"]) : null);
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'recipes': recipes?.map((recipe) => recipe.toJson()).toList(),
+      'availableSizes': availableSizes?.map((size) => size.toJson()).toList(),
+      'availableCategories':
+          availableCategories?.map((category) => category.toJson()).toList(),
+      'name': name,
+      'shortName': shortName,
+      'isHnh': isHnh,
+      'isNew': isNew,
+      'image': image,
+      'ingredients': ingredients,
+      'id': id,
+      'stockAvailable': stockAvailable,
+      'isActive': isActive,
+      'dietary': dietary?.toJson(),
+    };
   }
 }
 
@@ -203,36 +256,26 @@ class RecipeModel {
       size: json['Size'] != null
           ? AvailableSizesModel.fromJson(json['Size'])
           : null,
-
-      /* size: json['data'] != null
-          ? Map<String, GroupModel>.from(
-        (json['data'] as Map<String, dynamic>).map(
-              (key, value) => MapEntry(key, GroupModel.fromJson(value)),
-        ),
-      )
-          : null,*/
-
-
       sauce: json['Sauce'] != null
           ? List<SauceModel>.from(
-        (json['Sauce'] as List<dynamic>).map(
-              (item) => SauceModel.fromJson(item),
-        ),
-      )
+              (json['Sauce'] as List<dynamic>).map(
+                (item) => SauceModel.fromJson(item),
+              ),
+            )
           : null,
       base: json['Base'] != null
           ? List<BaseModel>.from(
-        (json['Base'] as List<dynamic>).map(
-              (item) => BaseModel.fromJson(item),
-        ),
-      )
+              (json['Base'] as List<dynamic>).map(
+                (item) => BaseModel.fromJson(item),
+              ),
+            )
           : null,
       toppings: json['Toppings'] != null
           ? List<ToppingsModel>.from(
-        (json['Toppings'] as List<dynamic>).map(
-              (item) => ToppingsModel.fromJson(item),
-        ),
-      )
+              (json['Toppings'] as List<dynamic>).map(
+                (item) => ToppingsModel.fromJson(item),
+              ),
+            )
           : null,
       toppingsInfo: json['toppingsInfo'] != null
           ? ToppingsInfoModel.fromJson(json['toppingsInfo'])
@@ -244,6 +287,22 @@ class RecipeModel {
       stockAvailable: json['stockAvailable'],
       tax: json['tax'],
     );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'Size': size?.toJson(),
+      'Sauce': sauce?.map((sauce) => sauce.toJson()).toList(),
+      'Base': base?.map((base) => base.toJson()).toList(),
+      'Toppings': toppings?.map((topping) => topping.toJson()).toList(),
+      'toppingsInfo': toppingsInfo?.toJson(),
+      'id': id,
+      'description': description,
+      'basePrice': basePrice,
+      'isActive': isActive,
+      'stockAvailable': stockAvailable,
+      'tax': tax,
+    };
   }
 }
 
@@ -286,6 +345,21 @@ class BaseModel {
       maximumQuantity: json['maximumQuantity'],
     );
   }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'name': name,
+      'sortOrder': sortOrder,
+      'image': image,
+      'stockAvailable': stockAvailable,
+      'id': id,
+      'addCost': addCost,
+      'defaultQuantity': defaultQuantity,
+      'itemQuantity': itemQuantity,
+      'minimumQuantity': minimumQuantity,
+      'maximumQuantity': maximumQuantity,
+    };
+  }
 }
 
 class AvailableSizesModel {
@@ -302,6 +376,14 @@ class AvailableSizesModel {
       id: json['id'],
     );
   }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'sortOrder': sortOrder,
+      'name': name,
+      'id': id,
+    };
+  }
 }
 
 class CategoryModel {
@@ -317,6 +399,14 @@ class CategoryModel {
       name: json['name'],
       id: json['id'],
     );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'sortOrder': sortOrder,
+      'name': name,
+      'id': id,
+    };
   }
 }
 
@@ -356,6 +446,20 @@ class ToppingsModel {
       maximumQuantity: json['maximumQuantity'],
     );
   }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'name': name,
+      'stockAvailable': stockAvailable,
+      'image': image,
+      'id': id,
+      'addCost': addCost,
+      'defaultQuantity': defaultQuantity,
+      'itemQuantity': itemQuantity,
+      'minimumQuantity': minimumQuantity,
+      'maximumQuantity': maximumQuantity,
+    };
+  }
 }
 
 class ToppingsInfoModel {
@@ -374,6 +478,13 @@ class ToppingsInfoModel {
           : null,
     );
   }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'Sauce': sauce?.toJson(),
+      'Toppings': toppings?.toJson(),
+    };
+  }
 }
 
 class QuantityInfoModel {
@@ -387,6 +498,13 @@ class QuantityInfoModel {
       maximumQuantity: json['maximumQuantity'],
       minimumQuantity: json['minimumQuantity'],
     );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'maximumQuantity': maximumQuantity,
+      'minimumQuantity': minimumQuantity,
+    };
   }
 }
 
@@ -404,13 +522,15 @@ class Dietary {
       name: json['name'],
     );
   }
-} /*
-"dietary": {
-"symbol": "https://apis.pineapplepizza.com.au/POSLocalAPI/uploads/images/VLeld_medium_spicy.jpg",
-"name": "M Spicy",
-"id": 1
-},*/
 
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'symbol': symbol,
+      'name': name,
+    };
+  }
+}
 
 class SauceModel {
   String? name;
@@ -448,5 +568,18 @@ class SauceModel {
       maximumQuantity: json['maximumQuantity'],
     );
   }
-}
 
+  Map<String, dynamic> toJson() {
+    return {
+      'name': name,
+      'stockAvailable': stockAvailable,
+      'image': image,
+      'id': id,
+      'addCost': addCost,
+      'defaultQuantity': defaultQuantity,
+      'itemQuantity': itemQuantity,
+      'minimumQuantity': minimumQuantity,
+      'maximumQuantity': maximumQuantity,
+    };
+  }
+}

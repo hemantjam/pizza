@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_blurhash/flutter_blurhash.dart';
@@ -6,7 +8,6 @@ import 'package:pizza/widgets/common_dialog.dart';
 import 'package:sizer/sizer.dart';
 
 import '../../../constants/assets.dart';
-import '../../delivery_order_type/delivery_order_type_options.dart';
 import '../by_group_code/menu_by_group_code_model.dart';
 import '../menu_details_list/all_menu_page.dart';
 import '../utils/calculate_tax.dart';
@@ -448,7 +449,12 @@ class _ItemDetailsState extends State<ItemDetails> {
                                       ? const SizedBox.shrink()
                                       : Obx(() {
                                           return buildElevatedButton(
-                                              context, 0);
+                                              context,
+                                              0,
+                                              controller.recipeDetailsModel
+                                                      ?.name ??
+                                                  "",
+                                              defaultQuantity);
                                         }),
                                 ],
                               ),
@@ -464,7 +470,11 @@ class _ItemDetailsState extends State<ItemDetails> {
 
                         /// add to cart
                         Obx(() {
-                          return buildElevatedButton(context, 55.w);
+                          return buildElevatedButton(
+                              context,
+                              55.w,
+                              controller.recipeDetailsModel?.name ?? "",
+                              defaultQuantity);
                         }),
                       ],
                     ),
@@ -475,9 +485,10 @@ class _ItemDetailsState extends State<ItemDetails> {
                       return SizedBox(
                         // width: 100.w,
                         child: buildElevatedButton(
-                          context,
-                          100.w,
-                        ),
+                            context,
+                            100.w,
+                            controller.recipeDetailsModel?.name ?? "",
+                            defaultQuantity),
                       );
                     })
             ],
@@ -487,7 +498,8 @@ class _ItemDetailsState extends State<ItemDetails> {
     );
   }
 
-  ElevatedButton buildElevatedButton(BuildContext context, double width) {
+  ElevatedButton buildElevatedButton(
+      BuildContext context, double width, String name, int quantity) {
     return ElevatedButton(
       style: ElevatedButton.styleFrom(
         fixedSize: Size(width, 0),
@@ -501,7 +513,23 @@ class _ItemDetailsState extends State<ItemDetails> {
       ),
       onPressed: () {
         if (controller.allToppings.any((element) => element.isSelected)) {
-          showModalBottomSheet(
+          //RecipeDetailsModel model = widget.;
+          RecipeModel recipeModel = controller.recipeModel.value!;
+          controller.addToLocalDb(
+              recipeDetailsModel: jsonEncode(recipeModel.toJson()),
+              name: name ?? "",
+              quantity: defaultQuantity,
+              addon: addOn.ceil(),
+              total: ((calculateTotalPrice(basePrice, tax) + addOn) *
+                      defaultQuantity)
+                  .ceil(),
+              selectedBase: selectedBase ?? "",
+              selectedSize: selectedSize ?? "");
+
+          /* controller.addToLocalDb(
+              recipeDetailsModel: jsonEncode(controller.recipeDetailsModel!)
+                  .toString(), name:name,quantity: quantity);*/
+          /* showModalBottomSheet(
               useSafeArea: true,
               shape: const RoundedRectangleBorder(
                   borderRadius: BorderRadius.only(
@@ -514,7 +542,7 @@ class _ItemDetailsState extends State<ItemDetails> {
                   padding: EdgeInsets.only(bottom: 10),
                   child: OrderDeliveryTypeOption(elevation: 0),
                 );
-              });
+              });*/
         }
       },
       child: const Text("Add To Cart"),
