@@ -395,6 +395,7 @@ class _MenuItemDetailsState extends State<MenuItemDetails> {
   @override
   void initState() {
     selectedSize = widget.value.recipes?.first.size?.name;
+    selectedBase = widget.value.recipes?.first.base?.first.name;
     addOn = widget.value.recipes?.first.base?.first.addCost ?? 0;
     basePrice = widget.value.recipes?.first.basePrice ?? 0;
     tax = widget.value.recipes?.first.tax ?? 0;
@@ -673,12 +674,12 @@ class _MenuItemDetailsState extends State<MenuItemDetails> {
 
                         RecipeDetailsModel model = widget.value;
 
-                        RecipeModel recipeModel = controller.recipeModel.value!;
+                       // RecipeModel recipeModel = controller.recipeModel.value!;
                         controller.addToLocalDb(
                             name: model.name ?? "",
                             quantity: defaultQuantity,
                             recipeDetailsModel:
-                            jsonEncode(recipeModel.toJson()),
+                            jsonEncode(model.toJson()),
                             addon: addOn.toInt(),
                             total: ((calculateTotalPrice(basePrice, tax) +
                                 addOn) * defaultQuantity).ceil(),

@@ -92,7 +92,7 @@ class CustomizePizzaController extends GetxController {
   }
 
   addToLocalDb({
-  required String recipeDetailsModel,
+  required String cartItemData,
   required String name,
   required int quantity,
   required int addon,
@@ -104,7 +104,7 @@ class CustomizePizzaController extends GetxController {
 
     final cartItemsDoa = database.cartItemsDoa;
     CartItemsEntity entity = CartItemsEntity(
-        itemModel: recipeDetailsModel,
+        itemModel: cartItemData,
         itemName: name,
         itemQuantity: quantity,
         selectedBase: selectedBase,
@@ -140,4 +140,30 @@ class ToppingsSelection {
     required this.addCost,
     required this.maximumQuantity,
   });
+  factory ToppingsSelection.fromJson(Map<String, dynamic> json) => ToppingsSelection(
+    canRemove: json['canRemove'] as bool,
+    values: (json['values'] as List<dynamic>?)!.map((e) => e as bool).toList(),
+    defaultQuantity: json['defaultQuantity'] as int,
+    isDefault: json['isDefault'] as bool,
+    toppingName: json['toppingName'] as String,
+    isSelected: json['isSelected'] as bool,
+    toppingId: json['toppingId'] as int,
+    itemQuantity: json['itemQuantity'] as int,
+    addCost: json['addCost'] as double,
+    maximumQuantity: json['maximumQuantity'] as int,
+  );
+
+  Map<String, dynamic> toJson() => {
+    'canRemove': canRemove,
+    'values': values,
+    'defaultQuantity': defaultQuantity,
+    'isDefault': isDefault,
+    'toppingName': toppingName,
+    'isSelected': isSelected,
+    'toppingId': toppingId,
+    'itemQuantity': itemQuantity,
+    'addCost': addCost,
+    'maximumQuantity': maximumQuantity,
+  };
 }
+

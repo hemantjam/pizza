@@ -1,12 +1,14 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:pizza/module/cart/cart_controller.dart';
+import 'package:sizer/sizer.dart';
+
+import '../menu/by_group_code/menu_by_group_code_model.dart';
 
 class CartPage extends StatelessWidget {
   const CartPage({super.key});
-
-  //Get.put(CartController());
-  // final controller = Get.put(CartController());
 
   @override
   Widget build(BuildContext context) {
@@ -14,9 +16,11 @@ class CartPage extends StatelessWidget {
       init: Get.put(CartController()),
       assignId: true,
       builder: (logic) {
+        logic.checkForOfflineData();
         return SafeArea(
           child: Scaffold(
               floatingActionButton: FloatingActionButton(
+                child: const Icon(Icons.refresh),
                 onPressed: () {
                   logic.checkForOfflineData();
                 },
@@ -32,7 +36,7 @@ class CartPage extends StatelessWidget {
                 ),
                 actions: [
                   IconButton(
-                    icon: Text(logic.cartItemsList.length.toString()),
+                    icon: Text(logic.cartItems.length.toString()),
                     onPressed: () {
                       Navigator.of(context).pop();
                     },
@@ -40,175 +44,239 @@ class CartPage extends StatelessWidget {
                 ],
               ),
               body: Obx(() {
-                return logic.cartItemsList.isNotEmpty
-                    ? Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: logic.cartItemsList.entries
-                            .map((e) => ListTile(
-                                  title: Text(e.key),
-                                  trailing: Text(e.value!.id.toString()),
-                                ))
-                            .toList())
-                    : Center(
+                return logic.cartItems.isNotEmpty
+                    ? SingleChildScrollView(
+                        child: Column(
+                            children: logic.cartItems.asMap().entries.map((e) {
+                          RecipeDetailsModel? model =
+                              logic.cartItemsList[e.key];
+                          return CartItemDetails(
+                            image: model?.image ?? "",
+                            selectedSize: e.value.selectedSize,
+                            selectedBase: e.value.selectedBase,
+                            total: e.value.total,
+                            quantity: e.value.itemQuantity,
+                            name: e.value.itemName,
+                          );
+                        }).toList()),
+                      )
+                    : const Center(
                         child: Text("Cart is empty"),
                       );
-              })
+              })),
+        );
+      },
+    );
+  }
+}
 
-              /* body: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
+class CartItemDetails extends StatefulWidget {
+  final String image;
+  final String selectedBase;
+  final String selectedSize;
+  final String name;
+  final int quantity;
+  final int total;
+
+  const CartItemDetails(
+      {super.key,
+      required this.image,
+      required this.selectedSize,
+      required this.selectedBase,
+      required this.total,
+      required this.quantity,
+      required this.name});
+
+  @override
+  State<CartItemDetails> createState() => _CartItemDetailsState();
+}
+
+class _CartItemDetailsState extends State<CartItemDetails> {
+  bool visibility = true;
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      margin: const EdgeInsets.all(5),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+      elevation: 1,
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 5),
-                  child: const Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [],
-                  ),
-                ),
-                const SizedBox(height: 10),
-                Container(
-                  color: Colors.grey.shade900,
-                  padding: const EdgeInsets.all(10),
-                  child: const Text(
-                    "You'll need to add more to your cart. Minimum Delivery is \$18",
-                    style: TextStyle(color: Colors.white, fontSize: 18),
-                    textAlign: TextAlign.center,
-                  ),
-                ),
-                const SizedBox(height: 5),
-                Expanded(
-                  child: Container(
-                    padding: const EdgeInsets.all(5),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(0),
-                      color: Colors.grey,
+                  height: 12.h,
+                  width: 25.w,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10),
+                    image: DecorationImage(
+                      fit: BoxFit.cover,
+                      image: NetworkImage(widget.image, scale: 1),
                     ),
-                    child: Card(
-                      child: Column(
-                        children: [
-                          Container(
-                            alignment: Alignment.center,
-                            padding: const EdgeInsets.all(10),
-                            decoration: const BoxDecoration(
-                                color: Colors.blueGrey),
-                            child: const Text(
-                              'Your Cart has: 0 Items',
-                              style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.white),
-                            ),
-                          ),
-                          Container(
-                            color: Colors.orange,
-                            height: 5,
-                            width: 100.w,
-                          ),
-                          const SizedBox(height: 10),
-                          const Expanded(
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Icon(
-                                  Icons.shopping_cart,
-                                  size: 150,
-                                ),
-                                SizedBox(height: 10),
-                                Text(
-                                  'YOUR CART IS EMPTY',
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                SizedBox(height: 5),
-                                Text(
-                                  'Please add some items from the menu or offers',
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          const SizedBox(height: 10),
-                          Container(
-                            decoration: BoxDecoration(
-                                color: Colors.white70,
-                                border: Border.all(color: Colors.black),
-                                boxShadow: const [
-                                  BoxShadow(
-                                      offset: Offset(1, 1),
-                                      color: Colors.grey,
-                                      spreadRadius: 5,
-                                      blurRadius: 10)
-                                ]),
-                            padding: const EdgeInsets.all(10),
-                            child: const Column(
-                              children: [
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment
-                                      .spaceBetween,
-                                  children: [
-                                    Text('Delivery Charge'),
-                                    Text('\$ 4.00'),
-                                  ],
-                                ),
-                                SizedBox(height: 5),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment
-                                      .spaceBetween,
-                                  children: [
-                                    Text(
-                                      'Total',
-                                      style: TextStyle(
-                                        fontSize: 13,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                    Text(
-                                      '\$ 4.00',
-                                      style: TextStyle(
-                                        fontSize: 13,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
-                          ),
-                          const SizedBox(height: 10),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: [
-                              ElevatedButton(
-                                onPressed: () {
-                                  // Handle Checkout
+                  ),
+                ),
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          "${widget.selectedSize} | ${widget.selectedBase}",
+                          style: TextStyle(fontSize: 14.sp),
+                        ),
+                        Text(
+                          widget.name,
+                          style: TextStyle(
+                              fontSize: 16.sp, fontWeight: FontWeight.bold),
+                        ),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: QuantitySelector(
+                                onTap: (quantity) {
+                                  log("$quantity");
                                 },
-                                child: const Row(
-                                  children: [
-                                    Text(
-                                      'CHECKOUT',
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                      ),
-                                    ),
-                                    Icon(Icons.arrow_forward),
-                                  ],
-                                ),
+                                defaultQuantity: widget.quantity,
                               ),
-                            ],
-                          ),
-                        ],
-                      ),
+                            ),
+                            Text("\$${widget.total}"),
+                          ],
+                        ),
+                      ],
                     ),
                   ),
                 ),
               ],
-            ),*/
+            ),
+            GestureDetector(
+              onTap: () {
+                setState(() {
+                  visibility = !visibility;
+                });
+              },
+              child: Row(
+                children: [
+                  Icon(visibility
+                      ? Icons.keyboard_arrow_right
+                      : Icons.keyboard_arrow_down),
+                  const SizedBox(
+                    width: 10,
+                  ),
+                  Expanded(
+                      child: Text(
+                    "Toppings (4)",
+                    style: TextStyle(fontSize: 14.sp),
+                  )),
+                  const Text("00.00")
+                ],
               ),
-        );
-      },
+            ),
+            Visibility(
+                visible: !visibility,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    ListTile(
+                      title: const Text("ham"),
+                      trailing: QuantitySelector(
+                        defaultQuantity: 1,
+                        onTap: (quantity) {},
+                      ),
+                    ),
+                    ListTile(
+                      title: const Text("ham"),
+                      trailing: QuantitySelector(
+                        defaultQuantity: 1,
+                        onTap: (quantity) {},
+                      ),
+                    ),
+                    ListTile(
+                      title: const Text("ham"),
+                      trailing: QuantitySelector(
+                        defaultQuantity: 1,
+                        onTap: (quantity) {},
+                      ),
+                    ),
+                    ListTile(
+                      title: const Text("ham"),
+                      trailing: QuantitySelector(
+                        defaultQuantity: 1,
+                        onTap: (quantity) {},
+                      ),
+                    ),
+                  ],
+                ))
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class QuantitySelector extends StatefulWidget {
+  const QuantitySelector(
+      {super.key, required this.onTap, required this.defaultQuantity});
+
+  final Function(int value) onTap;
+  final int defaultQuantity;
+
+  @override
+  QuantitySelectorState createState() => QuantitySelectorState();
+}
+
+class QuantitySelectorState extends State<QuantitySelector> {
+  late int quantity;
+
+  void increaseQuantity() {
+    setState(() {
+      quantity++;
+      widget.onTap(quantity);
+    });
+  }
+
+  void decreaseQuantity() {
+    if (quantity > 1) {
+      setState(() {
+        quantity--;
+        widget.onTap(quantity);
+      });
+    }
+  }
+
+  @override
+  void initState() {
+    quantity = widget.defaultQuantity;
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        GestureDetector(
+          onTap: decreaseQuantity,
+          child: Icon(Icons.delete_outline, size: 18.sp, color: Colors.red),
+        ),
+        const SizedBox(width: 5),
+        Text(
+          quantity.toString(),
+          style: TextStyle(fontSize: 14.sp),
+          textDirection: TextDirection.rtl,
+        ),
+        const SizedBox(width: 5),
+        GestureDetector(
+          onTap: increaseQuantity,
+          child: Icon(Icons.add, size: 18.sp, color: Colors.green),
+        ),
+      ],
     );
   }
 }

@@ -513,22 +513,19 @@ class _ItemDetailsState extends State<ItemDetails> {
       ),
       onPressed: () {
         if (controller.allToppings.any((element) => element.isSelected)) {
-          //RecipeDetailsModel model = widget.;
-          RecipeModel recipeModel = controller.recipeModel.value!;
+          RecipeDetailsModel recipeModel = controller.recipeDetailsModel!;
           controller.addToLocalDb(
-              recipeDetailsModel: jsonEncode(recipeModel.toJson()),
-              name: name ?? "",
-              quantity: defaultQuantity,
-              addon: addOn.ceil(),
-              total: ((calculateTotalPrice(basePrice, tax) + addOn) *
-                      defaultQuantity)
-                  .ceil(),
-              selectedBase: selectedBase ?? "",
-              selectedSize: selectedSize ?? "");
+            cartItemData: jsonEncode(recipeModel.toJson()),
+            name: name ?? "",
+            quantity: defaultQuantity,
+            addon: addOn.ceil(),
+            total: ((calculateTotalPrice(basePrice, tax) + addOn) *
+                    defaultQuantity)
+                .ceil(),
+            selectedBase: selectedBase ?? "",
+            selectedSize: selectedSize ?? "",
+          );
 
-          /* controller.addToLocalDb(
-              recipeDetailsModel: jsonEncode(controller.recipeDetailsModel!)
-                  .toString(), name:name,quantity: quantity);*/
           /* showModalBottomSheet(
               useSafeArea: true,
               shape: const RoundedRectangleBorder(
