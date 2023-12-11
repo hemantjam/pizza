@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:get/get.dart';
 
 import '../../../../api/api_response.dart';
@@ -19,8 +21,7 @@ class OutletShiftDetailsController extends GetxController {
   void getShiftDetails() async {
     ApiResponse? res =
         await apiClient.getRequest(ApiEndPoints.outletShiftDetails);
-
-    if (res!=null&&res.status) {
+    if (res != null && res.status) {
       outletShiftDetailsModel.value =
           OutletShiftDetailsModel.fromJson(res.toJson());
     }

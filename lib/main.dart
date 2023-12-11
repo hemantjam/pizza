@@ -6,6 +6,7 @@ Uuid uuid = const Uuid();
 
 void main()async {
   WidgetsFlutterBinding.ensureInitialized();
+  //GlobalBindings().dependencies();
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
  // Store store = await Object;
 

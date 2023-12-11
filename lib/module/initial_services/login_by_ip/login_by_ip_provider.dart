@@ -20,7 +20,6 @@ class LoginByIpProvider extends ChangeNotifier {
 
       //ApiEndPoints.authToken = res.data["jwtToken"];
      ApiEndPoints.authToken = loginByIpModel.data?.jwtToken ?? "";
-      //log("token----${ApiEndPoints.authToken}");
       getPizzaPortalToken(ApiEndPoints.authToken);
     }
   }

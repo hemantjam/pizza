@@ -1,8 +1,11 @@
+import 'dart:convert';
+
 import 'package:get/get.dart';
 
 import '../../../local_storage/app_database.dart';
 import '../../../local_storage/entity/cart_items_entity.dart';
 import '../by_group_code/menu_by_group_code_model.dart';
+import 'local_toppings_module.dart';
 
 class CustomizePizzaController extends GetxController {
   final Map<String, dynamic> arguments;
@@ -19,9 +22,9 @@ class CustomizePizzaController extends GetxController {
       recipeModel.value?.toppingsInfo?.toppings?.maximumQuantity?.ceil() ?? 0;
 
   int get filledSlots => allToppings
-      .where((p0) => p0.isSelected)
+      .where((p0) => p0.isSelected!)
       .map((element) =>
-          element.values.fold(0, (sum, value) => sum + (value ? 1 : 0)))
+          element.values!.fold(0, (sum, value) => sum + (value! ? 1 : 0)))
       .toList()
       .fold(0, (sum, count) => sum + count);
 
@@ -37,16 +40,16 @@ class CustomizePizzaController extends GetxController {
     double toppingPrice = 0.0;
 
     for (var topping in allToppings) {
-      if (topping.isSelected) {
-        int quantity = topping.values.where((value) => value).length;
+      if (topping.isSelected!) {
+        int quantity = topping.values!.where((value) => value!).length;
 
-        if (topping.isDefault && quantity > 1) {
+        if (topping!.isDefault! && quantity > 1) {
           // If default topping and quantity > 1, calculate addon price for additional quantities
           int additionalQuantity = quantity - 1;
-          toppingPrice += topping.addCost * additionalQuantity;
-        } else if (!topping.isDefault) {
+          toppingPrice += topping.addCost! * additionalQuantity;
+        } else if (!topping.isDefault!) {
           // For non-default toppings, add cost for each quantity
-          toppingPrice += topping.addCost * quantity;
+          toppingPrice += topping.addCost! * quantity;
         }
       }
     }
@@ -103,7 +106,11 @@ class CustomizePizzaController extends GetxController {
         await $FloorAppDatabase.databaseBuilder('app_database.db').build();
 
     final cartItemsDoa = database.cartItemsDoa;
+    List<ToppingsSelection>selectedToppings=allToppings.where((p0) => p0.isSelected!).toList();
+    List<Map<String, dynamic>> toppingsJsonList = selectedToppings.map((topping) => topping.toJson()).toList();
+    String toppingsJsonString = jsonEncode(toppingsJsonList);
     CartItemsEntity entity = CartItemsEntity(
+      toppings: toppingsJsonString,
         itemModel: cartItemData,
         itemName: name,
         itemQuantity: quantity,
@@ -116,54 +123,5 @@ class CustomizePizzaController extends GetxController {
   }
 }
 
-class ToppingsSelection {
-  int toppingId;
-  String toppingName;
-  bool isSelected;
-  bool isDefault;
-  int itemQuantity;
-  List<bool> values;
-  int defaultQuantity;
-  int maximumQuantity;
-  double addCost;
-  bool canRemove;
 
-  ToppingsSelection({
-    required this.canRemove,
-    required this.values,
-    required this.defaultQuantity,
-    required this.isDefault,
-    required this.toppingName,
-    required this.isSelected,
-    required this.toppingId,
-    required this.itemQuantity,
-    required this.addCost,
-    required this.maximumQuantity,
-  });
-  factory ToppingsSelection.fromJson(Map<String, dynamic> json) => ToppingsSelection(
-    canRemove: json['canRemove'] as bool,
-    values: (json['values'] as List<dynamic>?)!.map((e) => e as bool).toList(),
-    defaultQuantity: json['defaultQuantity'] as int,
-    isDefault: json['isDefault'] as bool,
-    toppingName: json['toppingName'] as String,
-    isSelected: json['isSelected'] as bool,
-    toppingId: json['toppingId'] as int,
-    itemQuantity: json['itemQuantity'] as int,
-    addCost: json['addCost'] as double,
-    maximumQuantity: json['maximumQuantity'] as int,
-  );
-
-  Map<String, dynamic> toJson() => {
-    'canRemove': canRemove,
-    'values': values,
-    'defaultQuantity': defaultQuantity,
-    'isDefault': isDefault,
-    'toppingName': toppingName,
-    'isSelected': isSelected,
-    'toppingId': toppingId,
-    'itemQuantity': itemQuantity,
-    'addCost': addCost,
-    'maximumQuantity': maximumQuantity,
-  };
-}
 

@@ -63,8 +63,9 @@ class LoginController extends GetxController {
     if (res != null && res.status) {
       userDataModel = UserDataModel.fromJson(res.toJson());
       if (userDataModel.data != null) {
-        ApiEndPoints.authToken = userDataModel.data?.jwtToken ?? "";
-        SharedPref.saveString("token", userDataModel.data?.jwtToken ?? "");
+       // ApiEndPoints.authToken = userDataModel.data?.jwtToken ?? "";
+//TODO
+      //  SharedPref.saveString("token", userDataModel.data?.jwtToken ?? "");
         showLoading.value = false;
         userName.value = userDataModel.data?.firstName ?? "";
         handleNavigation();

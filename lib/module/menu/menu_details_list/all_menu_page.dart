@@ -9,6 +9,7 @@ import 'package:pizza/constants/route_names.dart';
 import 'package:sizer/sizer.dart';
 
 import '../../../constants/assets.dart';
+import '../../delivery_order_type/delivery_order_type_options.dart';
 import '../by_group_code/menu_by_group_code_model.dart';
 import '../menu_model.dart';
 import '../utils/calculate_tax.dart';
@@ -60,10 +61,10 @@ class AllMenuPage extends GetView<MenuDetailsController> {
                   Obx(() {
                     return Text(
                       controller.selectedItemIndex.value ==
-                          controller.menuListModel
-                              .where((p0) => p0.webDisplay!)
-                              .length -
-                              1
+                              controller.menuListModel
+                                      .where((p0) => p0.webDisplay!)
+                                      .length -
+                                  1
                           ? "Checkout"
                           : "next",
                       style: buildButtonTextStyle(),
@@ -123,7 +124,7 @@ class MenuList extends GetView<MenuDetailsController> {
   Widget build(BuildContext context) {
     return Obx(() {
       final visibleMenuList =
-      controller.menuListModel.where((p0) => p0.webDisplay!).toList();
+          controller.menuListModel.where((p0) => p0.webDisplay!).toList();
       return DefaultTabController(
         initialIndex: controller.selectedItemIndex.value,
         length: visibleMenuList.length,
@@ -153,11 +154,10 @@ class MenuList extends GetView<MenuDetailsController> {
           .asMap()
           .entries
           .where((element) => element.value.webDisplay!)
-          .map((e) =>
-          CustomTabBar(
-            index: e.key,
-            menuListModel: e.value,
-          ))
+          .map((e) => CustomTabBar(
+                index: e.key,
+                menuListModel: e.value,
+              ))
           .toList(),
     );
   }
@@ -172,15 +172,15 @@ class MenuList extends GetView<MenuDetailsController> {
           .map((e) {
         return controller.groupModelList.values.isEmpty
             ? const Center(
-            child: CircularProgressIndicator(
-              color: Colors.orange,
-            ))
+                child: CircularProgressIndicator(
+                color: Colors.orange,
+              ))
             : MenuDetails(
-          image: controller.menuListModel[e.key].bigImage ?? "",
-          groupModel: controller.groupModelList.entries
-              .firstWhere((element) => element.key == e.value.code)
-              .value,
-        );
+                image: controller.menuListModel[e.key].bigImage ?? "",
+                groupModel: controller.groupModelList.entries
+                    .firstWhere((element) => element.key == e.value.code)
+                    .value,
+              );
       }).toList(),
     );
   }
@@ -211,11 +211,11 @@ class CustomTabBar extends GetView<MenuDetailsController> {
             children: [
               menuListModel.bigImage != null
                   ? SvgPicture.network(
-                menuListModel.bigImage ?? "",
-                fit: BoxFit.contain,
-                height: 24.sp,
-                width: 24.sp,
-              )
+                      menuListModel.bigImage ?? "",
+                      fit: BoxFit.contain,
+                      height: 24.sp,
+                      width: 24.sp,
+                    )
                   : const SizedBox(),
               const SizedBox(width: 5),
               Text(
@@ -243,7 +243,7 @@ class MenuDetails extends GetView<MenuDetailsController> {
     return SingleChildScrollView(
       child: GetBuilder<MenuDetailsController>(builder: (logic) {
         Map<String, List<RecipeDetailsModel>> categorizedRecipes =
-        controller.fetchCategories(groupModel);
+            controller.fetchCategories(groupModel);
         if (categorizedRecipes.isNotEmpty) {
           Future.delayed(const Duration(milliseconds: 10), () {
             controller.toggleCateExpName(
@@ -258,16 +258,8 @@ class MenuDetails extends GetView<MenuDetailsController> {
                   image,
                   categorizedRecipes.entries.map((e) => e.key).toList(),
                   groupModel.group?.itemGroupCode ?? "",
-                  controller
-                      .buildYourPizzaModel
-                      .value
-                      .data
-                      ?.entries
-                      .first
-                      .value
-                      .items
-                      ?.values
-                      .first,
+                  controller.buildYourPizzaModel.value.data?.entries.first.value
+                      .items?.values.first,
                   controller.expandedCateName.value, (value) {
                 controller.toggleCateExpName(
                     controller.expandedCateName.value != value, value);
@@ -278,32 +270,30 @@ class MenuDetails extends GetView<MenuDetailsController> {
             ),
             categorizedRecipes.isEmpty
                 ? Column(
-              children: groupModel.items != null
-                  ? groupModel.items!.entries
-                  .map((e) =>
-                  MenuItemDetails(
-                      value: e.value,
-                      groupCode:
-                      groupModel.group?.itemGroupCode ?? ""))
-                  .toList()
-                  : [const SizedBox()],
-            )
+                    children: groupModel.items != null
+                        ? groupModel.items!.entries
+                            .map((e) => MenuItemDetails(
+                                value: e.value,
+                                groupCode:
+                                    groupModel.group?.itemGroupCode ?? ""))
+                            .toList()
+                        : [const SizedBox()],
+                  )
                 : Obx(() {
-              return Column(
-                children: categorizedRecipes.entries
-                    .map((e) =>
-                    CustomCateTile(
-                      isExpand:
-                      e.key == controller.expandedCateName.value,
-                      category: e.key,
-                      children: e.value.map((e) => e).toList(),
-                      groupCode:
-                      groupModel.group?.itemGroupCode ?? "",
-                      onExpand: controller.toggleCateExpName,
-                    ))
-                    .toList(),
-              );
-            }),
+                    return Column(
+                      children: categorizedRecipes.entries
+                          .map((e) => CustomCateTile(
+                                isExpand:
+                                    e.key == controller.expandedCateName.value,
+                                category: e.key,
+                                children: e.value.map((e) => e).toList(),
+                                groupCode:
+                                    groupModel.group?.itemGroupCode ?? "",
+                                onExpand: controller.toggleCateExpName,
+                              ))
+                          .toList(),
+                    );
+                  }),
           ],
         );
       }),
@@ -425,11 +415,10 @@ class _MenuItemDetailsState extends State<MenuItemDetails> {
                   child: CachedNetworkImage(
                     fit: BoxFit.cover,
                     imageUrl: widget.value.image ?? "",
-                    placeholder: (context, url) =>
-                    const SizedBox(
+                    placeholder: (context, url) => const SizedBox(
                         child: BlurHash(hash: Assets.homeBannerBlur)),
                     errorWidget: (context, url, error) =>
-                    const Icon(Icons.error),
+                        const Icon(Icons.error),
                     height: 20.h,
                     width: 100.w,
                   ),
@@ -447,18 +436,18 @@ class _MenuItemDetailsState extends State<MenuItemDetails> {
                     alignment: Alignment.bottomCenter,
                     child: widget.groupCode == "G1"
                         ? Container(
-                      decoration: BoxDecoration(
-                        border: Border.all(color: Colors.white),
-                        color: Colors.black,
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 10, vertical: 5),
-                      child: const Text(
-                        "Customize",
-                        style: TextStyle(color: Colors.white),
-                      ),
-                    )
+                            decoration: BoxDecoration(
+                              border: Border.all(color: Colors.white),
+                              color: Colors.black,
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 10, vertical: 5),
+                            child: const Text(
+                              "Customize",
+                              style: TextStyle(color: Colors.white),
+                            ),
+                          )
                         : const SizedBox(),
                   ),
                 ),
@@ -469,23 +458,22 @@ class _MenuItemDetailsState extends State<MenuItemDetails> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-
                         /// is new flag
                         widget.value.isNew != null && widget.value.isNew!
                             ? const Icon(
-                          Icons.star,
-                          color: Colors.orange,
-                          size: 35,
-                        )
+                                Icons.star,
+                                color: Colors.orange,
+                                size: 35,
+                              )
                             : const SizedBox(),
 
                         /// spicy flag
                         widget.value.dietary != null
                             ? Image.network(
-                          widget.value.dietary?.symbol ?? "",
-                          height: 35.sp,
-                          width: 35.sp,
-                        )
+                                widget.value.dietary?.symbol ?? "",
+                                height: 35.sp,
+                                width: 35.sp,
+                              )
                             : const SizedBox(),
                       ],
                     ),
@@ -500,7 +488,6 @@ class _MenuItemDetailsState extends State<MenuItemDetails> {
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
               children: [
-
                 /// name , price , base, size
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -514,8 +501,7 @@ class _MenuItemDetailsState extends State<MenuItemDetails> {
                       ),
                     ),
                     Text(
-                      "\$${((calculateTotalPrice(basePrice, tax) + addOn) *
-                          defaultQuantity).toStringAsFixed(2)}",
+                      "\$${((calculateTotalPrice(basePrice, tax) + addOn) * defaultQuantity).toStringAsFixed(2)}",
                       style: TextStyle(fontSize: 18.sp, color: Colors.orange),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
@@ -531,113 +517,112 @@ class _MenuItemDetailsState extends State<MenuItemDetails> {
                 const SizedBox(height: 10),
                 widget.value.recipes != null
                     ? Row(
-                  mainAxisAlignment: widget.value.recipes != null &&
-                      widget.value.recipes?.first.size != null
-                      ? MainAxisAlignment.spaceBetween
-                      : MainAxisAlignment.start,
-                  children: [
-                    widget.value.recipes != null &&
-                        widget.value.recipes?.first.size != null
-                        ? Column(
-                      mainAxisSize: MainAxisSize.min,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text("Pizza Size", style: titleStyle()),
-                        const SizedBox(
-                          height: 5,
-                        ),
-                        Container(
-                          decoration: BoxDecoration(
-                              border: Border.all(
-                                  width: 0.5, color: Colors.black)),
-                          child: DropdownButton<String>(
-                            underline: const SizedBox(),
-                            elevation: 0,
-                            borderRadius: BorderRadius.zero,
-                            padding: const EdgeInsets.all(5),
-                            isDense: true,
-                            value: selectedSize,
-                            onChanged: (String? newValue) {
-                              if (newValue != null) {
-                                setState(() {
-                                  selectedSize = newValue;
-                                  basePrice = widget.value.recipes!
-                                      .where((element) =>
-                                  element.size?.name ==
-                                      newValue)
-                                      .first
-                                      .basePrice ??
-                                      0.0;
-                                  addOn = widget.value.recipes!
-                                      .where((element) =>
-                                  element.size?.name ==
-                                      newValue)
-                                      .first
-                                      .base
-                                      ?.first
-                                      .addCost ??
-                                      0.0;
-                                  selectedBase = null;
-                                  controller.toggleRecipeModel(
-                                      widget.value.recipes
-                                          ?.where((element) =>
-                                      element.size?.name ==
-                                          "$selectedSize")
-                                          .first);
-                                });
-                              }
-                            },
-                            items: widget.value.recipes!
-                                .map(
-                                    (e) =>
-                                    DropdownMenuItem<String>(
-                                      value: e.size?.name ?? "",
-                                      child: SizedBox(
-                                        width: 35.w,
-                                        child: Text(
-                                          e.size?.name ?? "",
-                                          overflow: TextOverflow
-                                              .ellipsis,
-                                          maxLines: 1,
-                                        ),
+                        mainAxisAlignment: widget.value.recipes != null &&
+                                widget.value.recipes?.first.size != null
+                            ? MainAxisAlignment.spaceBetween
+                            : MainAxisAlignment.start,
+                        children: [
+                          widget.value.recipes != null &&
+                                  widget.value.recipes?.first.size != null
+                              ? Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text("Pizza Size", style: titleStyle()),
+                                    const SizedBox(
+                                      height: 5,
+                                    ),
+                                    Container(
+                                      decoration: BoxDecoration(
+                                          border: Border.all(
+                                              width: 0.5, color: Colors.black)),
+                                      child: DropdownButton<String>(
+                                        underline: const SizedBox(),
+                                        elevation: 0,
+                                        borderRadius: BorderRadius.zero,
+                                        padding: const EdgeInsets.all(5),
+                                        isDense: true,
+                                        value: selectedSize,
+                                        onChanged: (String? newValue) {
+                                          if (newValue != null) {
+                                            setState(() {
+                                              selectedSize = newValue;
+                                              basePrice = widget.value.recipes!
+                                                      .where((element) =>
+                                                          element.size?.name ==
+                                                          newValue)
+                                                      .first
+                                                      .basePrice ??
+                                                  0.0;
+                                              addOn = widget.value.recipes!
+                                                      .where((element) =>
+                                                          element.size?.name ==
+                                                          newValue)
+                                                      .first
+                                                      .base
+                                                      ?.first
+                                                      .addCost ??
+                                                  0.0;
+                                              selectedBase = null;
+                                              controller.toggleRecipeModel(
+                                                  widget.value.recipes
+                                                      ?.where((element) =>
+                                                          element.size?.name ==
+                                                          "$selectedSize")
+                                                      .first);
+                                            });
+                                          }
+                                        },
+                                        items: widget.value.recipes!
+                                            .map(
+                                                (e) => DropdownMenuItem<String>(
+                                                      value: e.size?.name ?? "",
+                                                      child: SizedBox(
+                                                        width: 35.w,
+                                                        child: Text(
+                                                          e.size?.name ?? "",
+                                                          overflow: TextOverflow
+                                                              .ellipsis,
+                                                          maxLines: 1,
+                                                        ),
+                                                      ),
+                                                    ))
+                                            .toList(),
                                       ),
-                                    ))
-                                .toList(),
-                          ),
-                        )
-                      ],
-                    )
-                        : const SizedBox.shrink(),
-                    widget.value.recipes != null &&
-                        widget.value.recipes?.first.size != null
-                        ? BaseSelection(
-                      onSelect: (d, item) {
-                        setState(() {
-                          addOn = d;
-                          selectedBase = item;
-                        });
-                      },
-                      sizes: widget.value.recipes!
-                          .where((element) =>
-                      element.size?.name == selectedSize)
-                          .map((e) => e.base)
-                          .expand<BaseModel?>(
-                              (bases) => bases ?? [])
-                          .toList(),
-                      selectedBase: selectedBase,
-                    )
-                        : BaseSelection(
-                      onSelect: (addon, item) {
-                        setState(() {
-                          addOn = addon;
-                          selectedBase = item;
-                        });
-                      },
-                      sizes: widget.value.recipes?.first.base ?? [],
-                      selectedBase: selectedBase,
-                    ),
-                  ],
-                )
+                                    )
+                                  ],
+                                )
+                              : const SizedBox.shrink(),
+                          widget.value.recipes != null &&
+                                  widget.value.recipes?.first.size != null
+                              ? BaseSelection(
+                                  onSelect: (d, item) {
+                                    setState(() {
+                                      addOn = d;
+                                      selectedBase = item;
+                                    });
+                                  },
+                                  sizes: widget.value.recipes!
+                                      .where((element) =>
+                                          element.size?.name == selectedSize)
+                                      .map((e) => e.base)
+                                      .expand<BaseModel?>(
+                                          (bases) => bases ?? [])
+                                      .toList(),
+                                  selectedBase: selectedBase,
+                                )
+                              : BaseSelection(
+                                  onSelect: (addon, item) {
+                                    setState(() {
+                                      addOn = addon;
+                                      selectedBase = item;
+                                    });
+                                  },
+                                  sizes: widget.value.recipes?.first.base ?? [],
+                                  selectedBase: selectedBase,
+                                ),
+                        ],
+                      )
                     : const SizedBox.shrink(),
                 const SizedBox(height: 10),
 
@@ -654,13 +639,15 @@ class _MenuItemDetailsState extends State<MenuItemDetails> {
                         elevation: 1,
                         padding: const EdgeInsets.symmetric(horizontal: 50),
                       ),
-                      onPressed: () {
-                        /*showModalBottomSheet(
+                      onPressed: () async {
+                      /*  await showModalBottomSheet(
                             useSafeArea: true,
                             shape: const RoundedRectangleBorder(
-                                borderRadius: BorderRadius.only(
-                                    topLeft: Radius.circular(20),
-                                    topRight: Radius.circular(20))),
+                              borderRadius: BorderRadius.only(
+                                topLeft: Radius.circular(20),
+                                topRight: Radius.circular(20),
+                              ),
+                            ),
                             showDragHandle: true,
                             context: context,
                             builder: (context) {
@@ -671,21 +658,23 @@ class _MenuItemDetailsState extends State<MenuItemDetails> {
                                 ),
                               );
                             });*/
-
+                     //   Get.back();
                         RecipeDetailsModel model = widget.value;
 
-                       // RecipeModel recipeModel = controller.recipeModel.value!;
+                        RecipeModel recipeModel = controller.recipeModel.value!;
+                        controller.orderDetailsCreate(model, defaultQuantity,
+                            selectedBase, selectedSize,);
                         controller.addToLocalDb(
                             name: model.name ?? "",
                             quantity: defaultQuantity,
-                            recipeDetailsModel:
-                            jsonEncode(model.toJson()),
+                            recipeDetailsModel: jsonEncode(model.toJson()),
                             addon: addOn.toInt(),
-                            total: ((calculateTotalPrice(basePrice, tax) +
-                                addOn) * defaultQuantity).ceil(),
-
-                            selectedBase: selectedBase??"",
-                            selectedSize:selectedSize?? "");
+                            total:
+                                ((calculateTotalPrice(basePrice, tax) + addOn) *
+                                        defaultQuantity)
+                                    .ceil(),
+                            selectedBase: selectedBase ?? "",
+                            selectedSize: selectedSize ?? "");
                       },
                       child: const Text("Add To Cart"),
                     ),
@@ -706,96 +695,97 @@ class BaseSelection extends StatelessWidget {
   final Function(double, String?) onSelect;
   final String? selectedBase;
 
-  const BaseSelection({Key? key,
-    required this.sizes,
-    required this.onSelect,
-    required this.selectedBase})
+  const BaseSelection(
+      {Key? key,
+      required this.sizes,
+      required this.onSelect,
+      required this.selectedBase})
       : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return sizes.isNotEmpty
         ? Row(
-      mainAxisAlignment: MainAxisAlignment.start,
-      children: [
-        Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              "Base",
-              style: titleStyle(),
-            ),
-            const SizedBox(
-              height: 5,
-            ),
-            StatefulBuilder(
-              builder: (BuildContext context, StateSetter setState) {
-                String? selectedItem = selectedBase;
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    "Base",
+                    style: titleStyle(),
+                  ),
+                  const SizedBox(
+                    height: 5,
+                  ),
+                  StatefulBuilder(
+                    builder: (BuildContext context, StateSetter setState) {
+                      String? selectedItem = selectedBase;
 
-                if (selectedBase == null) {
-                  selectedItem = sizes.first!.name!;
-                }
-                if (sizes
-                    .any((element) => element!.name == selectedBase)) {
-                  selectedItem = selectedBase;
-                } else {
-                  selectedItem = sizes.first!.name!;
-                }
-                return Container(
-                  decoration: BoxDecoration(
-                      border:
-                      Border.all(width: 0.5, color: Colors.black)),
-                  child: DropdownButton<String>(
-                    underline: const SizedBox(),
-                    elevation: 0,
-                    padding: const EdgeInsets.all(5),
-                    isDense: true,
-                    value: selectedItem,
-                    onChanged: (String? newValue) {
-                      if (newValue != null) {
-                        setState(() {
-                          selectedItem = newValue;
-                        });
+                      if (selectedBase == null) {
+                        selectedItem = sizes.first!.name!;
                       }
-                      onSelect(
-                        sizes
-                            .firstWhere((element) =>
-                        element?.name == selectedItem &&
-                            element?.addCost != null)
-                            ?.addCost ??
-                            0.0,
-                        selectedItem,
+                      if (sizes
+                          .any((element) => element!.name == selectedBase)) {
+                        selectedItem = selectedBase;
+                      } else {
+                        selectedItem = sizes.first!.name!;
+                      }
+                      return Container(
+                        decoration: BoxDecoration(
+                            border:
+                                Border.all(width: 0.5, color: Colors.black)),
+                        child: DropdownButton<String>(
+                          underline: const SizedBox(),
+                          elevation: 0,
+                          padding: const EdgeInsets.all(5),
+                          isDense: true,
+                          value: selectedItem,
+                          onChanged: (String? newValue) {
+                            if (newValue != null) {
+                              setState(() {
+                                selectedItem = newValue;
+                              });
+                            }
+                            onSelect(
+                              sizes
+                                      .firstWhere((element) =>
+                                          element?.name == selectedItem &&
+                                          element?.addCost != null)
+                                      ?.addCost ??
+                                  0.0,
+                              selectedItem,
+                            );
+                          },
+                          items: sizes
+                              .map((e) => DropdownMenuItem<String>(
+                                    value: e?.name ?? "",
+                                    child: SizedBox(
+                                        width: 35.w,
+                                        child: Text(
+                                          e?.name ?? "",
+                                          overflow: TextOverflow.ellipsis,
+                                          maxLines: 1,
+                                        )),
+                                  ))
+                              .toList(),
+                        ),
                       );
                     },
-                    items: sizes
-                        .map((e) =>
-                        DropdownMenuItem<String>(
-                          value: e?.name ?? "",
-                          child: SizedBox(
-                              width: 35.w,
-                              child: Text(
-                                e?.name ?? "",
-                                overflow: TextOverflow.ellipsis,
-                                maxLines: 1,
-                              )),
-                        ))
-                        .toList(),
                   ),
-                );
-              },
-            ),
-          ],
-        ),
-      ],
-    )
+                ],
+              ),
+            ],
+          )
         : const SizedBox();
   }
 }
 
 TextStyle titleStyle() => TextStyle(color: Colors.blue.shade900, fontSize: 18);
 
-Widget headerDesign(String image,
+Widget headerDesign(
+    String image,
     List<String>? categories,
     String code,
     RecipeDetailsModel? recipeDetailsModel,
@@ -826,11 +816,11 @@ Widget headerDesign(String image,
                         border: Border.all(color: Colors.orange, width: 5)),
                     child: image.isNotEmpty
                         ? SvgPicture.network(
-                      image,
-                      fit: BoxFit.contain,
-                      height: 36.sp,
-                      width: 36.sp,
-                    )
+                            image,
+                            fit: BoxFit.contain,
+                            height: 36.sp,
+                            width: 36.sp,
+                          )
                         : const SizedBox(),
                   ),
                 ),
@@ -841,12 +831,11 @@ Widget headerDesign(String image,
                       child: Row(
                         children: categories
                             .map(
-                              (e) =>
-                              GestureDetector(
+                              (e) => GestureDetector(
                                 onTap: () => onTap(e),
                                 child: Padding(
                                   padding:
-                                  const EdgeInsets.only(right: 5, left: 5),
+                                      const EdgeInsets.only(right: 5, left: 5),
                                   child: Text(
                                     e,
                                     style: TextStyle(
@@ -860,7 +849,7 @@ Widget headerDesign(String image,
                                   ),
                                 ),
                               ),
-                        )
+                            )
                             .toList(),
                       ),
                     ),
@@ -882,7 +871,7 @@ Widget headerDesign(String image,
                               };
                               recipeDetailsModel != null
                                   ? Get.toNamed(RouteNames.customizePizza,
-                                  arguments: arguments)
+                                      arguments: arguments)
                                   : null;
                             },
                             child: SvgPicture.asset(

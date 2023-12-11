@@ -12,6 +12,7 @@ import '../by_group_code/menu_by_group_code_model.dart';
 import '../menu_details_list/all_menu_page.dart';
 import '../utils/calculate_tax.dart';
 import 'customize_controller.dart';
+import 'local_toppings_module.dart';
 
 class CustomizePizzaPage extends GetView<CustomizePizzaController> {
   const CustomizePizzaPage({super.key});
@@ -51,7 +52,7 @@ class CustomizePizzaPage extends GetView<CustomizePizzaController> {
             Obx(
               () => _buildToppingsList(
                 selected: controller.filledSlots,
-                controller.allToppings.where((p0) => p0.isSelected).toList(),
+                controller.allToppings.where((p0) => p0.isSelected!).toList(),
                 isSelectedList: true,
               ),
             ),
@@ -59,7 +60,7 @@ class CustomizePizzaPage extends GetView<CustomizePizzaController> {
             Obx(() => _buildToppingsList(
                   selected: controller.filledSlots,
                   isSelectedList: false,
-                  controller.allToppings.where((p0) => !p0.isSelected).toList(),
+                  controller.allToppings.where((p0) => !p0.isSelected!).toList(),
                 )),
             const Divider(
               color: Colors.grey,
@@ -90,18 +91,18 @@ class CustomizePizzaPage extends GetView<CustomizePizzaController> {
       children: toppings?.asMap().entries.map((e) {
             ToppingsSelection topping = toppings[e.key];
             return ListTile(
-                title: Text(topping.toppingName),
+                title: Text(topping.toppingName!),
                 trailing: Row(
                   mainAxisSize: MainAxisSize.min,
-                  children: List.generate(topping.maximumQuantity, (index) {
+                  children: List.generate(topping.maximumQuantity!, (index) {
                     return Checkbox(
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(20),
                       ),
-                      value: topping.values[index],
+                      value: topping.values![index],
                       onChanged: (value) {
                         int currentIn =
-                            topping.values.where((value) => value).length;
+                            topping.values!.where((value) => value!).length;
                         int totalFilledSlots =
                             (controller.filledSlots - currentIn) + (index + 1);
                         if (totalFilledSlots > controller.maxSlots) {
@@ -111,19 +112,19 @@ class CustomizePizzaPage extends GetView<CustomizePizzaController> {
                           return;
                         } else {
                           topping.defaultQuantity =
-                              topping.values.where((value) => value).length;
+                              topping.values!.where((value) => value!).length;
                           topping.values = List.generate(
-                            topping.maximumQuantity.ceil(),
+                            topping.maximumQuantity!.ceil(),
                             (oldIndex) => oldIndex < (index + 1).toInt(),
                           );
                           if (isSelectedList) {
-                            if (topping.canRemove &&
+                            if (topping.canRemove! &&
                                 index == 0 &&
-                                (topping.values[0] &&
-                                    !topping.values[1] &&
-                                    !topping.values[2])) {
+                                (topping.values![0]! &&
+                                    !topping.values![1]! &&
+                                    !topping.values![2]!)) {
                               topping.isSelected = false;
-                              topping.values = topping.values
+                              topping.values = topping.values!
                                   .map((element) => false)
                                   .toList();
                             }
@@ -507,12 +508,12 @@ class _ItemDetailsState extends State<ItemDetails> {
         padding: const EdgeInsets.symmetric(horizontal: 50),
         foregroundColor: Colors.white,
         backgroundColor:
-            !controller.allToppings.any((element) => element.isSelected)
+            !controller.allToppings.any((element) => element.isSelected!)
                 ? Colors.grey.shade700
                 : Colors.orange,
       ),
       onPressed: () {
-        if (controller.allToppings.any((element) => element.isSelected)) {
+        if (controller.allToppings.any((element) => element.isSelected!)) {
           RecipeDetailsModel recipeModel = controller.recipeDetailsModel!;
           controller.addToLocalDb(
             cartItemData: jsonEncode(recipeModel.toJson()),

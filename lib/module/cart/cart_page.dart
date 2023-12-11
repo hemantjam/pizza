@@ -1,8 +1,10 @@
+import 'dart:convert';
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:pizza/module/cart/cart_controller.dart';
+import 'package:pizza/module/menu/customize/local_toppings_module.dart';
 import 'package:sizer/sizer.dart';
 
 import '../menu/by_group_code/menu_by_group_code_model.dart';
@@ -19,12 +21,12 @@ class CartPage extends StatelessWidget {
         logic.checkForOfflineData();
         return SafeArea(
           child: Scaffold(
-              floatingActionButton: FloatingActionButton(
+             /* floatingActionButton: FloatingActionButton(
                 child: const Icon(Icons.refresh),
                 onPressed: () {
                   logic.checkForOfflineData();
                 },
-              ),
+              ),*/
               appBar: AppBar(
                 elevation: 0,
                 title: const Text(
@@ -48,9 +50,20 @@ class CartPage extends StatelessWidget {
                     ? SingleChildScrollView(
                         child: Column(
                             children: logic.cartItems.asMap().entries.map((e) {
+                          String toppingsJsonString = e.value.toppings;
+                          List<dynamic> toppingsJsonList =
+                              jsonDecode(toppingsJsonString);
+                          List<ToppingsSelection> selectedToppingsList =
+                              toppingsJsonList
+                                  .map((toppingJson) =>
+                                      ToppingsSelection.fromJson(toppingJson))
+                                  .toList();
+                       /*   ToppingsSelection topping =
+                              selectedToppingsList[e.key];*/
                           RecipeDetailsModel? model =
                               logic.cartItemsList[e.key];
                           return CartItemDetails(
+                            toppings: selectedToppingsList,
                             image: model?.image ?? "",
                             selectedSize: e.value.selectedSize,
                             selectedBase: e.value.selectedBase,
@@ -77,9 +90,11 @@ class CartItemDetails extends StatefulWidget {
   final String name;
   final int quantity;
   final int total;
+  final List<ToppingsSelection> toppings;
 
   const CartItemDetails(
       {super.key,
+      required this.toppings,
       required this.image,
       required this.selectedSize,
       required this.selectedBase,
@@ -93,6 +108,14 @@ class CartItemDetails extends StatefulWidget {
 
 class _CartItemDetailsState extends State<CartItemDetails> {
   bool visibility = true;
+  double toppingsTotal = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    toppingsTotal = widget.toppings
+        .fold(0.0, (sum, topping) => sum + (topping.addCost ?? 0.0));
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -141,7 +164,6 @@ class _CartItemDetailsState extends State<CartItemDetails> {
                             Expanded(
                               child: QuantitySelector(
                                 onTap: (quantity) {
-                                  log("$quantity");
                                 },
                                 defaultQuantity: widget.quantity,
                               ),
@@ -171,10 +193,10 @@ class _CartItemDetailsState extends State<CartItemDetails> {
                   ),
                   Expanded(
                       child: Text(
-                    "Toppings (4)",
+                    "Toppings (${widget.toppings.length})",
                     style: TextStyle(fontSize: 14.sp),
                   )),
-                  const Text("00.00")
+                  Text(toppingsTotal.toString())
                 ],
               ),
             ),
@@ -182,36 +204,22 @@ class _CartItemDetailsState extends State<CartItemDetails> {
                 visible: !visibility,
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
-                  children: [
-                    ListTile(
-                      title: const Text("ham"),
-                      trailing: QuantitySelector(
-                        defaultQuantity: 1,
-                        onTap: (quantity) {},
-                      ),
-                    ),
-                    ListTile(
-                      title: const Text("ham"),
-                      trailing: QuantitySelector(
-                        defaultQuantity: 1,
-                        onTap: (quantity) {},
-                      ),
-                    ),
-                    ListTile(
-                      title: const Text("ham"),
-                      trailing: QuantitySelector(
-                        defaultQuantity: 1,
-                        onTap: (quantity) {},
-                      ),
-                    ),
-                    ListTile(
-                      title: const Text("ham"),
-                      trailing: QuantitySelector(
-                        defaultQuantity: 1,
-                        onTap: (quantity) {},
-                      ),
-                    ),
-                  ],
+                  children:widget.toppings.isNotEmpty? widget.toppings
+                      .asMap()
+                      .entries
+                      .map(
+                        (e) => ListTile(
+                          title: Text(e.value.toppingName??""),
+                          trailing: QuantitySelector(
+                            maxQuantity: e.value.maximumQuantity,
+                            defaultQuantity: e.value.values
+                                ?.where((element) => element!)
+                                .length??0,
+                            onTap: (quantity) {},
+                          ),
+                        ),
+                      )
+                      .toList():[SizedBox()],
                 ))
           ],
         ),
@@ -221,11 +229,16 @@ class _CartItemDetailsState extends State<CartItemDetails> {
 }
 
 class QuantitySelector extends StatefulWidget {
-  const QuantitySelector(
-      {super.key, required this.onTap, required this.defaultQuantity});
+  QuantitySelector({
+    super.key,
+    required this.onTap,
+    required this.defaultQuantity,
+    this.maxQuantity,
+  });
 
   final Function(int value) onTap;
   final int defaultQuantity;
+  int? maxQuantity;
 
   @override
   QuantitySelectorState createState() => QuantitySelectorState();
@@ -235,10 +248,19 @@ class QuantitySelectorState extends State<QuantitySelector> {
   late int quantity;
 
   void increaseQuantity() {
-    setState(() {
-      quantity++;
-      widget.onTap(quantity);
-    });
+    if (widget.maxQuantity != null) {
+      if (quantity < widget.maxQuantity!) {
+        setState(() {
+          quantity++;
+          widget.onTap(quantity);
+        });
+      }
+    } else {
+      setState(() {
+        quantity++;
+        widget.onTap(quantity);
+      });
+    }
   }
 
   void decreaseQuantity() {

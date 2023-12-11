@@ -11,8 +11,10 @@ class CartItemsEntity {
   final int addon;
   final int total;
   final String itemModel;
+  final String toppings;
 
   CartItemsEntity({
+    required this.toppings,
     required this.itemModel,
     required this.itemName,
     required this.itemQuantity,

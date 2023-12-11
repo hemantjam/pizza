@@ -29,7 +29,6 @@ class OfferInfoModel {
 
   factory OfferInfoModel.fromJson(Map<String, dynamic>? json) {
 //Map<String,dynamic>d=json?["data"];
-//log("------>${d["data"].toString()}");
     List<dynamic>? offersList = json?['data'];
 
     List<SingleOfferInfoModel>? offers = offersList

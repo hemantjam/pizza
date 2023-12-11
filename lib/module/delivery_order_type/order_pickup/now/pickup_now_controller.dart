@@ -70,7 +70,6 @@ class PickUpNowController extends GetxController {
         throw 'Could not launch $url';
       }
     } catch (e) {
-      log("Error: $e");
     }
   }
 

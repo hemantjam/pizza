@@ -1,8 +1,17 @@
+import 'dart:convert';
 import 'dart:core';
+import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
+import 'package:pizza/api/api_response.dart';
+import 'package:pizza/api/api_services.dart';
+import 'package:pizza/api/end_point.dart';
+import 'package:pizza/module/cart/model/order_master/order_master_create_payload.dart';
+import 'package:pizza/module/splash/splash_controller.dart';
+import 'package:pizza/module/user/logged_in_user/logged_in_user_model.dart';
 
 import '../../../../local_storage/shared_pref.dart';
 import '../../../geography/all_active_controller.dart';
@@ -17,6 +26,10 @@ import '../../utils/get_week_list.dart';
 class DeliveryLaterController extends GetxController {
   Rx<OutletShiftDetailsController> outletShiftDetailsController =
       Get.find<OutletShiftDetailsController>().obs;
+
+  LoggedInUserModel loggedInUserModel = LoggedInUserModel();
+ // SplashController splashController = SplashController();
+  ApiServices apiServices = ApiServices();
 
   Rx<AllActiveController> allActiveController =
       Get.find<AllActiveController>().obs;
@@ -142,7 +155,9 @@ class DeliveryLaterController extends GetxController {
               .isBefore(dateTime))) {
         dateController.text = DateFormat('d MMMM yyyy, EEEE').format(dateTime);
         timeIntervalList.value = getTimeIntervals(regular.first!, dateTime);
-        if(timeIntervalList.isNotEmpty)timeController.text = timeIntervalList.first;
+        if (timeIntervalList.isNotEmpty) {
+          timeController.text = timeIntervalList.first;
+        }
         isStoreOff.value = false;
         return;
       }
@@ -153,6 +168,46 @@ class DeliveryLaterController extends GetxController {
       searchDateInList(DateTime.now().add(const Duration(days: 1)));
     } else {
       dateController.text = DateFormat('d MMMM yyyy, EEEE').format(dateTime);
+    }
+  }
+
+  orderMasterCreateApi() async {
+    await initializeDateFormatting('en');
+    OrderMasterCreatePayload payload = OrderMasterCreatePayload();
+    payload.orderMstWebRequest = OrderMstWebRequest();
+    DateFormat inputFormat = DateFormat('dd MMMM yyyy, EEEE', 'en');
+    DateTime dateTime = inputFormat.parse(dateController.text);
+
+    String timeString = timeController.text;
+    DateFormat inputTime = DateFormat.jm();
+    DateTime time = inputTime.parse(timeString);
+    String formattedTime = DateFormat('HH:mm:ss').format(time);
+
+    payload.orderMstWebRequest!.orderDate =
+        "${dateTime.year}-${dateTime.month}-${dateTime.day}";
+    payload.orderMstWebRequest!.orderTime = formattedTime;
+    payload.orderMstWebRequest!.timedOrder = true;
+    payload.orderMstWebRequest!.active = true;
+
+    payload.orderMstWebRequest!.customerAddressDtl = CustomerAddressDtl();
+    payload.orderMstWebRequest!.customerAddressDtl!.active =
+        loggedInUserModel.data?.userMST?.active ?? true;
+    payload.orderMstWebRequest!.customerAddressDtl!.streetNumber =
+        streetNumberController.text;
+    payload.orderMstWebRequest!.customerAddressDtl!.unitNumber =
+        unitController.text;
+
+    payload.orderMstWebRequest!.orderType = "OT01";
+    payload.orderMstWebRequest!.userId =
+        loggedInUserModel.data?.customerMST?.userMSTId;
+    log("--->${jsonEncode(payload.toMap())}");
+    ApiResponse? res = await apiServices.postRequest(
+        ApiEndPoints.orderMasterCreate,
+        data: jsonEncode(payload.toMap()));
+    if (res != null) {
+      if (res.status) {
+        log("---->${res.toJson()}");
+      }
     }
   }
 }

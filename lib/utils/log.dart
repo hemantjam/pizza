@@ -36,7 +36,6 @@ class AppLogs {
     String documentPath = documentDirectory.path;
     String id = DateTime.now().microsecondsSinceEpoch.toString();
     File file = File("$documentPath/$id.pdf");
-    log("pdfFile  : ${file.path}");
     file.writeAsBytesSync(await pdf.save());
     Get.back();
     return file;

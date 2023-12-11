@@ -1,25 +1,25 @@
 // To parse this JSON data, do
 //
-//     final menuItemsModel = menuItemsModelFromMap(jsonString);
+//     final addToCartResponseModel = addToCartResponseModelFromMap(jsonString);
 
 import 'dart:convert';
 
-AddToCartModel menuItemsModelFromMap(String str) => AddToCartModel.fromMap(json.decode(str));
+AddToCartResponseModel addToCartResponseModelFromMap(String str) => AddToCartResponseModel.fromMap(json.decode(str));
 
-String menuItemsModelToMap(AddToCartModel data) => json.encode(data.toMap());
+String addToCartResponseModelToMap(AddToCartResponseModel data) => json.encode(data.toMap());
 
-class AddToCartModel {
+class AddToCartResponseModel {
   String? message;
   bool? status;
   Data? data;
 
-  AddToCartModel({
+  AddToCartResponseModel({
     this.message,
     this.status,
     this.data,
   });
 
-  factory AddToCartModel.fromMap(Map<String, dynamic> json) => AddToCartModel(
+  factory AddToCartResponseModel.fromMap(Map<String, dynamic> json) => AddToCartResponseModel(
     message: json["message"],
     status: json["status"],
     data: json["data"] == null ? null : Data.fromMap(json["data"]),
@@ -46,9 +46,9 @@ class Data {
   dynamic customerMstId;
   dynamic customerAddressDtl;
   dynamic couponMstId;
-  dynamic customerName;
-  int? surcharge;
-  int? appliedAmount;
+  String? customerName;
+  double? surcharge;
+  double? appliedAmount;
   dynamic paymentModeDiscount;
   dynamic paymentModeCharges;
   dynamic promoCodeDiscount;
@@ -165,11 +165,11 @@ class OrderDtlWebRequestSet {
   int? itemMstId;
   int? recipeMstId;
   int? itemSide;
-  int? qty;
+  double? qty;
   dynamic sortOrder;
   dynamic displayName;
   dynamic cookingInstruction;
-  int? hnhSurcharge;
+  double? hnhSurcharge;
   dynamic additionalValue;
   String? orderDtlRefId;
   dynamic comboRefId;
@@ -244,8 +244,8 @@ class OrderRecipeItemWebRequestSet {
   bool? inFirstFour;
   String? id;
   int? recipeItemDtlId;
-  int? qty;
-  int? defaultQty;
+  double? qty;
+  double? defaultQty;
   int? itemSide;
   int? sortOrder;
   bool? base;

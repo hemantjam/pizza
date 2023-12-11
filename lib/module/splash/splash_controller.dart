@@ -43,7 +43,6 @@ class SplashController extends GetxController {
     String? token = await getOfflineToken();
     ApiEndPoints.authToken = token ?? "";
     ApiResponse? res = await apiServices.getRequest(ApiEndPoints.userLoggedIn);
-    //log("logged in response------>${res!.toJson()}");
     if (res != null && res.status) {
       loggedInUserModel.value = LoggedInUserModel.fromJson(res.toJson());
       if (!loggedInUserModel.value.data!.userMST!.ipUser!) {

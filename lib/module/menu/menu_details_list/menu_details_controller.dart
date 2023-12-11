@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -6,6 +7,8 @@ import 'package:pizza/api/api_response.dart';
 import 'package:pizza/api/api_services.dart';
 import 'package:pizza/api/end_point.dart';
 import 'package:pizza/local_storage/entity/menu_details_entity.dart';
+import 'package:pizza/module/cart/model/order_create/add_to_cart_model.dart';
+import 'package:pizza/module/cart/model/order_create/add_to_cart_payload.dart'as cartPayload;
 
 import '../../../local_storage/app_database.dart';
 import '../../../local_storage/entity/cart_items_entity.dart';
@@ -175,6 +178,71 @@ class MenuDetailsController extends GetxController {
     return categorizedRecipes;
   }
 
+  orderDetailsCreate(
+    RecipeDetailsModel model,
+    int quantity,
+    String? selectedBase,
+    String? selectedSize,
+  ) async {
+    RecipeModel? a = model.recipes
+        ?.where((element) => element.size?.name == selectedSize)
+        .first;
+    BaseModel? baseModel = model.recipes
+        ?.where((element) => element.size?.name == selectedSize)
+        .first
+        .base
+        ?.where((element) => element.name == selectedBase)
+        .first;
+    cartPayload.AddToCartPayload payload = cartPayload.AddToCartPayload();
+    List<ToppingsModel>? toppings = model.recipes
+            ?.where((element) => element.size?.name == selectedSize)
+            .first
+            .toppings ??
+        [];
+    List<cartPayload.OrderRecipeItemWebRequestSet> itemSet =
+        <cartPayload.OrderRecipeItemWebRequestSet>[];
+    if (toppings.isNotEmpty) {
+      for (var element in toppings) {
+        cartPayload.OrderRecipeItemWebRequestSet orderRecipeItemWebRequestSet =
+        cartPayload.OrderRecipeItemWebRequestSet(
+          recipeItemDTLId: element.id,
+          qty: element.itemQuantity?.ceil(),
+          defaultQty: element.defaultQuantity?.ceil(),
+          sortOrder: 1,
+          base: false,
+          active: model.isActive,
+        );
+        itemSet.add(orderRecipeItemWebRequestSet);
+      }
+    }
+    itemSet.add(cartPayload.OrderRecipeItemWebRequestSet(
+      qty: 1,
+      recipeItemDTLId: baseModel?.id,
+      defaultQty: baseModel?.defaultQuantity?.ceil(),
+      sortOrder: baseModel?.sortOrder,
+      base: true,
+      active: true,
+    ));
+    payload.active = model.isActive;
+    payload.displayName = model.name;
+    payload.itemMSTId = model.id;
+    payload.recipeMSTId = a?.id;
+    payload.qty = quantity;
+    payload.orderRecipeItemWebRequestSet = itemSet;
+    payload.orderStage = "DS01";
+    payload.hnhSurcharge = 0;
+    payload.additionalValue = 0;
+    payload.sortOrder = 1;
+    payload.orderMSTId =
+        "58ad12a9-c8f7-4a00-9e76-9455386ce92c"; //TODO coming from ordermaster API
+    payload.orderDTLRefId = "1";
+    log("-->${jsonEncode(payload.toMap())}");
+    ApiResponse? res = await _apiServices.postRequest(
+        ApiEndPoints.orderDetailsCreate,
+        data: jsonEncode(payload.toMap()));
+    AddToCartResponseModel modelD=AddToCartResponseModel.fromMap(res!.toJson());
+  }
+
   addToLocalDb({
     required String recipeDetailsModel,
     required String name,
@@ -189,6 +257,7 @@ class MenuDetailsController extends GetxController {
 
     final cartItemsDoa = database.cartItemsDoa;
     CartItemsEntity entity = CartItemsEntity(
+      toppings: "[{}]",
       itemModel: recipeDetailsModel,
       itemName: name,
       itemQuantity: quantity,

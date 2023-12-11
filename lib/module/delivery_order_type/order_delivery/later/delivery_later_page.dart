@@ -243,9 +243,10 @@ class DeliveryLaterPage extends GetView<DeliveryLaterController> {
               } else if (!controller.rememberAddress.value) {
                 SharedPref.deleteData("later");
               }
-              Get.back();
+              controller.orderMasterCreateApi();
+             // Get.back();
             //  showCoomonErrorDialog(title: "Success", message: "Order Successful");
-              controller.formKey.currentState?.reset();
+            //  controller.formKey.currentState?.reset();
             }
           },
         );
