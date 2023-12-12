@@ -47,8 +47,8 @@ class Data {
   dynamic customerAddressDtl;
   dynamic couponMstId;
   dynamic customerName;
-  int? surcharge;
-  int? appliedAmount;
+  double? surcharge;
+  double? appliedAmount;
   dynamic paymentModeDiscount;
   dynamic paymentModeCharges;
   dynamic promoCodeDiscount;

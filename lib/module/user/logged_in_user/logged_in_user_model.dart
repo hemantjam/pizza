@@ -2,7 +2,7 @@ import 'package:get/get.dart';
 
 import '../login/login_model.dart';
 
-class LoggedInUserModel extends GetxController{
+class LoggedInUserModel {
   String? message;
   bool? status;
   Data? data;

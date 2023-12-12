@@ -8,6 +8,7 @@ import 'package:pizza/widgets/common_dialog.dart';
 import 'package:sizer/sizer.dart';
 
 import '../../../constants/assets.dart';
+import '../../cart/model/order_master/order_master_create_model.dart';
 import '../by_group_code/menu_by_group_code_model.dart';
 import '../menu_details_list/all_menu_page.dart';
 import '../utils/calculate_tax.dart';
@@ -60,7 +61,9 @@ class CustomizePizzaPage extends GetView<CustomizePizzaController> {
             Obx(() => _buildToppingsList(
                   selected: controller.filledSlots,
                   isSelectedList: false,
-                  controller.allToppings.where((p0) => !p0.isSelected!).toList(),
+                  controller.allToppings
+                      .where((p0) => !p0.isSelected!)
+                      .toList(),
                 )),
             const Divider(
               color: Colors.grey,
@@ -375,78 +378,78 @@ class _ItemDetailsState extends State<ItemDetails> {
 
               /// quantity , add to cart
               SizedBox(height: controller.isBuildYourOwnPizza.value ? 10 : 0),
-              controller.isBuildYourOwnPizza.value
-                  ? Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Column(
-                          mainAxisSize: MainAxisSize.min,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text("Sauce", style: titleStyle()),
-                            const SizedBox(height: 5),
-                            Container(
-                              decoration: BoxDecoration(
-                                  border: Border.all(
-                                      width: 0.5, color: Colors.black)),
-                              child: DropdownButton<String>(
-                                underline: const SizedBox(),
-                                elevation: 0,
-                                borderRadius: BorderRadius.zero,
-                                padding: const EdgeInsets.all(5),
-                                isDense: true,
-                                value: selectedSauce,
-                                onChanged: (String? newValue) {
-                                  if (newValue != null) {
-                                    setState(() {
-                                      selectedSauce = newValue;
-
-                                      selectedBase = null;
-                                      controller.toggleRecipeModel(controller
-                                          .recipeDetailsModel?.recipes
-                                          ?.where((element) =>
-                                              element.size?.name ==
-                                              "$selectedSize")
-                                          .first);
-                                    });
-                                  }
-                                },
-                                items: controller
-                                    .recipeDetailsModel?.recipes?.first.sauce!
-                                    .map((e) => DropdownMenuItem<String>(
-                                          value: e.name ?? "",
-                                          child: SizedBox(
-                                            width: 35.w,
-                                            child: Text(
-                                              e.name ?? "",
-                                              overflow: TextOverflow.ellipsis,
-                                              maxLines: 1,
-                                            ),
-                                          ),
-                                        ))
-                                    .toList(),
-                              ),
-                            )
-                          ],
+              /* controller.isBuildYourOwnPizza.value
+                  ?*/
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text("Sauce", style: titleStyle()),
+                      const SizedBox(height: 5),
+                      Container(
+                        decoration: BoxDecoration(
+                            border:
+                                Border.all(width: 0.5, color: Colors.black)),
+                        child: DropdownButton<String>(
+                          underline: const SizedBox(),
+                          elevation: 0,
+                          borderRadius: BorderRadius.zero,
+                          padding: const EdgeInsets.all(5),
+                          isDense: true,
+                          value: selectedSauce,
+                          onChanged: (String? newValue) {
+                            if (newValue != null) {
+                              setState(() {
+                                selectedSauce = newValue;
+                                selectedBase = null;
+                                controller.toggleRecipeModel(controller
+                                    .recipeDetailsModel?.recipes
+                                    ?.where((element) =>
+                                        element.size?.name == "$selectedSize")
+                                    .first);
+                              });
+                            }
+                          },
+                          items: controller
+                              .recipeDetailsModel?.recipes?.first.sauce!
+                              .map((e) => DropdownMenuItem<String>(
+                                    value: e.name ?? "",
+                                    child: SizedBox(
+                                      width: 35.w,
+                                      child: Text(
+                                        e.name ?? "",
+                                        overflow: TextOverflow.ellipsis,
+                                        maxLines: 1,
+                                      ),
+                                    ),
+                                  ))
+                              .toList(),
                         ),
-                        SizedBox(
-                          width: 45.w,
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text("Quantity", style: titleStyle()),
-                              const SizedBox(
-                                height: 5,
-                              ),
-                              Row(
+                      )
+                    ],
+                  ),
+                  SizedBox(
+                    width: 45.w,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text("Quantity", style: titleStyle()),
+                        const SizedBox(
+                          height: 5,
+                        ),
+                        QuantitySelector(onTap: onTap),
+                        /*  Row(
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
                                 children: [
-                                  QuantitySelector(onTap: onTap),
+
 
                                   /// add to cart
-                                  controller.isBuildYourOwnPizza.value
+                               */ /*   controller.isBuildYourOwnPizza.value
                                       ? const SizedBox.shrink()
                                       : Obx(() {
                                           return buildElevatedButton(
@@ -456,15 +459,15 @@ class _ItemDetailsState extends State<ItemDetails> {
                                                       ?.name ??
                                                   "",
                                               defaultQuantity);
-                                        }),
+                                        }),*/ /*
                                 ],
-                              ),
-                            ],
-                          ),
-                        ),
+                              ),*/
                       ],
-                    )
-                  : Row(
+                    ),
+                  ),
+                ],
+              ),
+              /* : Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         QuantitySelector(onTap: onTap),
@@ -478,20 +481,21 @@ class _ItemDetailsState extends State<ItemDetails> {
                               defaultQuantity);
                         }),
                       ],
-                    ),
+                    ),*/
               const SizedBox(height: 5),
-              !controller.isBuildYourOwnPizza.value
+              /* !controller.isBuildYourOwnPizza.value
                   ? const SizedBox.shrink()
-                  : Obx(() {
-                      return SizedBox(
-                        // width: 100.w,
-                        child: buildElevatedButton(
-                            context,
-                            100.w,
-                            controller.recipeDetailsModel?.name ?? "",
-                            defaultQuantity),
-                      );
-                    })
+                  :*/
+              Obx(() {
+                return SizedBox(
+                  // width: 100.w,
+                  child: buildElevatedButton(
+                      context,
+                      100.w,
+                      controller.recipeDetailsModel?.name ?? "",
+                      defaultQuantity),
+                );
+              })
             ],
           ),
         ),
@@ -512,21 +516,35 @@ class _ItemDetailsState extends State<ItemDetails> {
                 ? Colors.grey.shade700
                 : Colors.orange,
       ),
-      onPressed: () {
+      onPressed: () async {
         if (controller.allToppings.any((element) => element.isSelected!)) {
           RecipeDetailsModel recipeModel = controller.recipeDetailsModel!;
-          controller.addToLocalDb(
-            cartItemData: jsonEncode(recipeModel.toJson()),
-            name: name ?? "",
-            quantity: defaultQuantity,
-            addon: addOn.ceil(),
-            total: ((calculateTotalPrice(basePrice, tax) + addOn) *
-                    defaultQuantity)
-                .ceil(),
-            selectedBase: selectedBase ?? "",
-            selectedSize: selectedSize ?? "",
-          );
 
+          OrderMasterCreateModel? orderMasterCreateModel =
+              GetInstance().isRegistered<OrderMasterCreateModel>()
+                  ? Get.find<OrderMasterCreateModel>()
+                  : null;
+          bool success = await controller.orderDetailsCreate(
+              recipeModel,
+              defaultQuantity,
+              selectedBase,
+              selectedSize,
+              orderMasterCreateModel?.data?.id);
+          success
+              ? controller.addToLocalDb(
+                  cartItemData: jsonEncode(recipeModel.toJson()),
+                  name: name ?? "",
+                  quantity: defaultQuantity,
+                  addon: addOn.ceil(),
+                  total: ((calculateTotalPrice(basePrice, tax) + addOn) *
+                          defaultQuantity)
+                      .ceil(),
+                  selectedBase: selectedBase ?? "",
+                  selectedSize: selectedSize ?? "",
+                )
+              : null;
+          /* showCoomonErrorDialog(
+              title: "Success", message: "Successfully added in cart");*/
           /* showModalBottomSheet(
               useSafeArea: true,
               shape: const RoundedRectangleBorder(

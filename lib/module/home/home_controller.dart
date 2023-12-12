@@ -4,7 +4,6 @@ import 'package:get/get.dart';
 import 'package:pizza/module/cart/cart_page.dart';
 import 'package:pizza/module/offers/offer_view_all.dart';
 import 'package:pizza/module/user/logged_in_user/logged_in_user_model.dart';
-import 'package:pizza/module/user/login/login_controller.dart';
 
 import '../splash/splash_controller.dart';
 import 'home_page.dart';
@@ -12,16 +11,19 @@ import 'home_page.dart';
 class HomeController extends GetxController {
   RxBool showHeader = false.obs;
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
- // PageController indicatorController = PageController();
+
+  // PageController indicatorController = PageController();
   CarouselController carouselController = CarouselController();
+
 //  LoginController loginController = Get.put(LoginController());
   RxString userName = "".obs;
   SplashController splashController = Get.find<SplashController>();
-LoggedInUserModel loggedInUserModel=LoggedInUserModel();
+  LoggedInUserModel loggedInUserModel = Get.find<LoggedInUserModel>();
+
   @override
   void onInit() {
     super.onInit();
-loggedInUserModel=splashController.loggedInUserModel.value;
+    loggedInUserModel = splashController.loggedInUserModel;
     userName.value = splashController.userName.value;
   }
 
@@ -29,7 +31,7 @@ loggedInUserModel=splashController.loggedInUserModel.value;
     const HomePage(),
     const OfferList(),
     const Page(text: "quick orders will be here"),
-     CartPage()
+    const CartPage()
   ].obs;
 
   final RxInt currentIndex = 0.obs;

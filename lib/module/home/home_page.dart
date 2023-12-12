@@ -2,34 +2,86 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_blurhash/flutter_blurhash.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:pizza/constants/assets.dart';
 import 'package:pizza/module/home/home_controller.dart';
 import 'package:sizer/sizer.dart';
 
+import '../../constants/route_names.dart';
 import '../../widgets/header.dart';
 import '../delivery_order_type/delivery_order_type_options.dart';
 import '../menu/home_page_list/menu_page.dart';
+import 'drawer/drawer.dart';
 
 class HomePage extends GetView<HomeController> {
   const HomePage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(left: 2, right: 2),
-      child: SingleChildScrollView(
-        physics: const BouncingScrollPhysics(),
-          primary: true,
-          child: Column(
-            children: [
-              const Header(),
-              const CustomSlider(),
-              const OrderDeliveryTypeOption(),
-              SizedBox(height: 10.sp),
-              const MenusPage(),
-            ],
-          )),
+    return Scaffold(
+      key: controller.scaffoldKey,
+      drawer: const AppDrawer(),
+      //key: controller.scaffoldKey,
+      appBar: AppBar(
+        automaticallyImplyLeading: false,
+        elevation: 0,
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            GestureDetector(
+              onTap: controller.openDrawer,
+              child: Center(
+                child: SvgPicture.asset(
+                  Assets.menu,
+                  height: 24.sp,
+                  width: 24.sp,
+                  color: Colors.black,
+                ),
+              ),
+            ),
+            GestureDetector(
+              onTap: () {
+                controller.userName.value != ""
+                    ? controller.scaffoldKey.currentState?.openDrawer()
+                    : Get.toNamed(RouteNames.login);
+              },
+              child: Center(
+                  child: Row(
+                children: [
+                  controller.userName.value.isNotEmpty
+                      ? Row(
+                          children: [
+                            const Icon(Icons.person),
+                            Text(controller.userName.value)
+                          ],
+                        )
+                      : const Text("Sign in",
+                          style: TextStyle(
+                            decoration: TextDecoration.underline,
+                            fontWeight: FontWeight.w400,
+                          )),
+                ],
+              )),
+            )
+          ],
+        ),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.only(left: 2, right: 2),
+        child: SingleChildScrollView(
+            physics: const BouncingScrollPhysics(),
+            primary: true,
+            child: Column(
+              children: [
+                const Header(),
+                const CustomSlider(),
+                const OrderDeliveryTypeOption(),
+                SizedBox(height: 10.sp),
+                const MenusPage(),
+              ],
+            )),
+      ),
     );
   }
 }

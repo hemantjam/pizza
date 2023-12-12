@@ -9,6 +9,7 @@ import 'package:pizza/constants/route_names.dart';
 import 'package:sizer/sizer.dart';
 
 import '../../../constants/assets.dart';
+import '../../cart/model/order_master/order_master_create_model.dart';
 import '../../delivery_order_type/delivery_order_type_options.dart';
 import '../by_group_code/menu_by_group_code_model.dart';
 import '../menu_model.dart';
@@ -640,7 +641,7 @@ class _MenuItemDetailsState extends State<MenuItemDetails> {
                         padding: const EdgeInsets.symmetric(horizontal: 50),
                       ),
                       onPressed: () async {
-                      /*  await showModalBottomSheet(
+                        await showModalBottomSheet(
                             useSafeArea: true,
                             shape: const RoundedRectangleBorder(
                               borderRadius: BorderRadius.only(
@@ -657,24 +658,33 @@ class _MenuItemDetailsState extends State<MenuItemDetails> {
                                   elevation: 0,
                                 ),
                               );
-                            });*/
-                     //   Get.back();
+                            });
+                        OrderMasterCreateModel? orderMasterCreateModel =
+                            GetInstance().isRegistered<OrderMasterCreateModel>()
+                                ? Get.find<OrderMasterCreateModel>()
+                                : null;
                         RecipeDetailsModel model = widget.value;
 
                         RecipeModel recipeModel = controller.recipeModel.value!;
-                        controller.orderDetailsCreate(model, defaultQuantity,
-                            selectedBase, selectedSize,);
-                        controller.addToLocalDb(
-                            name: model.name ?? "",
-                            quantity: defaultQuantity,
-                            recipeDetailsModel: jsonEncode(model.toJson()),
-                            addon: addOn.toInt(),
-                            total:
-                                ((calculateTotalPrice(basePrice, tax) + addOn) *
-                                        defaultQuantity)
-                                    .ceil(),
-                            selectedBase: selectedBase ?? "",
-                            selectedSize: selectedSize ?? "");
+                        bool success = await controller.orderDetailsCreate(
+                            model,
+                            defaultQuantity,
+                            selectedBase,
+                            selectedSize,
+                            orderMasterCreateModel?.data?.id);
+                        if (success) {
+                          controller.addToLocalDb(
+                              name: model.name ?? "",
+                              quantity: defaultQuantity,
+                              recipeDetailsModel: jsonEncode(model.toJson()),
+                              addon: addOn.toInt(),
+                              total: ((calculateTotalPrice(basePrice, tax) +
+                                          addOn) *
+                                      defaultQuantity)
+                                  .ceil(),
+                              selectedBase: selectedBase ?? "",
+                              selectedSize: selectedSize ?? "");
+                        }
                       },
                       child: const Text("Add To Cart"),
                     ),

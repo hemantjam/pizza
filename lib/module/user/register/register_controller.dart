@@ -1,4 +1,6 @@
 
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:pizza/constants/route_names.dart';
@@ -32,9 +34,9 @@ class RegisterController extends GetxController {
 
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
-  RxBool rememberMe = false.obs;
-  RxBool emailSub = false.obs;
-  RxBool smsSub = false.obs;
+  RxBool rememberMe = true.obs;
+  RxBool emailSub = true.obs;
+  RxBool smsSub = true.obs;
   RxBool showPass = false.obs;
   RxBool showConfirmPass = false.obs;
   RxBool showLoading = false.obs;
@@ -57,7 +59,7 @@ class RegisterController extends GetxController {
         "system": "PIZZAPORTAL"
       },
     );
-
+//log("register response--->${res!.toJson()}");
     if (res!=null&&res.status) {
       showLoading.value = false;
       if (registerModel.value.data != null) {
@@ -73,7 +75,7 @@ class RegisterController extends GetxController {
       Future.delayed(const Duration(seconds: 3), () {
         showLoading.value = false;
       });
-      showCoomonErrorDialog(title: "Register Failed", message:"Something went wrong ");
+     // showCoomonErrorDialog(title: "Register Failed", message:"Something went wrong ");
 
     }
     Future.delayed(const Duration(seconds: 3), () {

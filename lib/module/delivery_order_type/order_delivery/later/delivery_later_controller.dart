@@ -10,10 +10,11 @@ import 'package:pizza/api/api_response.dart';
 import 'package:pizza/api/api_services.dart';
 import 'package:pizza/api/end_point.dart';
 import 'package:pizza/module/cart/model/order_master/order_master_create_payload.dart';
-import 'package:pizza/module/splash/splash_controller.dart';
 import 'package:pizza/module/user/logged_in_user/logged_in_user_model.dart';
+import 'package:pizza/module/user/widgets/loader.dart';
 
 import '../../../../local_storage/shared_pref.dart';
+import '../../../cart/model/order_master/order_master_create_model.dart';
 import '../../../geography/all_active_controller.dart';
 import '../../../geography/byType/street_name_model.dart';
 import '../../../outlet_details/shift/outlet_shift_details_controller.dart';
@@ -27,8 +28,10 @@ class DeliveryLaterController extends GetxController {
   Rx<OutletShiftDetailsController> outletShiftDetailsController =
       Get.find<OutletShiftDetailsController>().obs;
 
-  LoggedInUserModel loggedInUserModel = LoggedInUserModel();
- // SplashController splashController = SplashController();
+  LoggedInUserModel loggedInUserModel = Get.find<LoggedInUserModel>(tag: "login");
+  OrderMasterCreateModel orderMasterCreateModel = OrderMasterCreateModel();
+
+  // SplashController splashController = SplashController();
   ApiServices apiServices = ApiServices();
 
   Rx<AllActiveController> allActiveController =
@@ -172,6 +175,8 @@ class DeliveryLaterController extends GetxController {
   }
 
   orderMasterCreateApi() async {
+    showCommonLoading(true);
+
     await initializeDateFormatting('en');
     OrderMasterCreatePayload payload = OrderMasterCreatePayload();
     payload.orderMstWebRequest = OrderMstWebRequest();
@@ -188,7 +193,6 @@ class DeliveryLaterController extends GetxController {
     payload.orderMstWebRequest!.orderTime = formattedTime;
     payload.orderMstWebRequest!.timedOrder = true;
     payload.orderMstWebRequest!.active = true;
-
     payload.orderMstWebRequest!.customerAddressDtl = CustomerAddressDtl();
     payload.orderMstWebRequest!.customerAddressDtl!.active =
         loggedInUserModel.data?.userMST?.active ?? true;
@@ -196,18 +200,35 @@ class DeliveryLaterController extends GetxController {
         streetNumberController.text;
     payload.orderMstWebRequest!.customerAddressDtl!.unitNumber =
         unitController.text;
-
+    payload.orderMstWebRequest!.expressOrder = false;
     payload.orderMstWebRequest!.orderType = "OT01";
     payload.orderMstWebRequest!.userId =
-        loggedInUserModel.data?.customerMST?.userMSTId;
-    log("--->${jsonEncode(payload.toMap())}");
+        loggedInUserModel.data?.customerMST?.userMSTId ;
+    payload.orderMstWebRequest!.deliveyInstrucation = "";
+    payload.orderMstWebRequest!.otherInstrucation = "";
+    payload.orderMstWebRequest!.orderStageCode = "DS01";
+    payload.orderMstWebRequest!.customerAddressDtl!.address1 =
+        unitController.text;
+    payload.orderMstWebRequest!.customerAddressDtl!.address2 =
+        streetNumberController.text;
+    payload.orderMstWebRequest!.customerAddressDtl!.pincode =
+        int.parse(postCodeController.text);
+    payload.orderMstWebRequest!.customerAddressDtl!.streetNumber =
+        streetNumberController.text;
+    payload.orderMstWebRequest!.customerAddressDtl!.unitNumber =
+        unitController.text;
+
     ApiResponse? res = await apiServices.postRequest(
         ApiEndPoints.orderMasterCreate,
         data: jsonEncode(payload.toMap()));
     if (res != null) {
       if (res.status) {
-        log("---->${res.toJson()}");
+        orderMasterCreateModel = OrderMasterCreateModel.fromMap(res!.toJson());
+        Get.put(orderMasterCreateModel, permanent: true);
+        showCommonLoading(false);
+        Get.back();
       }
     }
+    showCommonLoading(false);
   }
 }

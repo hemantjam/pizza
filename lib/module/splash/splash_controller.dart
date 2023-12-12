@@ -14,7 +14,7 @@ class SplashController extends GetxController {
   RxBool loading = false.obs;
   ApiServices apiServices = ApiServices();
   LoginController loginController = Get.put(LoginController());
-  Rx<LoggedInUserModel> loggedInUserModel = LoggedInUserModel().obs;
+  LoggedInUserModel loggedInUserModel = LoggedInUserModel();
   RxBool serverIssue = false.obs;
   RxString userName = "".obs;
 
@@ -43,12 +43,16 @@ class SplashController extends GetxController {
     String? token = await getOfflineToken();
     ApiEndPoints.authToken = token ?? "";
     ApiResponse? res = await apiServices.getRequest(ApiEndPoints.userLoggedIn);
+    //log("==>${res?.toJson()}");
     if (res != null && res.status) {
-      loggedInUserModel.value = LoggedInUserModel.fromJson(res.toJson());
-      if (!loggedInUserModel.value.data!.userMST!.ipUser!) {
+      loggedInUserModel = LoggedInUserModel.fromJson(res.toJson());
+
+      Get.put<LoggedInUserModel>(loggedInUserModel, permanent: true,tag: "login");
+      if (!loggedInUserModel.data!.userMST!.ipUser!) {
         userName.value =
-            loggedInUserModel.value.data?.customerMST?.customerFirstName ?? "";
+            "${loggedInUserModel.data?.customerMST?.customerFirstName ?? ""} ${loggedInUserModel.data?.customerMST?.customerLastName ?? ""}";
       }
+      getSystemToken();
       loading.value = false;
     } else {
       loginByIp();

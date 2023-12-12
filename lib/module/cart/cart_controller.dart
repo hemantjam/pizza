@@ -8,8 +8,7 @@ import '../../local_storage/entity/cart_items_entity.dart';
 
 class CartController extends GetxController {
   RxList<CartItemsEntity> cartItems = <CartItemsEntity>[].obs;
-  RxList< RecipeDetailsModel?> cartItemsList =
-      <RecipeDetailsModel?>[].obs;
+  RxList<RecipeDetailsModel?> cartItemsList = <RecipeDetailsModel?>[].obs;
 
   @override
   onInit() {
@@ -36,23 +35,24 @@ class CartController extends GetxController {
       List<CartItemsEntity> result = await cartItemsDao.findAllCartItems();
 
       if (result.isNotEmpty) {
-      //  cartItemsList.clear();
-      //  cartItems.clear();
+        //  cartItemsList.clear();
+        //  cartItems.clear();
         cartItems.value = result;
         for (var element in cartItems) {
-          cartItemsList.add(
-              RecipeDetailsModel.fromJson(jsonDecode(element.itemModel)));
+          cartItemsList
+              .add(RecipeDetailsModel.fromJson(jsonDecode(element.itemModel)));
         }
       }
     }
+    update();
   }
 
-  databaseToModel(List<CartItemsEntity> result) {
-    /*for (var element in result) {
+/*databaseToModel(List<CartItemsEntity> result) {
+    */ /*for (var element in result) {
       String res = element.groupData;
       Map<String, dynamic> resultMap = json.decode(res);
       groupModelList[element.groupName] = GroupModel.fromJson(resultMap);
-    }*/
+    }*/ /*
     update();
-  }
+  }*/
 }

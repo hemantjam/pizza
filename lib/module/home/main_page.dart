@@ -5,13 +5,9 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:pizza/constants/app_colors.dart';
 import 'package:pizza/constants/assets.dart';
-import 'package:pizza/module/splash/splash_controller.dart';
-import 'package:pizza/module/user/login/login_controller.dart';
 import 'package:sizer/sizer.dart';
 
-import '../../constants/route_names.dart';
 import '../user/logged_in_user/logged_in_user_model.dart';
-import 'drawer/drawer.dart';
 import 'home_controller.dart';
 
 class MainPage extends GetView<HomeController> {
@@ -21,56 +17,14 @@ class MainPage extends GetView<HomeController> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        floatingActionButton: FloatingActionButton(
-          onPressed: (){
-            LoggedInUserModel userModel=Get.put(LoggedInUserModel());
+       /*   floatingActionButton: FloatingActionButton(
+            onPressed: () {
+              LoggedInUserModel loggedInUserModel =
+                  Get.find<LoggedInUserModel>(tag: "login");
 
-          },
-        ),
-          appBar: AppBar(
-            automaticallyImplyLeading: false,
-            elevation: 0,
-            title: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                GestureDetector(
-                  onTap: controller.openDrawer,
-                  child: Center(
-                    child: SvgPicture.asset(
-                      Assets.menu,
-                      height: 24.sp,
-                      width: 24.sp,
-                      color: Colors.black,
-                    ),
-                  ),
-                ),
-                GestureDetector(
-                  onTap: () {
-                    Get.toNamed(RouteNames.login);
-                  },
-                  child: Center(
-                      child: Row(
-                    children: [
-                      controller.userName.value.isNotEmpty
-                          ? Row(
-                              children: [
-                                const Icon(Icons.person),
-                                Text(controller.userName.value)
-                              ],
-                            )
-                          : const Text("Sign in",
-                              style: TextStyle(
-                                decoration: TextDecoration.underline,
-                                fontWeight: FontWeight.w400,
-                              )),
-                    ],
-                  )),
-                )
-              ],
-            ),
-          ),
-          key: controller.scaffoldKey,
-          drawer: const AppDrawer(),
+              log("${loggedInUserModel.message}");
+            },
+          ),*/
           body: Obx(() {
             return IndexedStack(
                 index: controller.currentIndex.value,

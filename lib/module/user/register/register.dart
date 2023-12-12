@@ -37,7 +37,7 @@ class RegisterPage extends GetView<RegisterController> {
                         height: 1.h,
                       ),
                       customText(
-                        text: "To retain fantastic deals",
+                        text: "To grab fantastic deals",
                         fontSize: 12.sp,
                         color: Colors.grey,
                       ),

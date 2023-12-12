@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:dio/dio.dart';
 import 'package:pizza/api/end_point.dart';
 import 'package:pizza/utils/log.dart';
@@ -71,9 +73,14 @@ class ApiServices {
           data: data ?? '"' + data + '"', queryParameters: queryParameters);
       if (response.statusCode == 200) {
         ApiResponse apiResponse = ApiResponse<T>.fromJson(response.data);
+        if (apiResponse.status) {
+          return apiResponse;
+        } else if (!apiResponse.status) {
+          showCoomonErrorDialog(
+              title: "Something went wrong", message: apiResponse.message);
+        }
         logField.addAll({"response": response.toString()});
         AppLogs.add(logField.toString());
-        return apiResponse;
       } else {
         handleError({"status": "Error", "message": response.data["message"]});
         logField.addAll({"error": "error in response code"});
@@ -89,6 +96,7 @@ class ApiServices {
 
   void handleError(dynamic e) {
     if (e is DioException) {
+
       if (e.type == DioExceptionType.connectionTimeout ||
           e.type == DioExceptionType.sendTimeout ||
           e.type == DioExceptionType.receiveTimeout ||
@@ -100,14 +108,16 @@ class ApiServices {
       } else if (e.type == DioExceptionType.badResponse) {
         showCoomonErrorDialog(
           title: "Error:",
-          message: e.response!.data == "" || e.response == null
-              ? "something went wrong"
+          message: e.response?.statusCode==401
+              ? e.response!.data["error"]
               : e.response!.data["message"],
         );
       } else {
         showCoomonErrorDialog(
           title: "Something went wrong:",
-          message: e.response!.data["error"],
+          message:e.response?.statusCode==401
+              ? e.response!.data["error"]
+              : e.response!.data["message"],
         );
       }
     }
