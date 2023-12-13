@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:get/get.dart';
 import 'package:pizza/module/menu/by_group_code/menu_by_group_code_model.dart';
@@ -16,29 +17,36 @@ class CartController extends GetxController {
     checkForOfflineData();
   }
 
-  deleteData() async {
+  @override
+  onReady() {
+    checkForOfflineData();
+    super.onReady();
+  }
+
+  deleteData(CartItemsEntity cartItemsEntity) async {
     AppDatabase? database =
         await $FloorAppDatabase.databaseBuilder('app_database.db').build();
-
     if (!database.isBlank!) {
       final cartItemsDao = database.cartItemsDoa;
-      // cartItemsDao.deleteAllCart(cartItemsEntity);
+      await cartItemsDao.deleteSingleCartItem(cartItemsEntity.id!);
+      checkForOfflineData();
     }
+    update();
   }
 
   checkForOfflineData() async {
+    cartItemsList.clear();
     AppDatabase? database =
         await $FloorAppDatabase.databaseBuilder('app_database.db').build();
 
     if (!database.isBlank!) {
       final cartItemsDao = database.cartItemsDoa;
       List<CartItemsEntity> result = await cartItemsDao.findAllCartItems();
-
       if (result.isNotEmpty) {
-        //  cartItemsList.clear();
-        //  cartItems.clear();
         cartItems.value = result;
         for (var element in cartItems) {
+          log("${element.id}");
+          log(element.itemName);
           cartItemsList
               .add(RecipeDetailsModel.fromJson(jsonDecode(element.itemModel)));
         }

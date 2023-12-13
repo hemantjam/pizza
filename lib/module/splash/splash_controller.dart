@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:get/get.dart';
 import 'package:pizza/api/end_point.dart';
 import 'package:pizza/constants/route_names.dart';
@@ -47,7 +45,8 @@ class SplashController extends GetxController {
     if (res != null && res.status) {
       loggedInUserModel = LoggedInUserModel.fromJson(res.toJson());
 
-      Get.put<LoggedInUserModel>(loggedInUserModel, permanent: true,tag: "login");
+      Get.put<LoggedInUserModel>(loggedInUserModel,
+          permanent: true, tag: "login");
       if (!loggedInUserModel.data!.userMST!.ipUser!) {
         userName.value =
             "${loggedInUserModel.data?.customerMST?.customerFirstName ?? ""} ${loggedInUserModel.data?.customerMST?.customerLastName ?? ""}";
@@ -57,6 +56,8 @@ class SplashController extends GetxController {
     } else {
       loginByIp();
     }
+    Get.put<LoggedInUserModel>(loggedInUserModel,
+        permanent: true, tag: "login");
     update();
   }
 

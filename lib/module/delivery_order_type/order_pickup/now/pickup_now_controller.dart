@@ -4,7 +4,6 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/date_symbol_data_local.dart';
-import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../../api/api_response.dart';
@@ -30,7 +29,8 @@ class PickUpNowController extends GetxController {
       Get.find<AllActiveController>().obs;
   ApiServices apiServices = ApiServices();
 
-  LoggedInUserModel loggedInUserModel = Get.find<LoggedInUserModel>(tag: "login");
+  LoggedInUserModel loggedInUserModel =
+      Get.find<LoggedInUserModel>(tag: "login");
   OrderMasterCreateModel orderMasterCreateModel = OrderMasterCreateModel();
 
   Rx<OutletShiftDetailsModel> outletShiftDetailsModel =
@@ -84,6 +84,7 @@ class PickUpNowController extends GetxController {
         throw 'Could not launch $url';
       }
     } catch (e) {
+      log(e.toString());
     }
   }
 
@@ -140,49 +141,25 @@ class PickUpNowController extends GetxController {
       }
     }
   }
+
   orderMasterCreateApi() async {
     showCommonLoading(true);
 
     await initializeDateFormatting('en');
     OrderMasterCreatePayload payload = OrderMasterCreatePayload();
     payload.orderMstWebRequest = OrderMstWebRequest();
-    // DateFormat inputFormat = DateFormat('dd MMMM yyyy, EEEE', 'en');
-    ///DateTime dateTime = inputFormat.parse(dateController.text);
-
-    //  String timeString = timeController.text;
-   // DateFormat inputTime = DateFormat.jm();
-    // DateTime time = inputTime.parse(timeString);
-    //  String formattedTime = DateFormat('HH:mm:ss').format(time);
-
-    /*payload.orderMstWebRequest!.orderDate =
-    "${dateTime.year}-${dateTime.month}-${dateTime.day}";*/
-    // payload.orderMstWebRequest!.orderTime = formattedTime;
     payload.orderMstWebRequest!.timedOrder = true;
     payload.orderMstWebRequest!.active = true;
     payload.orderMstWebRequest!.customerAddressDtl = CustomerAddressDtl();
     payload.orderMstWebRequest!.customerAddressDtl!.active =
         loggedInUserModel.data?.userMST?.active ?? true;
-   /* payload.orderMstWebRequest!.customerAddressDtl!.streetNumber =
-        streetNumberController.text;
-    payload.orderMstWebRequest!.customerAddressDtl!.unitNumber =
-        unitController.text;*/
     payload.orderMstWebRequest!.expressOrder = false;
     payload.orderMstWebRequest!.orderType = "OT02";
     payload.orderMstWebRequest!.userId =
-        loggedInUserModel.data?.customerMST?.userMSTId ;
+        loggedInUserModel.data?.customerMST?.userMSTId;
     payload.orderMstWebRequest!.deliveyInstrucation = "";
     payload.orderMstWebRequest!.otherInstrucation = "";
     payload.orderMstWebRequest!.orderStageCode = "DS01";
-   /* payload.orderMstWebRequest!.customerAddressDtl!.address1 =
-        unitController.text;
-    payload.orderMstWebRequest!.customerAddressDtl!.address2 =
-        streetNumberController.text;
-    payload.orderMstWebRequest!.customerAddressDtl!.pincode =
-        int.parse(postCodeController.text);
-    payload.orderMstWebRequest!.customerAddressDtl!.streetNumber =
-        streetNumberController.text;
-    payload.orderMstWebRequest!.customerAddressDtl!.unitNumber =
-        unitController.text;*/
 
     ApiResponse? res = await apiServices.postRequest(
         ApiEndPoints.orderMasterCreate,
@@ -192,10 +169,14 @@ class PickUpNowController extends GetxController {
         orderMasterCreateModel = OrderMasterCreateModel.fromMap(res!.toJson());
         Get.put(orderMasterCreateModel, permanent: true);
         showCommonLoading(false);
+        log("order master create success------->");
         Get.back();
       }
+    } else {
+      Get.isDialogOpen != null && Get.isDialogOpen!
+          ? Get.back(closeOverlays: true)
+          : null;
     }
-    showCommonLoading(false);
+    // showCommonLoading(false);
   }
-
 }

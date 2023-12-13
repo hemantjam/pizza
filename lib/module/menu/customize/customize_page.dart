@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
@@ -9,6 +10,7 @@ import 'package:sizer/sizer.dart';
 
 import '../../../constants/assets.dart';
 import '../../cart/model/order_master/order_master_create_model.dart';
+import '../../delivery_order_type/delivery_order_type_options.dart';
 import '../by_group_code/menu_by_group_code_model.dart';
 import '../menu_details_list/all_menu_page.dart';
 import '../utils/calculate_tax.dart';
@@ -110,7 +112,7 @@ class CustomizePizzaPage extends GetView<CustomizePizzaController> {
                             (controller.filledSlots - currentIn) + (index + 1);
                         if (totalFilledSlots > controller.maxSlots) {
                           showCoomonErrorDialog(
-                              title: "Toopings Alert",
+                              title: "Toppings Alert",
                               message: "Max toppings reached");
                           return;
                         } else {
@@ -180,6 +182,9 @@ class _ItemDetailsState extends State<ItemDetails> {
   @override
   void initState() {
     selectedSize = controller.recipeDetailsModel?.recipes?.first.size?.name;
+    selectedBase =
+        controller.recipeDetailsModel?.recipes?.first.base?.first.name;
+
     selectedSauce =
         controller.recipeDetailsModel?.recipes?.first.sauce?.first.name;
     RecipeModel? recipeModel = controller.recipeDetailsModel?.recipes
@@ -253,7 +258,7 @@ class _ItemDetailsState extends State<ItemDetails> {
                 controller.recipeDetailsModel?.ingredients ?? "",
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
-                style: TextStyle(color: Color(0xff999999)),
+                style: const TextStyle(color: Color(0xff999999)),
               ),
               const SizedBox(height: 10),
               controller.recipeDetailsModel?.recipes != null
@@ -376,10 +381,8 @@ class _ItemDetailsState extends State<ItemDetails> {
               Text(!controller.isBuildYourOwnPizza.value ? "Quantity" : "",
                   style: titleStyle()),
 
-              /// quantity , add to cart
               SizedBox(height: controller.isBuildYourOwnPizza.value ? 10 : 0),
-              /* controller.isBuildYourOwnPizza.value
-                  ?*/
+
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -442,53 +445,16 @@ class _ItemDetailsState extends State<ItemDetails> {
                           height: 5,
                         ),
                         QuantitySelector(onTap: onTap),
-                        /*  Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-
-
-                                  /// add to cart
-                               */ /*   controller.isBuildYourOwnPizza.value
-                                      ? const SizedBox.shrink()
-                                      : Obx(() {
-                                          return buildElevatedButton(
-                                              context,
-                                              0,
-                                              controller.recipeDetailsModel
-                                                      ?.name ??
-                                                  "",
-                                              defaultQuantity);
-                                        }),*/ /*
-                                ],
-                              ),*/
                       ],
                     ),
                   ),
                 ],
               ),
-              /* : Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        QuantitySelector(onTap: onTap),
 
-                        /// add to cart
-                        Obx(() {
-                          return buildElevatedButton(
-                              context,
-                              55.w,
-                              controller.recipeDetailsModel?.name ?? "",
-                              defaultQuantity);
-                        }),
-                      ],
-                    ),*/
               const SizedBox(height: 5),
-              /* !controller.isBuildYourOwnPizza.value
-                  ? const SizedBox.shrink()
-                  :*/
+
               Obx(() {
                 return SizedBox(
-                  // width: 100.w,
                   child: buildElevatedButton(
                       context,
                       100.w,
@@ -519,33 +485,7 @@ class _ItemDetailsState extends State<ItemDetails> {
       onPressed: () async {
         if (controller.allToppings.any((element) => element.isSelected!)) {
           RecipeDetailsModel recipeModel = controller.recipeDetailsModel!;
-
-          OrderMasterCreateModel? orderMasterCreateModel =
-              GetInstance().isRegistered<OrderMasterCreateModel>()
-                  ? Get.find<OrderMasterCreateModel>()
-                  : null;
-          bool success = await controller.orderDetailsCreate(
-              recipeModel,
-              defaultQuantity,
-              selectedBase,
-              selectedSize,
-              orderMasterCreateModel?.data?.id);
-          success
-              ? controller.addToLocalDb(
-                  cartItemData: jsonEncode(recipeModel.toJson()),
-                  name: name ?? "",
-                  quantity: defaultQuantity,
-                  addon: addOn.ceil(),
-                  total: ((calculateTotalPrice(basePrice, tax) + addOn) *
-                          defaultQuantity)
-                      .ceil(),
-                  selectedBase: selectedBase ?? "",
-                  selectedSize: selectedSize ?? "",
-                )
-              : null;
-          /* showCoomonErrorDialog(
-              title: "Success", message: "Successfully added in cart");*/
-          /* showModalBottomSheet(
+        await   showModalBottomSheet(
               useSafeArea: true,
               shape: const RoundedRectangleBorder(
                   borderRadius: BorderRadius.only(
@@ -556,9 +496,45 @@ class _ItemDetailsState extends State<ItemDetails> {
               builder: (context) {
                 return const Padding(
                   padding: EdgeInsets.only(bottom: 10),
-                  child: OrderDeliveryTypeOption(elevation: 0),
+                  child: OrderDeliveryTypeOption(elevation: 0,navigationBack: true,),
                 );
-              });*/
+              });
+        //  Get.back();
+          /*BaseModel? baseModel = recipeModel.recipes
+              ?.where((element) => element.size?.name == selectedSize)
+              .first
+              .base
+              ?.where((element) => element.name == selectedBase)
+              .first;*/
+          log("----$selectedSize");
+          log("----$selectedBase");
+         // log("----${selectedSize}");
+          OrderMasterCreateModel? orderMasterCreateModel =
+              GetInstance().isRegistered<OrderMasterCreateModel>()
+                  ? Get.find<OrderMasterCreateModel>()
+                  : null;
+          bool success = await controller.orderDetailsCreate(
+              recipeModel,
+              defaultQuantity,
+              selectedBase,
+              selectedSize,
+              orderMasterCreateModel?.data?.id);
+          if (success) {
+
+            List<ToppingsSelection> toppings =
+                controller.allToppings.where((p0) => p0.isSelected!).toList();
+            controller.addToLocalDb(
+              cartItemData: jsonEncode(recipeModel.toJson()),
+              name: name,
+              quantity: defaultQuantity,
+              addon: addOn.ceil(),
+              total: ((calculateTotalPrice(basePrice, tax) + addOn) *
+                      defaultQuantity)
+                  .ceil(),
+              selectedBase: selectedBase ?? "",
+              selectedSize: selectedSize ?? "",
+            );
+          }
         }
       },
       child: const Text("Add To Cart"),

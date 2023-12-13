@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
@@ -25,7 +26,8 @@ class DeliveryNowController extends GetxController {
       Get.find<OutletShiftDetailsController>().obs;
   ApiServices apiServices = ApiServices();
 
-  LoggedInUserModel loggedInUserModel = Get.find<LoggedInUserModel>(tag: "login");
+  LoggedInUserModel loggedInUserModel =
+      Get.find<LoggedInUserModel>(tag: "login");
   OrderMasterCreateModel orderMasterCreateModel = OrderMasterCreateModel();
 
   Rx<AllActiveController> allActiveController =
@@ -47,6 +49,9 @@ class DeliveryNowController extends GetxController {
   RxList<SingleGeographyModel>? streetList = <SingleGeographyModel>[].obs;
   final RxBool rememberAddress = true.obs;
   RxBool storeOff = false.obs;
+  int? streetNameGeoId;
+  int? postCodeGeoId;
+  int? subUrbGeoId;
 
   @override
   void onInit() {
@@ -153,23 +158,24 @@ class DeliveryNowController extends GetxController {
       }
     }
   }
+
   orderMasterCreateApi() async {
     showCommonLoading(true);
 
     await initializeDateFormatting('en');
     OrderMasterCreatePayload payload = OrderMasterCreatePayload();
     payload.orderMstWebRequest = OrderMstWebRequest();
-   // DateFormat inputFormat = DateFormat('dd MMMM yyyy, EEEE', 'en');
+    // DateFormat inputFormat = DateFormat('dd MMMM yyyy, EEEE', 'en');
     ///DateTime dateTime = inputFormat.parse(dateController.text);
 
-  //  String timeString = timeController.text;
+    //  String timeString = timeController.text;
     DateFormat inputTime = DateFormat.jm();
-   // DateTime time = inputTime.parse(timeString);
-  //  String formattedTime = DateFormat('HH:mm:ss').format(time);
+    // DateTime time = inputTime.parse(timeString);
+    //  String formattedTime = DateFormat('HH:mm:ss').format(time);
 
     /*payload.orderMstWebRequest!.orderDate =
     "${dateTime.year}-${dateTime.month}-${dateTime.day}";*/
-   // payload.orderMstWebRequest!.orderTime = formattedTime;
+    // payload.orderMstWebRequest!.orderTime = formattedTime;
     payload.orderMstWebRequest!.timedOrder = true;
     payload.orderMstWebRequest!.active = true;
     payload.orderMstWebRequest!.customerAddressDtl = CustomerAddressDtl();
@@ -182,7 +188,7 @@ class DeliveryNowController extends GetxController {
     payload.orderMstWebRequest!.expressOrder = false;
     payload.orderMstWebRequest!.orderType = "OT01";
     payload.orderMstWebRequest!.userId =
-        loggedInUserModel.data?.customerMST?.userMSTId ;
+        loggedInUserModel.data?.customerMST?.userMSTId;
     payload.orderMstWebRequest!.deliveyInstrucation = "";
     payload.orderMstWebRequest!.otherInstrucation = "";
     payload.orderMstWebRequest!.orderStageCode = "DS01";
@@ -197,18 +203,36 @@ class DeliveryNowController extends GetxController {
     payload.orderMstWebRequest!.customerAddressDtl!.unitNumber =
         unitController.text;
 
+    payload.orderMstWebRequest!.customerAddressDtl!.geographyMstId1 =
+        streetNameGeoId;
+    payload.orderMstWebRequest!.customerAddressDtl!.geographyMstId2 =
+        subUrbGeoId;
+    payload.orderMstWebRequest!.customerAddressDtl!.geographyMstId3 =
+        postCodeGeoId;
+
     ApiResponse? res = await apiServices.postRequest(
         ApiEndPoints.orderMasterCreate,
         data: jsonEncode(payload.toMap()));
+    log("res--${res?.toJson()}");
     if (res != null) {
       if (res.status) {
         orderMasterCreateModel = OrderMasterCreateModel.fromMap(res!.toJson());
         Get.put(orderMasterCreateModel, permanent: true);
         showCommonLoading(false);
+        log("order master create success------->");
         Get.back();
+      } else {
+        showCommonLoading(false);
       }
+    } else {
+      Get.isDialogOpen != null && Get.isDialogOpen!
+          ? Get.back(closeOverlays: true)
+          : null;
+      // log("error--->somethign went wrong");
+      //showCommonLoading(false);
+      // Get.back();
+      // showCoomonErrorDialog(title: "Failed", message: "Something went wrong");
+      // showCommonLoading(false);
     }
-    showCommonLoading(false);
   }
-
 }

@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
@@ -6,6 +7,7 @@ import 'package:flutter_blurhash/flutter_blurhash.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:pizza/constants/route_names.dart';
+import 'package:pizza/module/cart/cart_controller.dart';
 import 'package:sizer/sizer.dart';
 
 import '../../../constants/assets.dart';
@@ -17,7 +19,8 @@ import '../utils/calculate_tax.dart';
 import 'menu_details_controller.dart';
 
 class AllMenuPage extends GetView<MenuDetailsController> {
-  const AllMenuPage({Key? key}) : super(key: key);
+  AllMenuPage({Key? key}) : super(key: key);
+  CartController cartController = Get.put(CartController());
 
   @override
   Widget build(BuildContext context) {
@@ -43,20 +46,24 @@ class AllMenuPage extends GetView<MenuDetailsController> {
               onPressed: () {},
               child: Row(
                 children: [
-                  Text(
-                    "1 item",
-                    style: buildButtonTextStyle(),
-                  ),
+                  Obx(() {
+                    return Text(
+                      "${cartController.cartItems.length.toString()} items",
+                      style: buildButtonTextStyle(),
+                    );
+                  }),
                   const Spacer(),
                   Text(
-                    " \$55",
+                    " \$${cartController.cartItems.fold(0, (previousValue, element) => previousValue + element.total)}",
                     style: buildButtonTextStyle(),
                   ),
                 ],
               )),
           ElevatedButton(
               style: buildStyleFrom(126, 44),
-              onPressed: () {},
+              onPressed: () {
+                // cartController.checkForOfflineData();
+              },
               child: Row(
                 children: [
                   Obx(() {
@@ -105,11 +112,20 @@ class AllMenuPage extends GetView<MenuDetailsController> {
             Get.toNamed(RouteNames.cartPage);
           },
           child: Padding(
-            padding: const EdgeInsets.only(right: 10),
-            child: SvgPicture.asset(
-              Assets.bottomCart,
-              color: Colors.black,
-            ),
+            padding: const EdgeInsets.only(right: 10, top: 10),
+            child: GetBuilder<CartController>(
+                init: CartController(),
+                builder: (logic) {
+                  return Badge(
+                    label: Obx(() {
+                      return Text(logic.cartItems.length.toString());
+                    }),
+                    child: SvgPicture.asset(
+                      Assets.bottomCart,
+                      color: Colors.black,
+                    ),
+                  );
+                }),
           ),
         )
       ],
@@ -383,6 +399,8 @@ class _MenuItemDetailsState extends State<MenuItemDetails> {
     setState(() {});
   }
 
+  CartController cartController = Get.find<CartController>();
+
   @override
   void initState() {
     selectedSize = widget.value.recipes?.first.size?.name;
@@ -390,11 +408,11 @@ class _MenuItemDetailsState extends State<MenuItemDetails> {
     addOn = widget.value.recipes?.first.base?.first.addCost ?? 0;
     basePrice = widget.value.recipes?.first.basePrice ?? 0;
     tax = widget.value.recipes?.first.tax ?? 0;
-    RecipeModel? recipeModel = widget.value?.recipes
+    /* RecipeModel? recipeModel = widget.value?.recipes
         ?.where((element) => element.size?.name == "$selectedSize")
-        .first;
+        ?.first;
 //TODO
-    controller.toggleRecipeModel(recipeModel);
+    controller.toggleRecipeModel(recipeModel);*/
     super.initState();
   }
 
@@ -655,17 +673,19 @@ class _MenuItemDetailsState extends State<MenuItemDetails> {
                               return const Padding(
                                 padding: EdgeInsets.only(bottom: 10),
                                 child: OrderDeliveryTypeOption(
+                                  navigationBack: true,
                                   elevation: 0,
                                 ),
                               );
                             });
+                        log("here---->");
                         OrderMasterCreateModel? orderMasterCreateModel =
                             GetInstance().isRegistered<OrderMasterCreateModel>()
                                 ? Get.find<OrderMasterCreateModel>()
                                 : null;
                         RecipeDetailsModel model = widget.value;
 
-                        RecipeModel recipeModel = controller.recipeModel.value!;
+                        // RecipeModel recipeModel = controller.recipeModel.value!;
                         bool success = await controller.orderDetailsCreate(
                             model,
                             defaultQuantity,
@@ -673,7 +693,11 @@ class _MenuItemDetailsState extends State<MenuItemDetails> {
                             selectedSize,
                             orderMasterCreateModel?.data?.id);
                         if (success) {
-                          controller.addToLocalDb(
+                          await controller.addToLocalDb(
+                              recipeValue: model.recipes
+                                  ?.where((element) =>
+                                      element.size?.name == selectedSize)
+                                  .first,
                               name: model.name ?? "",
                               quantity: defaultQuantity,
                               recipeDetailsModel: jsonEncode(model.toJson()),
@@ -684,6 +708,7 @@ class _MenuItemDetailsState extends State<MenuItemDetails> {
                                   .ceil(),
                               selectedBase: selectedBase ?? "",
                               selectedSize: selectedSize ?? "");
+                          cartController.checkForOfflineData();
                         }
                       },
                       child: const Text("Add To Cart"),

@@ -1,9 +1,11 @@
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:get/get.dart';
 import 'package:pizza/api/api_services.dart';
 import 'package:pizza/module/cart/model/order_create/add_to_cart_payload.dart'
     as cart_payload;
+import 'package:pizza/widgets/common_dialog.dart';
 
 import '../../../api/api_response.dart';
 import '../../../api/end_point.dart';
@@ -114,18 +116,21 @@ class CustomizePizzaController extends GetxController {
         ?.where((element) => element.name == selectedBase)
         .first;
     cart_payload.AddToCartPayload payload = cart_payload.AddToCartPayload();
-    List<ToppingsModel>? toppings = model.recipes
+
+    /*List<ToppingsModel>? toppings = model.recipes
             ?.where((element) => element.size?.name == selectedSize)
             .first
             .toppings ??
-        [];
+        [];*/
+    List<ToppingsSelection>? toppings =
+        allToppings.where((p0) => p0.isSelected!).toList();
     List<cart_payload.OrderRecipeItemWebRequestSet> itemSet =
         <cart_payload.OrderRecipeItemWebRequestSet>[];
     if (toppings.isNotEmpty) {
       for (var element in toppings) {
         cart_payload.OrderRecipeItemWebRequestSet orderRecipeItemWebRequestSet =
             cart_payload.OrderRecipeItemWebRequestSet(
-          recipeItemDTLId: element.id,
+          recipeItemDTLId: element.toppingId,
           qty: element.itemQuantity?.ceil(),
           defaultQty: element.defaultQuantity?.ceil(),
           sortOrder: 1,
@@ -159,9 +164,12 @@ class CustomizePizzaController extends GetxController {
         ApiEndPoints.orderDetailsCreate,
         data: jsonEncode(payload.toMap()));
     if (res != null && res.status) {
+      log("data---->${res!.toJson()}");
       AddToCartResponseModel addToCartResponseModel =
           AddToCartResponseModel.fromMap(res.toJson());
-      Get.put(addToCartResponseModel);
+      Get.put(addToCartResponseModel,permanent: true);
+      showCoomonErrorDialog(
+          title: "Success", message: "Successfully added to cart");
     }
     return res?.status ?? false;
   }

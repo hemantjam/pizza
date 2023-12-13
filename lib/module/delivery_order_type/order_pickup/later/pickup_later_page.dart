@@ -142,10 +142,10 @@ class PickUpLaterPage extends GetView<PickUpLaterController> {
       bottomNavigationBar: Obx(() {
         return OrderButton(
           enable: !controller.isStoreOff.value,
-          onTap: () {
+          onTap: () async{
             if (controller.formKey.currentState!.validate()) {
-              controller.orderMasterCreateApi();
-            //  Get.back();
+             await controller.orderMasterCreateApi();
+              Get.back();
               //showCoomonErrorDialog(title: "Success", message: "Order Successful");
              // controller.formKey.currentState?.reset();
             }

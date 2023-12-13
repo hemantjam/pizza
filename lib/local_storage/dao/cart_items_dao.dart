@@ -12,8 +12,8 @@ abstract class CartItemsDao {
   @Update(onConflict: OnConflictStrategy.replace)
   Future<void>updateCartItem(CartItemsEntity cartItemEntity);
 
-  @delete
-  Future<void> deleteSingleCartItem(CartItemsEntity cartItemEntity);
+  @Query('DELETE FROM CartItemsEntity where id=:id')
+  Future<void> deleteSingleCartItem(int id);
 
   @delete
   Future<int> deleteAllCart(List<CartItemsEntity> cartItemsEntity);

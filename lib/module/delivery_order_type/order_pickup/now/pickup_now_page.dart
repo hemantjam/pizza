@@ -68,11 +68,11 @@ class PickUpNowPage extends GetView<PickUpNowController> {
       bottomNavigationBar: Obx(() {
         return OrderButton(
           enable: !controller.storeOff.value,
-          onTap: () {
+          onTap: () async{
             if (controller.formKey.currentState!.validate()) {
-              controller.orderMasterCreateApi();
+            await  controller.orderMasterCreateApi();
             }
-            // Get.back();
+             Get.back();
             // showCoomonErrorDialog(title: "Success", message: "Order Successful");
           },
         );

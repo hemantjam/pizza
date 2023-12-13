@@ -21,6 +21,7 @@ class OutletShiftDetailsController extends GetxController {
   void getShiftDetails() async {
     ApiResponse? res =
         await apiClient.getRequest(ApiEndPoints.outletShiftDetails);
+   // log("--shift data${res!.toJson()}");
     if (res != null && res.status) {
       outletShiftDetailsModel.value =
           OutletShiftDetailsModel.fromJson(res.toJson());

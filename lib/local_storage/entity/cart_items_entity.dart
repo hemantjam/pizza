@@ -1,6 +1,6 @@
 import 'package:floor/floor.dart';
 
-@entity
+@Entity(tableName: "CartItemsEntity")
 class CartItemsEntity {
   @PrimaryKey(autoGenerate: true)
   int? id;
@@ -22,5 +22,6 @@ class CartItemsEntity {
     required this.selectedSize,
     required this.addon,
     required this.total,
+    this.id
   });
 }

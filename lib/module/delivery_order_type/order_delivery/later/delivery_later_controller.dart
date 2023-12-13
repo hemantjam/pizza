@@ -28,10 +28,9 @@ class DeliveryLaterController extends GetxController {
   Rx<OutletShiftDetailsController> outletShiftDetailsController =
       Get.find<OutletShiftDetailsController>().obs;
 
-  LoggedInUserModel loggedInUserModel = Get.find<LoggedInUserModel>(tag: "login");
+  LoggedInUserModel loggedInUserModel = LoggedInUserModel();
   OrderMasterCreateModel orderMasterCreateModel = OrderMasterCreateModel();
 
-  // SplashController splashController = SplashController();
   ApiServices apiServices = ApiServices();
 
   Rx<AllActiveController> allActiveController =
@@ -59,6 +58,9 @@ class DeliveryLaterController extends GetxController {
   RxList<String> timeIntervalList = <String>[].obs;
   final RxBool isStoreOff = false.obs;
   RxList<String> dateList = <String>[].obs;
+  int? streetNameGeoId;
+  int? postCodeGeoId;
+  int? subUrbGeoId;
 
   @override
   void onInit() {
@@ -175,6 +177,8 @@ class DeliveryLaterController extends GetxController {
   }
 
   orderMasterCreateApi() async {
+    loggedInUserModel = Get.find<LoggedInUserModel>(tag: "login");
+
     showCommonLoading(true);
 
     await initializeDateFormatting('en');
@@ -203,7 +207,7 @@ class DeliveryLaterController extends GetxController {
     payload.orderMstWebRequest!.expressOrder = false;
     payload.orderMstWebRequest!.orderType = "OT01";
     payload.orderMstWebRequest!.userId =
-        loggedInUserModel.data?.customerMST?.userMSTId ;
+        loggedInUserModel.data?.customerMST?.userMSTId;
     payload.orderMstWebRequest!.deliveyInstrucation = "";
     payload.orderMstWebRequest!.otherInstrucation = "";
     payload.orderMstWebRequest!.orderStageCode = "DS01";
@@ -217,18 +221,28 @@ class DeliveryLaterController extends GetxController {
         streetNumberController.text;
     payload.orderMstWebRequest!.customerAddressDtl!.unitNumber =
         unitController.text;
+    payload.orderMstWebRequest!.customerAddressDtl!.geographyMstId1 =
+        streetNameGeoId;
+    payload.orderMstWebRequest!.customerAddressDtl!.geographyMstId2 =
+        subUrbGeoId;
+    payload.orderMstWebRequest!.customerAddressDtl!.geographyMstId3 =
+        postCodeGeoId;
 
     ApiResponse? res = await apiServices.postRequest(
         ApiEndPoints.orderMasterCreate,
         data: jsonEncode(payload.toMap()));
     if (res != null) {
       if (res.status) {
-        orderMasterCreateModel = OrderMasterCreateModel.fromMap(res!.toJson());
+        orderMasterCreateModel = OrderMasterCreateModel.fromMap(res.toJson());
         Get.put(orderMasterCreateModel, permanent: true);
+        log("order master create success------->");
         showCommonLoading(false);
-        Get.back();
+        //Get.back();
       }
+    } else {
+      Get.isDialogOpen != null && Get.isDialogOpen!
+          ? Get.back(closeOverlays: true)
+          : null;
     }
-    showCommonLoading(false);
   }
 }

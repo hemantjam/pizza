@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -18,15 +17,8 @@ class CartPage extends StatelessWidget {
       init: Get.put(CartController()),
       assignId: true,
       builder: (logic) {
-        logic.checkForOfflineData();
         return SafeArea(
           child: Scaffold(
-             /* floatingActionButton: FloatingActionButton(
-                child: const Icon(Icons.refresh),
-                onPressed: () {
-                  logic.checkForOfflineData();
-                },
-              ),*/
               appBar: AppBar(
                 elevation: 0,
                 title: const Text(
@@ -58,19 +50,24 @@ class CartPage extends StatelessWidget {
                                   .map((toppingJson) =>
                                       ToppingsSelection.fromJson(toppingJson))
                                   .toList();
-                       /*   ToppingsSelection topping =
-                              selectedToppingsList[e.key];*/
                           RecipeDetailsModel? model =
-                              logic.cartItemsList[e.key];
-                          return CartItemDetails(
-                            toppings: selectedToppingsList,
-                            image: model?.image ?? "",
-                            selectedSize: e.value.selectedSize,
-                            selectedBase: e.value.selectedBase,
-                            total: e.value.total,
-                            quantity: e.value.itemQuantity,
-                            name: e.value.itemName,
-                          );
+                              logic.cartItemsList.isNotEmpty
+                                  ? logic.cartItemsList[e.key]
+                                  : RecipeDetailsModel();
+
+                          return model != null
+                              ? CartItemDetails(
+                                  toppings: selectedToppingsList,
+                                  image: model?.image ?? "",
+                                  selectedSize: e.value.selectedSize,
+                                  selectedBase: e.value.selectedBase,
+                                  total: e.value.total,
+                                  quantity: e.value.itemQuantity,
+                                  name: e.value.itemName,
+                                  onDelete: (value) {
+                                    value ? logic.deleteData(e.value) : null;
+                                  })
+                              : SizedBox();
                         }).toList()),
                       )
                     : const Center(
@@ -91,16 +88,19 @@ class CartItemDetails extends StatefulWidget {
   final int quantity;
   final int total;
   final List<ToppingsSelection> toppings;
+  final Function(bool) onDelete;
 
-  const CartItemDetails(
-      {super.key,
-      required this.toppings,
-      required this.image,
-      required this.selectedSize,
-      required this.selectedBase,
-      required this.total,
-      required this.quantity,
-      required this.name});
+  const CartItemDetails({
+    super.key,
+    required this.onDelete,
+    required this.toppings,
+    required this.image,
+    required this.selectedSize,
+    required this.selectedBase,
+    required this.total,
+    required this.quantity,
+    required this.name,
+  });
 
   @override
   State<CartItemDetails> createState() => _CartItemDetailsState();
@@ -164,6 +164,9 @@ class _CartItemDetailsState extends State<CartItemDetails> {
                             Expanded(
                               child: QuantitySelector(
                                 onTap: (quantity) {
+                                  if (quantity == 0) {
+                                    widget.onDelete(true);
+                                  }
                                 },
                                 defaultQuantity: widget.quantity,
                               ),
@@ -204,22 +207,25 @@ class _CartItemDetailsState extends State<CartItemDetails> {
                 visible: !visibility,
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
-                  children:widget.toppings.isNotEmpty? widget.toppings
-                      .asMap()
-                      .entries
-                      .map(
-                        (e) => ListTile(
-                          title: Text(e.value.toppingName??""),
-                          trailing: QuantitySelector(
-                            maxQuantity: e.value.maximumQuantity,
-                            defaultQuantity: e.value.values
-                                ?.where((element) => element!)
-                                .length??0,
-                            onTap: (quantity) {},
-                          ),
-                        ),
-                      )
-                      .toList():[SizedBox()],
+                  children: widget.toppings.isNotEmpty
+                      ? widget.toppings
+                          .asMap()
+                          .entries
+                          .map(
+                            (e) => ListTile(
+                              title: Text(e.value.toppingName ?? ""),
+                              trailing: QuantitySelector(
+                                maxQuantity: e.value.maximumQuantity,
+                                defaultQuantity: e.value.values
+                                        ?.where((element) => element!)
+                                        .length ??
+                                    0,
+                                onTap: (quantity) {},
+                              ),
+                            ),
+                          )
+                          .toList()
+                      : [SizedBox()],
                 ))
           ],
         ),
@@ -258,6 +264,7 @@ class QuantitySelectorState extends State<QuantitySelector> {
     } else {
       setState(() {
         quantity++;
+
         widget.onTap(quantity);
       });
     }
@@ -269,6 +276,8 @@ class QuantitySelectorState extends State<QuantitySelector> {
         quantity--;
         widget.onTap(quantity);
       });
+    } else {
+      widget.onTap(0);
     }
   }
 

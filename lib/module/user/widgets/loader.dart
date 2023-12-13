@@ -1,7 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
 
 Widget loader(bool loading) {
   return Visibility(
@@ -10,8 +9,9 @@ Widget loader(bool loading) {
   );
 }
 showCommonLoading(bool show){
-  return show?Get.dialog(CommonLoading()):null;
+  return show?Get.dialog(const CommonLoading()):null;
 }
+
 class CommonLoading extends StatelessWidget {
   const CommonLoading({
     super.key,

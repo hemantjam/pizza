@@ -123,7 +123,7 @@ class RouteGenerator {
     /// pizza menu page
     GetPage(
         name: RouteNames.pizzaMenuPage,
-        page: () => const AllMenuPage(),
+        page: () =>  AllMenuPage(),
         binding: MenuDetailsBinding(),
         arguments: Get.arguments)
   ];

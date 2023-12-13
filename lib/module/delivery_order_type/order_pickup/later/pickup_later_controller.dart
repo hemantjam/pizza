@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:core';
+import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -199,27 +200,15 @@ class PickUpLaterController extends GetxController {
     payload.orderMstWebRequest!.customerAddressDtl = CustomerAddressDtl();
     payload.orderMstWebRequest!.customerAddressDtl!.active =
         loggedInUserModel.data?.userMST?.active ?? true;
-   /* payload.orderMstWebRequest!.customerAddressDtl!.streetNumber =
-        streetNumberController.text;
-    payload.orderMstWebRequest!.customerAddressDtl!.unitNumber =
-        unitController.text;*/
+
     payload.orderMstWebRequest!.expressOrder = false;
-    payload.orderMstWebRequest!.orderType = "OT01";
+    payload.orderMstWebRequest!.orderType = "OT02";
     payload.orderMstWebRequest!.userId =
         loggedInUserModel.data?.customerMST?.userMSTId ;
     payload.orderMstWebRequest!.deliveyInstrucation = "";
     payload.orderMstWebRequest!.otherInstrucation = "";
     payload.orderMstWebRequest!.orderStageCode = "DS01";
-   /* payload.orderMstWebRequest!.customerAddressDtl!.address1 =
-        unitController.text;
-    payload.orderMstWebRequest!.customerAddressDtl!.address2 =
-        streetNumberController.text;
-    payload.orderMstWebRequest!.customerAddressDtl!.pincode =
-        int.parse(postCodeController.text);
-    payload.orderMstWebRequest!.customerAddressDtl!.streetNumber =
-        streetNumberController.text;
-    payload.orderMstWebRequest!.customerAddressDtl!.unitNumber =
-        unitController.text;*/
+
 
     ApiResponse? res = await apiServices.postRequest(
         ApiEndPoints.orderMasterCreate,
@@ -228,11 +217,16 @@ class PickUpLaterController extends GetxController {
       if (res.status) {
         orderMasterCreateModel = OrderMasterCreateModel.fromMap(res!.toJson());
         Get.put(orderMasterCreateModel, permanent: true);
-        showCommonLoading(false);
+        showCommonLoading(false);        log("order master create success------->");
+
         Get.back();
       }
+    }else {
+      Get.isDialogOpen != null && Get.isDialogOpen!
+          ? Get.back(closeOverlays: true)
+          : null;
     }
-    showCommonLoading(false);
+    //showCommonLoading(false);
   }
 
 }

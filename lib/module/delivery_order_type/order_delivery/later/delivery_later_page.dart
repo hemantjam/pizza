@@ -56,7 +56,7 @@ class DeliveryLaterPage extends GetView<DeliveryLaterController> {
                         title: "Date",
                         streetList: controller.dateList,
                       ));
-                      if (date!=null&&date.isNotEmpty) {
+                      if (date != null && date.isNotEmpty) {
                         controller.timeController.clear();
                         DateFormat inputFormat =
                             DateFormat('d MMMM yyyy, EEEE');
@@ -174,6 +174,13 @@ class DeliveryLaterPage extends GetView<DeliveryLaterController> {
                         ),
                       );
                       if (item != null) {
+                        controller.streetNameGeoId =
+                            item.geographyMstId;
+                        controller.subUrbGeoId =
+                            item.parentGeographyMst!.geographyMstId;
+                        controller.postCodeGeoId = item.parentGeographyMst
+                                ?.parentGeographyMst?.geographyMstId
+                                ;
                         controller.streetNameController.text =
                             "${item.geographyName ?? ""} - ${item.parentGeographyMst != null ? item.parentGeographyMst!.geographyName : ""}";
 
@@ -230,7 +237,7 @@ class DeliveryLaterPage extends GetView<DeliveryLaterController> {
       bottomNavigationBar: Obx(() {
         return OrderButton(
           enable: !controller.isStoreOff.value,
-          onTap: () {
+          onTap: () async{
             if (controller.formKey.currentState!.validate()) {
               if (controller.rememberAddress.value) {
                 List<String> address = [
@@ -243,10 +250,10 @@ class DeliveryLaterPage extends GetView<DeliveryLaterController> {
               } else if (!controller.rememberAddress.value) {
                 SharedPref.deleteData("later");
               }
-              controller.orderMasterCreateApi();
-             // Get.back();
-            //  showCoomonErrorDialog(title: "Success", message: "Order Successful");
-            //  controller.formKey.currentState?.reset();
+              await controller.orderMasterCreateApi();
+               Get.back();
+              //  showCoomonErrorDialog(title: "Success", message: "Order Successful");
+              //  controller.formKey.currentState?.reset();
             }
           },
         );

@@ -94,6 +94,13 @@ class DeliveryNowPage extends GetView<DeliveryNowController> {
                           ),
                         );
                         if (item != null) {
+                          controller.streetNameGeoId =
+                              item.geographyMstId;
+                          controller.subUrbGeoId =
+                              item.parentGeographyMst!.geographyMstId;
+                          controller.postCodeGeoId = item.parentGeographyMst
+                              ?.parentGeographyMst?.geographyMstId
+                          ;
                           controller.streetNameController.text =
                               "${item.geographyName ?? ""} - ${item.parentGeographyMst != null ? item.parentGeographyMst!.geographyName : ""}";
                           controller.postCodeController.text = item
@@ -149,7 +156,7 @@ class DeliveryNowPage extends GetView<DeliveryNowController> {
       bottomNavigationBar: Obx(() {
         return OrderButton(
           enable: !controller.storeOff.value,
-          onTap: () {
+          onTap: ()async {
             if (controller.formKey.currentState!.validate()) {
               if (controller.rememberAddress.value) {
                 List<String> address = [
@@ -162,9 +169,9 @@ class DeliveryNowPage extends GetView<DeliveryNowController> {
               } else if (!controller.rememberAddress.value) {
                 SharedPref.deleteData("now");
               }
-              controller.orderMasterCreateApi();
+             await controller.orderMasterCreateApi();
               //showCoomonErrorDialog(title: "Success", message: "Order Successful");
-              //Get.back();
+             Get.back();
              // controller.formKey.currentState?.reset();
             }
           },

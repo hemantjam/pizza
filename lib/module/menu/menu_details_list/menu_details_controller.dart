@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -6,14 +7,17 @@ import 'package:pizza/api/api_response.dart';
 import 'package:pizza/api/api_services.dart';
 import 'package:pizza/api/end_point.dart';
 import 'package:pizza/local_storage/entity/menu_details_entity.dart';
+import 'package:pizza/module/cart/cart_controller.dart';
 import 'package:pizza/module/cart/model/order_create/add_to_cart_model.dart';
 import 'package:pizza/module/cart/model/order_create/add_to_cart_payload.dart'
     as cart_payload;
+import 'package:pizza/module/user/widgets/loader.dart';
 
 import '../../../local_storage/app_database.dart';
 import '../../../local_storage/entity/cart_items_entity.dart';
 import '../../../widgets/common_dialog.dart';
 import '../by_group_code/menu_by_group_code_model.dart';
+import '../customize/local_toppings_module.dart';
 import '../menu_model.dart';
 
 class MenuDetailsController extends GetxController {
@@ -180,6 +184,7 @@ class MenuDetailsController extends GetxController {
 
   Future<bool> orderDetailsCreate(RecipeDetailsModel model, int quantity,
       String? selectedBase, String? selectedSize, String? orderMSTId) async {
+   // showCommonLoading(true);
     RecipeModel? a = model.recipes
         ?.where((element) => element.size?.name == selectedSize)
         .first;
@@ -238,25 +243,67 @@ class MenuDetailsController extends GetxController {
       AddToCartResponseModel addToCartResponseModel =
           AddToCartResponseModel.fromMap(res.toJson());
       Get.put(addToCartResponseModel);
+      notifySSE();
     }
+   // showCommonLoading(false);
     return res?.status ?? false;
   }
 
-  addToLocalDb({
-    required String recipeDetailsModel,
-    required String name,
-    required int quantity,
-    required int addon,
-    required int total,
-    required String selectedBase,
-    required String selectedSize,
-  }) async {
+  notifySSE() async {
+    ApiResponse? res = await _apiServices.getRequest(ApiEndPoints.notifySSE);
+    if (res != null && res.status) {
+      log("---> notified");
+    }
+  }
+
+  List<ToppingsSelection> getAllToppingList(RecipeModel recipeValue) {
+    List<ToppingsSelection> allToppings = [];
+    allToppings.clear();
+    recipeValue.toppings?.forEach((element) {
+      ToppingsSelection toppingsSelection = ToppingsSelection(
+          canRemove: element.defaultQuantity?.ceil() == 1.0,
+          values: List.generate(
+            element.maximumQuantity?.ceil() ?? 0,
+            (index) => index < (element.defaultQuantity?.ceil() ?? 0).toInt(),
+          ),
+          defaultQuantity: element.defaultQuantity?.ceil() ?? 0,
+          isDefault:
+              element.defaultQuantity != null && element.defaultQuantity != 0.0,
+          addCost: element.addCost ?? 0,
+          toppingName: element.name ?? "",
+          isSelected:
+              element.defaultQuantity != null && element.defaultQuantity != 0,
+          toppingId: element.id ?? 0,
+          itemQuantity: element.itemQuantity?.ceil() ?? 0,
+          maximumQuantity: element.maximumQuantity?.ceil() ?? 0);
+      allToppings.add(toppingsSelection);
+    });
+    update();
+    return allToppings;
+  }
+
+  addToLocalDb(
+      {required String recipeDetailsModel,
+      required String name,
+      required int quantity,
+      required int addon,
+      required int total,
+      required String selectedBase,
+      required String selectedSize,
+      required RecipeModel? recipeValue}) async {
     final database =
         await $FloorAppDatabase.databaseBuilder('app_database.db').build();
 
     final cartItemsDoa = database.cartItemsDoa;
+    List<ToppingsSelection> allToppings =
+        getAllToppingList(recipeValue ?? RecipeModel());
+    List<ToppingsSelection> selectedToppings =
+        allToppings.where((p0) => p0.isSelected!).toList();
+    List<Map<String, dynamic>> toppingsJsonList =
+        selectedToppings.map((topping) => topping.toJson()).toList();
+    String toppingsJsonString = jsonEncode(toppingsJsonList);
     CartItemsEntity entity = CartItemsEntity(
-      toppings: "[{}]",
+      toppings: toppingsJsonString,
       itemModel: recipeDetailsModel,
       itemName: name,
       itemQuantity: quantity,
@@ -265,7 +312,10 @@ class MenuDetailsController extends GetxController {
       addon: addon,
       total: total,
     );
-
     await cartItemsDoa.insertCartItem(entity);
+   /* CartController controller=CartController();
+    controller.checkForOfflineData();*/
+    showCoomonErrorDialog(
+        title: "Success", message: "Successfully added to cart");
   }
 }

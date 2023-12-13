@@ -6,8 +6,11 @@ import '../../constants/assets.dart';
 import '../../constants/route_names.dart';
 
 class OrderDeliveryTypeOption extends StatelessWidget {
- final  double? elevation;
-   const OrderDeliveryTypeOption({super.key,this.elevation});
+  final bool? navigationBack;
+  final double? elevation;
+
+  const OrderDeliveryTypeOption(
+      {super.key, this.elevation, this.navigationBack});
 
   @override
   Widget build(BuildContext context) {
@@ -15,12 +18,15 @@ class OrderDeliveryTypeOption extends StatelessWidget {
       margin: EdgeInsets.symmetric(horizontal: 1.w),
       child: IntrinsicHeight(
         child: Card(
-          elevation: elevation??5,
+          elevation: elevation ?? 5,
           child: Row(
             children: <Widget>[
               Expanded(
                 child: GestureDetector(
                   onTap: () {
+                    if (navigationBack != null) {
+                      Get.back();
+                    }
                     Get.toNamed(RouteNames.orderDeliveryOptions);
                   },
                   child: Container(
@@ -69,7 +75,9 @@ class OrderDeliveryTypeOption extends StatelessWidget {
               const VerticalDivider(color: Colors.black, width: 1),
               Expanded(
                 child: GestureDetector(
-                  onTap: () {
+                  onTap: () {  if (navigationBack != null) {
+                   // Get.back();
+                  }
                     Get.toNamed(RouteNames.orderPickUpOptions);
                   },
                   child: Container(

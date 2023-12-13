@@ -21,8 +21,8 @@ class ApiEndPoints {
   static const String geographyByTypeCode = "geographyMST/byTypeCode/";
   static const String outletDetailsByCode = "outletMST/code/";
   static const String orderMasterCreate = "orderMST/create/";
-  static const String orderDetailsCreate="orderDTL/create/";
-
+  static const String orderDetailsCreate = "orderDTL/create/";
+  static const String notifySSE = "orderMST/notifySSE/";
 
   /// menu
   static const String getMenuByCode = "itemMST/byGroupCode/";
