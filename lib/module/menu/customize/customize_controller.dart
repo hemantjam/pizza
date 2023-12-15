@@ -1,17 +1,6 @@
-import 'dart:convert';
-import 'dart:developer';
-
 import 'package:get/get.dart';
 import 'package:pizza/api/api_services.dart';
-import 'package:pizza/module/cart/model/order_create/add_to_cart_payload.dart'
-    as cart_payload;
-import 'package:pizza/widgets/common_dialog.dart';
 
-import '../../../api/api_response.dart';
-import '../../../api/end_point.dart';
-import '../../../local_storage/app_database.dart';
-import '../../../local_storage/entity/cart_items_entity.dart';
-import '../../cart/model/order_create/add_to_cart_model.dart';
 import '../by_group_code/menu_by_group_code_model.dart';
 import 'local_toppings_module.dart';
 
@@ -104,7 +93,7 @@ class CustomizePizzaController extends GetxController {
     update();
   }
 
-  Future<bool> orderDetailsCreate(RecipeDetailsModel model, int quantity,
+/* Future<bool> orderDetailsCreate(RecipeDetailsModel model, int quantity,
       String? selectedBase, String? selectedSize, String? orderMSTId) async {
     RecipeModel? a = model.recipes
         ?.where((element) => element.size?.name == selectedSize)
@@ -117,11 +106,11 @@ class CustomizePizzaController extends GetxController {
         .first;
     cart_payload.AddToCartPayload payload = cart_payload.AddToCartPayload();
 
-    /*List<ToppingsModel>? toppings = model.recipes
+    */ /*List<ToppingsModel>? toppings = model.recipes
             ?.where((element) => element.size?.name == selectedSize)
             .first
             .toppings ??
-        [];*/
+        [];*/ /*
     List<ToppingsSelection>? toppings =
         allToppings.where((p0) => p0.isSelected!).toList();
     List<cart_payload.OrderRecipeItemWebRequestSet> itemSet =
@@ -173,8 +162,8 @@ class CustomizePizzaController extends GetxController {
     }
     return res?.status ?? false;
   }
-
-  addToLocalDb({
+*/
+/* addToLocalDb({
     required String cartItemData,
     required String name,
     required int quantity,
@@ -203,5 +192,5 @@ class CustomizePizzaController extends GetxController {
         total: total);
 
     await cartItemsDoa.insertCartItem(entity);
-  }
+  }*/
 }

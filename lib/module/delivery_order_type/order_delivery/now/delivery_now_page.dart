@@ -169,7 +169,7 @@ class DeliveryNowPage extends GetView<DeliveryNowController> {
               } else if (!controller.rememberAddress.value) {
                 SharedPref.deleteData("now");
               }
-             await controller.orderMasterCreateApi();
+             await controller.orderCreateApi();
               //showCoomonErrorDialog(title: "Success", message: "Order Successful");
              Get.back();
              // controller.formKey.currentState?.reset();

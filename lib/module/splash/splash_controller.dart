@@ -46,18 +46,18 @@ class SplashController extends GetxController {
       loggedInUserModel = LoggedInUserModel.fromJson(res.toJson());
 
       Get.put<LoggedInUserModel>(loggedInUserModel,
-          permanent: true, tag: "login");
+          permanent: true, tag: "loggedInUserModel");
       if (!loggedInUserModel.data!.userMST!.ipUser!) {
         userName.value =
             "${loggedInUserModel.data?.customerMST?.customerFirstName ?? ""} ${loggedInUserModel.data?.customerMST?.customerLastName ?? ""}";
       }
-      getSystemToken();
+      await getSystemToken();
       loading.value = false;
     } else {
       loginByIp();
     }
     Get.put<LoggedInUserModel>(loggedInUserModel,
-        permanent: true, tag: "login");
+        permanent: true, tag: "loggedInUserModel");
     update();
   }
 
@@ -79,7 +79,7 @@ class SplashController extends GetxController {
     if (res != null && res.status) {
       ApiEndPoints.authToken = res.data.toString();
       saveOfflineToken(ApiEndPoints.authToken);
-      getOutletToken();
+      await getOutletToken();
     } else {
       serverIssue.value = true;
     }

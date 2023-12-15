@@ -25,7 +25,7 @@ class OrderDeliveryTypeOption extends StatelessWidget {
                 child: GestureDetector(
                   onTap: () {
                     if (navigationBack != null) {
-                      Get.back();
+                     // Get.back();
                     }
                     Get.toNamed(RouteNames.orderDeliveryOptions);
                   },

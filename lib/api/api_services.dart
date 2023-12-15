@@ -96,7 +96,6 @@ class ApiServices {
 
   void handleError(dynamic e) {
     if (e is DioException) {
-
       if (e.type == DioExceptionType.connectionTimeout ||
           e.type == DioExceptionType.sendTimeout ||
           e.type == DioExceptionType.receiveTimeout ||
@@ -106,16 +105,17 @@ class ApiServices {
           message: "Check your internet connection and try again.",
         );
       } else if (e.type == DioExceptionType.badResponse) {
+        log("===>${e.toString()}");
         showCoomonErrorDialog(
           title: "Error:",
-          message: e.response?.statusCode==401
+          message: e.response?.statusCode == 401
               ? e.response!.data["error"]
               : e.response!.data["message"],
         );
       } else {
         showCoomonErrorDialog(
           title: "Something went wrong:",
-          message:e.response?.statusCode==401
+          message: e.response?.statusCode == 401
               ? e.response!.data["error"]
               : e.response!.data["message"],
         );

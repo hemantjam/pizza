@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
@@ -7,7 +5,6 @@ import 'package:pizza/constants/app_colors.dart';
 import 'package:pizza/constants/assets.dart';
 import 'package:sizer/sizer.dart';
 
-import '../user/logged_in_user/logged_in_user_model.dart';
 import 'home_controller.dart';
 
 class MainPage extends GetView<HomeController> {
@@ -17,7 +14,7 @@ class MainPage extends GetView<HomeController> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-       /*   floatingActionButton: FloatingActionButton(
+          /*   floatingActionButton: FloatingActionButton(
             onPressed: () {
               LoggedInUserModel loggedInUserModel =
                   Get.find<LoggedInUserModel>(tag: "login");

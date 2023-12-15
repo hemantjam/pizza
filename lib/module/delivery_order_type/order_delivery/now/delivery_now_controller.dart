@@ -1,33 +1,25 @@
-import 'dart:convert';
-import 'dart:developer';
-
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
-import 'package:intl/date_symbol_data_local.dart';
-import 'package:intl/intl.dart';
 
-import '../../../../api/api_response.dart';
 import '../../../../api/api_services.dart';
-import '../../../../api/end_point.dart';
 import '../../../../local_storage/shared_pref.dart';
 import '../../../cart/model/order_master/order_master_create_model.dart';
-import '../../../cart/model/order_master/order_master_create_payload.dart';
 import '../../../geography/all_active_controller.dart';
 import '../../../geography/byType/street_name_model.dart';
 import '../../../outlet_details/shift/outlet_shift_details_controller.dart';
 import '../../../outlet_details/shift/outlet_shift_details_model.dart';
 import '../../../user/logged_in_user/logged_in_user_model.dart';
-import '../../../user/widgets/loader.dart';
 import '../../utils/calculate_shift_time.dart';
 import '../../utils/date_model.dart';
+import '../../utils/order_mst_create.dart';
 
 class DeliveryNowController extends GetxController {
   Rx<OutletShiftDetailsController> outletShiftDetailsController =
       Get.find<OutletShiftDetailsController>().obs;
   ApiServices apiServices = ApiServices();
 
-  LoggedInUserModel loggedInUserModel =
-      Get.find<LoggedInUserModel>(tag: "login");
+  /*LoggedInUserModel loggedInUserModel =
+      Get.find<LoggedInUserModel>(tag: "loggedInUserModel");*/
   OrderMasterCreateModel orderMasterCreateModel = OrderMasterCreateModel();
 
   Rx<AllActiveController> allActiveController =
@@ -159,7 +151,20 @@ class DeliveryNowController extends GetxController {
     }
   }
 
-  orderMasterCreateApi() async {
+  orderCreateApi() {
+    orderMasterCreateApi(
+
+        orderTypeCode: "OT01",
+        streetNumber: streetNumberController.text,
+        unitNUmber: unitController.text,
+        pinCode: int.parse(postCodeController.text),
+        gt1: streetNameGeoId,
+        gt2: subUrbGeoId,
+        gt3: postCodeGeoId
+
+        );
+  }
+/*orderMasterCreateApi() async {
     showCommonLoading(true);
 
     await initializeDateFormatting('en');
@@ -173,8 +178,8 @@ class DeliveryNowController extends GetxController {
     // DateTime time = inputTime.parse(timeString);
     //  String formattedTime = DateFormat('HH:mm:ss').format(time);
 
-    /*payload.orderMstWebRequest!.orderDate =
-    "${dateTime.year}-${dateTime.month}-${dateTime.day}";*/
+    */ /*payload.orderMstWebRequest!.orderDate =
+    "${dateTime.year}-${dateTime.month}-${dateTime.day}";*/ /*
     // payload.orderMstWebRequest!.orderTime = formattedTime;
     payload.orderMstWebRequest!.timedOrder = true;
     payload.orderMstWebRequest!.active = true;
@@ -234,5 +239,5 @@ class DeliveryNowController extends GetxController {
       // showCoomonErrorDialog(title: "Failed", message: "Something went wrong");
       // showCommonLoading(false);
     }
-  }
+  }*/
 }

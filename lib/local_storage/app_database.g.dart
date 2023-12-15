@@ -269,7 +269,14 @@ class _$CartItemsDao extends CartItemsDao {
             selectedBase: row['selectedBase'] as String,
             selectedSize: row['selectedSize'] as String,
             addon: row['addon'] as int,
-            total: row['total'] as int));
+            total: row['total'] as int,
+            id: row['id'] as int?));
+  }
+
+  @override
+  Future<void> deleteSingleCartItem(int id) async {
+    await _queryAdapter.queryNoReturn('DELETE FROM CartItemsEntity where id=?1',
+        arguments: [id]);
   }
 
   @override
@@ -282,11 +289,6 @@ class _$CartItemsDao extends CartItemsDao {
   Future<void> updateCartItem(CartItemsEntity cartItemEntity) async {
     await _cartItemsEntityUpdateAdapter.update(
         cartItemEntity, OnConflictStrategy.replace);
-  }
-
-  @override
-  Future<void> deleteSingleCartItem(CartItemsEntity cartItemEntity) async {
-    await _cartItemsEntityDeletionAdapter.delete(cartItemEntity);
   }
 
   @override

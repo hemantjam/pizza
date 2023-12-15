@@ -47,8 +47,10 @@ class CartController extends GetxController {
         for (var element in cartItems) {
           log("${element.id}");
           log(element.itemName);
-          cartItemsList
-              .add(RecipeDetailsModel.fromJson(jsonDecode(element.itemModel)));
+          try {
+            cartItemsList.add(
+                RecipeDetailsModel.fromJson(jsonDecode(element.itemModel)));
+          } catch (e) {}
         }
       }
     }

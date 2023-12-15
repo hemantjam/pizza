@@ -174,13 +174,11 @@ class DeliveryLaterPage extends GetView<DeliveryLaterController> {
                         ),
                       );
                       if (item != null) {
-                        controller.streetNameGeoId =
-                            item.geographyMstId;
+                        controller.streetNameGeoId = item.geographyMstId;
                         controller.subUrbGeoId =
                             item.parentGeographyMst!.geographyMstId;
                         controller.postCodeGeoId = item.parentGeographyMst
-                                ?.parentGeographyMst?.geographyMstId
-                                ;
+                            ?.parentGeographyMst?.geographyMstId;
                         controller.streetNameController.text =
                             "${item.geographyName ?? ""} - ${item.parentGeographyMst != null ? item.parentGeographyMst!.geographyName : ""}";
 
@@ -237,7 +235,7 @@ class DeliveryLaterPage extends GetView<DeliveryLaterController> {
       bottomNavigationBar: Obx(() {
         return OrderButton(
           enable: !controller.isStoreOff.value,
-          onTap: () async{
+          onTap: () async {
             if (controller.formKey.currentState!.validate()) {
               if (controller.rememberAddress.value) {
                 List<String> address = [
@@ -250,8 +248,8 @@ class DeliveryLaterPage extends GetView<DeliveryLaterController> {
               } else if (!controller.rememberAddress.value) {
                 SharedPref.deleteData("later");
               }
-              await controller.orderMasterCreateApi();
-               Get.back();
+              await controller.orderCreateApi();
+              Get.back();
               //  showCoomonErrorDialog(title: "Success", message: "Order Successful");
               //  controller.formKey.currentState?.reset();
             }

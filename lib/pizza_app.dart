@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:get/get_navigation/src/root/get_material_app.dart';
 import 'package:pizza/constants/app_colors.dart';
 import 'package:pizza/constants/app_strings.dart';

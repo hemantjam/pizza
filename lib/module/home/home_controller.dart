@@ -18,7 +18,7 @@ class HomeController extends GetxController {
 //  LoginController loginController = Get.put(LoginController());
   RxString userName = "".obs;
   SplashController splashController = Get.find<SplashController>();
-  LoggedInUserModel loggedInUserModel = Get.find<LoggedInUserModel>();
+  LoggedInUserModel loggedInUserModel = Get.find<LoggedInUserModel>(tag: "loggedInUserModel");
 
   @override
   void onInit() {

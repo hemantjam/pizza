@@ -20,6 +20,7 @@ import '../../../user/logged_in_user/logged_in_user_model.dart';
 import '../../../user/widgets/loader.dart';
 import '../../utils/calculate_shift_time.dart';
 import '../../utils/date_model.dart';
+import '../../utils/order_mst_create.dart';
 
 class PickUpNowController extends GetxController {
   Rx<OutletShiftDetailsController> outletShiftDetailsController =
@@ -28,9 +29,9 @@ class PickUpNowController extends GetxController {
   Rx<AllActiveController> allActiveController =
       Get.find<AllActiveController>().obs;
   ApiServices apiServices = ApiServices();
-
+/*
   LoggedInUserModel loggedInUserModel =
-      Get.find<LoggedInUserModel>(tag: "login");
+      Get.find<LoggedInUserModel>(tag: "loggedInModel");*/
   OrderMasterCreateModel orderMasterCreateModel = OrderMasterCreateModel();
 
   Rx<OutletShiftDetailsModel> outletShiftDetailsModel =
@@ -141,8 +142,14 @@ class PickUpNowController extends GetxController {
       }
     }
   }
-
-  orderMasterCreateApi() async {
+  orderCreateApi() {
+    orderMasterCreateApi(
+        orderTypeCode: "OT02",
+       // time: timeController.text,
+       // date: dateController.text
+    );
+  }
+ /* orderMasterCreateApi() async {
     showCommonLoading(true);
 
     await initializeDateFormatting('en');
@@ -178,5 +185,5 @@ class PickUpNowController extends GetxController {
           : null;
     }
     // showCommonLoading(false);
-  }
+  }*/
 }

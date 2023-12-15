@@ -23,6 +23,8 @@ class ApiEndPoints {
   static const String orderMasterCreate = "orderMST/create/";
   static const String orderDetailsCreate = "orderDTL/create/";
   static const String notifySSE = "orderMST/notifySSE/";
+  static const String cartTrackingMST = "cartTrackingMST/create/";
+static const String orderMasterUpdate="orderMST/update/";
 
   /// menu
   static const String getMenuByCode = "itemMST/byGroupCode/";

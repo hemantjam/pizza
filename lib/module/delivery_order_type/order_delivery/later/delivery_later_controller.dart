@@ -1,17 +1,10 @@
-import 'dart:convert';
 import 'dart:core';
-import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
-import 'package:pizza/api/api_response.dart';
 import 'package:pizza/api/api_services.dart';
-import 'package:pizza/api/end_point.dart';
-import 'package:pizza/module/cart/model/order_master/order_master_create_payload.dart';
 import 'package:pizza/module/user/logged_in_user/logged_in_user_model.dart';
-import 'package:pizza/module/user/widgets/loader.dart';
 
 import '../../../../local_storage/shared_pref.dart';
 import '../../../cart/model/order_master/order_master_create_model.dart';
@@ -23,12 +16,13 @@ import '../../utils/calculate_shift_time.dart';
 import '../../utils/date_model.dart';
 import '../../utils/get_time_interval.dart';
 import '../../utils/get_week_list.dart';
+import '../../utils/order_mst_create.dart';
 
 class DeliveryLaterController extends GetxController {
   Rx<OutletShiftDetailsController> outletShiftDetailsController =
       Get.find<OutletShiftDetailsController>().obs;
 
-  LoggedInUserModel loggedInUserModel = LoggedInUserModel();
+  /*LoggedInUserModel loggedInUserModel = LoggedInUserModel();*/
   OrderMasterCreateModel orderMasterCreateModel = OrderMasterCreateModel();
 
   ApiServices apiServices = ApiServices();
@@ -176,7 +170,19 @@ class DeliveryLaterController extends GetxController {
     }
   }
 
-  orderMasterCreateApi() async {
+  orderCreateApi() {
+    orderMasterCreateApi(
+        orderTypeCode: "OT01",
+        streetNumber: streetNumberController.text,
+        unitNUmber: unitController.text,
+        pinCode: int.parse(postCodeController.text),
+        gt1: streetNameGeoId,
+        gt2: subUrbGeoId,
+        gt3: postCodeGeoId,
+        time: timeController.text,
+        date: dateController.text);
+  }
+/* orderMasterCreateApi() async {
     loggedInUserModel = Get.find<LoggedInUserModel>(tag: "login");
 
     showCommonLoading(true);
@@ -237,12 +243,12 @@ class DeliveryLaterController extends GetxController {
         Get.put(orderMasterCreateModel, permanent: true);
         log("order master create success------->");
         showCommonLoading(false);
-        //Get.back();
+        Get.back();
       }
     } else {
       Get.isDialogOpen != null && Get.isDialogOpen!
           ? Get.back(closeOverlays: true)
           : null;
     }
-  }
+  }*/
 }

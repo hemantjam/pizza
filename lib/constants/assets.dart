@@ -26,6 +26,9 @@ class Assets {
   static const String homeBannerBlur =
       "|8KckELg.R=H+I5ORiKRPWw|?ZFfZ*#j5=\$~-OI]7%=z5[N1FZ+FxXXox_m+S6tkxasoxGJWV@oHt,kYJBwHT1i^Se\$%-8jcf+kVR,t6-UShNHV?xaS5Orogr]E4NZ\$jxWSiV@tPShV[t6SLjKxZX9bct6ozxVkDt5adNI";
   static const String mapPlaceHolder = "assets/images/map_placeholder.png";
-  static const String offlineBanner="assets/images/banner.jpg";
-  static const String pizzaMenuPlaceHolder="assets/images/menu_pizza_placeholder.png";
+  static const String offlineBanner = "assets/images/banner.jpg";
+  static const String pizzaMenuPlaceHolder =
+      "assets/images/menu_pizza_placeholder.png";
+  static const String customize = "assets/icons/customize.svg";
+  static const String delete = "assets/icons/delete.svg";
 }

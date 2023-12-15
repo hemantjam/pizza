@@ -175,7 +175,7 @@ class RecipeDetailsModel {
                   recipeMap['name'] = item.keys.first;
                   return RecipeModel.fromJson(recipeMap);
                 },
-              ).toList()
+              ).toList()??[]
             : null,
         availableSizes: json['availableSizes'] != null
             ? List<AvailableSizesModel>.from(

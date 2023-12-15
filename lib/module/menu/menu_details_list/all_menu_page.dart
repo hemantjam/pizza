@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:developer';
 
 import 'package:cached_network_image/cached_network_image.dart';
@@ -8,13 +7,16 @@ import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:pizza/constants/route_names.dart';
 import 'package:pizza/module/cart/cart_controller.dart';
+import 'package:pizza/widgets/common_dialog.dart';
 import 'package:sizer/sizer.dart';
 
 import '../../../constants/assets.dart';
 import '../../cart/model/order_master/order_master_create_model.dart';
+import '../../cart/widget/cart_details_bottom_bar.dart';
 import '../../delivery_order_type/delivery_order_type_options.dart';
 import '../by_group_code/menu_by_group_code_model.dart';
 import '../menu_model.dart';
+import '../utils/add_to_cart.dart';
 import '../utils/calculate_tax.dart';
 import 'menu_details_controller.dart';
 
@@ -28,70 +30,16 @@ class AllMenuPage extends GetView<MenuDetailsController> {
       child: Scaffold(
         appBar: buildAppBar(),
         body: const MenuList(),
-        bottomNavigationBar: buildBottomButton(),
+        bottomNavigationBar: cartDetailsBottomBar(
+            cartController,
+            controller.selectedItemIndex.value ==
+                controller.menuListModel.where((p0) => p0.webDisplay!).length -
+                    1,
+            false,(){
+
+        }),
       ),
     );
-  }
-
-  Container buildBottomButton() {
-    return Container(
-      padding: const EdgeInsets.symmetric(vertical: 2),
-      height: 75,
-      decoration: const BoxDecoration(color: Color(0xffEEEEEE)),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: [
-          ElevatedButton(
-              style: buildStyleFrom(186, 44),
-              onPressed: () {},
-              child: Row(
-                children: [
-                  Obx(() {
-                    return Text(
-                      "${cartController.cartItems.length.toString()} items",
-                      style: buildButtonTextStyle(),
-                    );
-                  }),
-                  const Spacer(),
-                  Text(
-                    " \$${cartController.cartItems.fold(0, (previousValue, element) => previousValue + element.total)}",
-                    style: buildButtonTextStyle(),
-                  ),
-                ],
-              )),
-          ElevatedButton(
-              style: buildStyleFrom(126, 44),
-              onPressed: () {
-                // cartController.checkForOfflineData();
-              },
-              child: Row(
-                children: [
-                  Obx(() {
-                    return Text(
-                      controller.selectedItemIndex.value ==
-                              controller.menuListModel
-                                      .where((p0) => p0.webDisplay!)
-                                      .length -
-                                  1
-                          ? "Checkout"
-                          : "next",
-                      style: buildButtonTextStyle(),
-                    );
-                  }),
-                  const Spacer(),
-                  const Icon(Icons.arrow_forward)
-                ],
-              )),
-        ],
-      ),
-    );
-  }
-
-  TextStyle buildButtonTextStyle() => const TextStyle(fontSize: 16);
-
-  ButtonStyle buildStyleFrom(double width, double height) {
-    return ElevatedButton.styleFrom(
-        fixedSize: Size(width, height), elevation: 1);
   }
 
   /// app bar
@@ -399,7 +347,7 @@ class _MenuItemDetailsState extends State<MenuItemDetails> {
     setState(() {});
   }
 
-  CartController cartController = Get.find<CartController>();
+  CartController cartController = Get.put(CartController());
 
   @override
   void initState() {
@@ -645,14 +593,11 @@ class _MenuItemDetailsState extends State<MenuItemDetails> {
                     : const SizedBox.shrink(),
                 const SizedBox(height: 10),
 
-                /// quantity , add to cart
                 Text("Quantity", style: titleStyle()),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     QuantitySelector(onTap: onTap),
-
-                    /// add to cart
                     ElevatedButton(
                       style: ElevatedButton.styleFrom(
                         elevation: 1,
@@ -678,38 +623,47 @@ class _MenuItemDetailsState extends State<MenuItemDetails> {
                                 ),
                               );
                             });
-                        log("here---->");
                         OrderMasterCreateModel? orderMasterCreateModel =
-                            GetInstance().isRegistered<OrderMasterCreateModel>()
-                                ? Get.find<OrderMasterCreateModel>()
+                            GetInstance().isRegistered<OrderMasterCreateModel>(
+                                    tag: "orderMasterCreateModel")
+                                ? Get.find<OrderMasterCreateModel>(
+                                    tag: "orderMasterCreateModel")
                                 : null;
                         RecipeDetailsModel model = widget.value;
-
-                        // RecipeModel recipeModel = controller.recipeModel.value!;
-                        bool success = await controller.orderDetailsCreate(
-                            model,
-                            defaultQuantity,
-                            selectedBase,
-                            selectedSize,
-                            orderMasterCreateModel?.data?.id);
-                        if (success) {
-                          await controller.addToLocalDb(
-                              recipeValue: model.recipes
-                                  ?.where((element) =>
-                                      element.size?.name == selectedSize)
-                                  .first,
-                              name: model.name ?? "",
-                              quantity: defaultQuantity,
-                              recipeDetailsModel: jsonEncode(model.toJson()),
-                              addon: addOn.toInt(),
-                              total: ((calculateTotalPrice(basePrice, tax) +
-                                          addOn) *
+                        log("=====${orderMasterCreateModel?.data?.id.toString()}");
+                        if (orderMasterCreateModel?.data?.id! != null) {
+                          bool success = await orderDetailsCreate(
+                              model,
+                              defaultQuantity,
+                              selectedBase,
+                              selectedSize,
+                              orderMasterCreateModel?.data?.id,
+                              cartController,
+                              ((calculateTotalPrice(basePrice, tax) + addOn) *
                                       defaultQuantity)
-                                  .ceil(),
-                              selectedBase: selectedBase ?? "",
-                              selectedSize: selectedSize ?? "");
-                          cartController.checkForOfflineData();
+                                  .ceil());
+                          if (success) {
+                            /*await controller.addToLocalDb(
+                                recipeValue: model.recipes
+                                    ?.where((element) =>
+                                        element.size?.name == selectedSize)
+                                    .first,
+                                name: model.name ?? "",
+                                quantity: defaultQuantity,
+                                recipeDetailsModel: jsonEncode(model.toJson()),
+                                addon: addOn.toInt(),
+                                total: ((calculateTotalPrice(basePrice, tax) +
+                                            addOn) *
+                                        defaultQuantity)
+                                    .ceil(),
+                                selectedBase: selectedBase ?? "",
+                                selectedSize: selectedSize ?? "");*/
+                          }
+                        } else {
+                          showCoomonErrorDialog(
+                              title: "Error", message: "Something went wrong");
                         }
+                        ;
                       },
                       child: const Text("Add To Cart"),
                     ),

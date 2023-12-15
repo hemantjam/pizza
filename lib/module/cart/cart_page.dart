@@ -1,11 +1,17 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
+import 'package:pizza/constants/assets.dart';
 import 'package:pizza/module/cart/cart_controller.dart';
+import 'package:pizza/module/cart/model/order_master/order_master_create_model.dart';
+import 'package:pizza/module/cart/utils/handle_checkout.dart';
+import 'package:pizza/module/cart/widget/cart_details_bottom_bar.dart';
 import 'package:pizza/module/menu/customize/local_toppings_module.dart';
 import 'package:sizer/sizer.dart';
 
+import '../../constants/route_names.dart';
 import '../menu/by_group_code/menu_by_group_code_model.dart';
 
 class CartPage extends StatelessWidget {
@@ -19,6 +25,17 @@ class CartPage extends StatelessWidget {
       builder: (logic) {
         return SafeArea(
           child: Scaffold(
+              bottomNavigationBar: cartDetailsBottomBar(
+                logic,
+                true,
+                true,
+                () {
+                  final orderMasterCreateModel =
+                      Get.find<OrderMasterCreateModel>(
+                          tag: "orderMasterCreateModel");
+                  CheckOut.cartUpdate(orderMasterCreateModel);
+                },
+              ),
               appBar: AppBar(
                 elevation: 0,
                 title: const Text(
@@ -57,6 +74,7 @@ class CartPage extends StatelessWidget {
 
                           return model != null
                               ? CartItemDetails(
+                                  recipeDetailsModel: model,
                                   toppings: selectedToppingsList,
                                   image: model?.image ?? "",
                                   selectedSize: e.value.selectedSize,
@@ -81,6 +99,7 @@ class CartPage extends StatelessWidget {
 }
 
 class CartItemDetails extends StatefulWidget {
+  final RecipeDetailsModel? recipeDetailsModel;
   final String image;
   final String selectedBase;
   final String selectedSize;
@@ -92,6 +111,7 @@ class CartItemDetails extends StatefulWidget {
 
   const CartItemDetails({
     super.key,
+    required this.recipeDetailsModel,
     required this.onDelete,
     required this.toppings,
     required this.image,
@@ -226,7 +246,42 @@ class _CartItemDetailsState extends State<CartItemDetails> {
                           )
                           .toList()
                       : [SizedBox()],
-                ))
+                )),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Row(
+                children: [
+                  GestureDetector(
+                      onTap: () {
+                        Map<String, dynamic> arguments = {
+                          "model": widget.recipeDetailsModel,
+                          "isBuildYourOwn": false,
+                        };
+                        Get.toNamed(RouteNames.customizePizza,
+                            arguments: arguments);
+                      },
+                      child: SvgPicture.asset(
+                        Assets.customize,
+                        height: 20.sp,
+                        width: 20.sp,
+                      )),
+                  SizedBox(
+                    width: 10,
+                  ),
+                  GestureDetector(
+                      onTap: () {
+                        widget.onDelete(true);
+                      },
+                      child: SvgPicture.asset(
+                        Assets.delete,
+                        height: 20.sp,
+                        width: 20.sp,
+                      )),
+                  //IconButton(onPressed: () {}, icon: Icon(Icons.edit)),
+                  //IconButton(onPressed: () {}, icon: Icon(Icons.delete_outline)),
+                ],
+              ),
+            ),
           ],
         ),
       ),
@@ -235,7 +290,7 @@ class _CartItemDetailsState extends State<CartItemDetails> {
 }
 
 class QuantitySelector extends StatefulWidget {
-  QuantitySelector({
+  const QuantitySelector({
     super.key,
     required this.onTap,
     required this.defaultQuantity,
@@ -244,7 +299,7 @@ class QuantitySelector extends StatefulWidget {
 
   final Function(int value) onTap;
   final int defaultQuantity;
-  int? maxQuantity;
+  final int? maxQuantity;
 
   @override
   QuantitySelectorState createState() => QuantitySelectorState();
@@ -294,7 +349,13 @@ class QuantitySelectorState extends State<QuantitySelector> {
       children: [
         GestureDetector(
           onTap: decreaseQuantity,
-          child: Icon(Icons.delete_outline, size: 18.sp, color: Colors.red),
+          child: GestureDetector(
+              child: SvgPicture.asset(
+            Assets.delete,
+            height: 20.sp,
+            width: 20.sp,
+            color: Colors.red,
+          )),
         ),
         const SizedBox(width: 5),
         Text(
