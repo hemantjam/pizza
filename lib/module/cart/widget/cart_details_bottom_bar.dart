@@ -27,7 +27,7 @@ Container cartDetailsBottomBar(
                 }),
                 const Spacer(),
                 Text(
-                  " \$${cartController.cartItems.fold(0, (previousValue, element) => previousValue + element.total)}",
+                  " \$${cartController.cartTotal}",
                   style: buildButtonTextStyle(),
                 ),
               ],

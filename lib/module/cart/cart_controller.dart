@@ -10,13 +10,27 @@ import '../../local_storage/entity/cart_items_entity.dart';
 class CartController extends GetxController {
   RxList<CartItemsEntity> cartItems = <CartItemsEntity>[].obs;
   RxList<RecipeDetailsModel?> cartItemsList = <RecipeDetailsModel?>[].obs;
+int get cartTotal=>cartItems.fold(0, (previousValue, element) => previousValue + element.total);
+  RecipeDetailsModel? recipeDetailsModel;
 
   @override
   onInit() {
+    recipeDetailsModel=  GetInstance().isRegistered<RecipeDetailsModel>(
+        tag: "recipeDetailsModel")
+        ? Get.find<RecipeDetailsModel>(tag: "recipeDetailsModel")
+        : null;
+
+
     super.onInit();
     checkForOfflineData();
   }
-
+getModel(){
+  recipeDetailsModel=  GetInstance().isRegistered<RecipeDetailsModel>(
+      tag: "recipeDetailsModel")
+      ? Get.find<RecipeDetailsModel>(tag: "recipeDetailsModel")
+      : null;
+  update();
+}
   @override
   onReady() {
     checkForOfflineData();

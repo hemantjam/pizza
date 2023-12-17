@@ -106,12 +106,17 @@ class ApiServices {
         );
       } else if (e.type == DioExceptionType.badResponse) {
         log("===>${e.toString()}");
-        showCoomonErrorDialog(
-          title: "Error:",
-          message: e.response?.statusCode == 401
-              ? e.response!.data["error"]
-              : e.response!.data["message"],
-        );
+        e.response?.statusCode == 401
+            ? showCoomonErrorDialog(
+                title: "Error:",
+                message: e.response?.statusCode == 401
+                    ? e.response!.data["error"]
+                    : e.response!.data["message"],
+              )
+            : showCoomonErrorDialog(
+                title: "Error",
+                message: "Something went wrong",
+              );
       } else {
         showCoomonErrorDialog(
           title: "Something went wrong:",

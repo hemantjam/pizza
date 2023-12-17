@@ -35,9 +35,8 @@ class AllMenuPage extends GetView<MenuDetailsController> {
             controller.selectedItemIndex.value ==
                 controller.menuListModel.where((p0) => p0.webDisplay!).length -
                     1,
-            false,(){
-
-        }),
+            false,
+            () {}),
       ),
     );
   }
@@ -359,7 +358,7 @@ class _MenuItemDetailsState extends State<MenuItemDetails> {
     /* RecipeModel? recipeModel = widget.value?.recipes
         ?.where((element) => element.size?.name == "$selectedSize")
         ?.first;
-//TODO
+//
     controller.toggleRecipeModel(recipeModel);*/
     super.initState();
   }

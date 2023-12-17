@@ -100,6 +100,7 @@ Future<bool> orderDetailsCreate(
         recipeValue: recipeModel);
     cartController.checkForOfflineData();
   }
+  Get.put<RecipeDetailsModel>(model,tag: "recipeDetailsModel",permanent: true);
   Get.back();
   return res?.status ?? false;
 }
@@ -143,8 +144,8 @@ addToLocalDb(
     total: total,
   );
   await cartItemsDoa.insertCartItem(entity);
-  /* CartController controller=CartController();
-    controller.checkForOfflineData();*/
+   CartController controller=CartController();
+    controller.checkForOfflineData();
   showCoomonErrorDialog(
       title: "Success", message: "Successfully added to cart");
 }
