@@ -125,4 +125,5 @@ cartMasterTracking(String id) async {
     Get.put<CartTrackingModel>(cartTrackingModel,
         permanent: true, tag: "cartTrackingModel");
   }
+  showCommonLoading(false);
 }

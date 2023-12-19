@@ -1,22 +1,20 @@
-import 'dart:developer';
-
-class MenuGroupCodeModel {
+class TestMenuGroupCodeModel {
   String? message;
   bool? status;
-  Map<String, GroupModel>? data;
+  Map<String, TestGroupModel>? data;
 
-  MenuGroupCodeModel({this.message, this.status, this.data});
+  TestMenuGroupCodeModel({this.message, this.status, this.data});
 
-  factory MenuGroupCodeModel.fromJson(Map<String, dynamic> json) {
-    return MenuGroupCodeModel(
+  factory TestMenuGroupCodeModel.fromJson(Map<String, dynamic> json) {
+    return TestMenuGroupCodeModel(
       message: json['message'],
       status: json['status'],
       data: json['data'] != null
-          ? Map<String, GroupModel>.from(
-              (json['data'] as Map<String, dynamic>).map(
-                (key, value) => MapEntry(key, GroupModel.fromJson(value)),
-              ),
-            )
+          ? Map<String, TestGroupModel>.from(
+        (json['data'] as Map<String, dynamic>).map(
+              (key, value) => MapEntry(key, TestGroupModel.fromJson(value)),
+        ),
+      )
           : null,
     );
   }
@@ -30,24 +28,24 @@ class MenuGroupCodeModel {
   }
 }
 
-class GroupModel {
-  GroupDetailsModel? group;
-  Map<String, RecipeDetailsModel>? items;
+class TestGroupModel {
+  TestGroupDetailsModel? group;
+  Map<String, TestRecipeDetailsModel>? items;
 
-  GroupModel({this.group, this.items});
+  TestGroupModel({this.group, this.items});
 
-  factory GroupModel.fromJson(Map<String, dynamic> json) {
-    return GroupModel(
+  factory TestGroupModel.fromJson(Map<String, dynamic> json) {
+    return TestGroupModel(
       group: json['group'] != null
-          ? GroupDetailsModel.fromJson(json['group'])
+          ? TestGroupDetailsModel.fromJson(json['group'])
           : null,
       items: json['items'] != null
-          ? Map<String, RecipeDetailsModel>.from(
-              (json['items'] as Map<String, dynamic>).map(
-                (key, value) =>
-                    MapEntry(key, RecipeDetailsModel.fromJson(value)),
-              ),
-            )
+          ? Map<String, TestRecipeDetailsModel>.from(
+        (json['items'] as Map<String, dynamic>).map(
+              (key, value) =>
+              MapEntry(key, TestRecipeDetailsModel.fromJson(value)),
+        ),
+      )
           : null,
     );
   }
@@ -60,16 +58,16 @@ class GroupModel {
   }
 }
 
-class GroupDetailsModel {
+class TestGroupDetailsModel {
   int? itemGroupMSTId;
   int? itemDivisionMSTId;
-  ItemDivisionModel? itemDivisionMST;
+  TestItemDivisionModel? itemDivisionMST;
   String? itemGroupCode;
   String? itemGroupName;
   bool? webDisplay;
   int? sortOrder;
 
-  GroupDetailsModel({
+  TestGroupDetailsModel({
     this.itemGroupMSTId,
     this.itemDivisionMSTId,
     this.itemDivisionMST,
@@ -79,12 +77,12 @@ class GroupDetailsModel {
     this.sortOrder,
   });
 
-  factory GroupDetailsModel.fromJson(Map<String, dynamic> json) {
-    return GroupDetailsModel(
+  factory TestGroupDetailsModel.fromJson(Map<String, dynamic> json) {
+    return TestGroupDetailsModel(
       itemGroupMSTId: json['itemGroupMSTId'],
       itemDivisionMSTId: json['itemDivisionMSTId'],
       itemDivisionMST: json['itemDivisionMST'] != null
-          ? ItemDivisionModel.fromJson(json['itemDivisionMST'])
+          ? TestItemDivisionModel.fromJson(json['itemDivisionMST'])
           : null,
       itemGroupCode: json['itemGroupCode'],
       itemGroupName: json['itemGroupName'],
@@ -106,21 +104,21 @@ class GroupDetailsModel {
   }
 }
 
-class ItemDivisionModel {
+class TestItemDivisionModel {
   int? itemDivisionMSTId;
   String? itemDivisionCode;
   String? itemDivisionName;
   int? sortOrder;
 
-  ItemDivisionModel({
+  TestItemDivisionModel({
     this.itemDivisionMSTId,
     this.itemDivisionCode,
     this.itemDivisionName,
     this.sortOrder,
   });
 
-  factory ItemDivisionModel.fromJson(Map<String, dynamic> json) {
-    return ItemDivisionModel(
+  factory TestItemDivisionModel.fromJson(Map<String, dynamic> json) {
+    return TestItemDivisionModel(
       itemDivisionMSTId: json['itemDivisionMSTId'],
       itemDivisionCode: json['itemDivisionCode'],
       itemDivisionName: json['itemDivisionName'],
@@ -138,10 +136,10 @@ class ItemDivisionModel {
   }
 }
 
-class RecipeDetailsModel {
-  List<RecipeModel>? recipes;
-  List<AvailableSizesModel>? availableSizes;
-  List<CategoryModel>? availableCategories;
+class TestRecipeDetailsModel {
+  List<TestRecipeModel>? recipes;
+  List<TestAvailableSizesModel>? availableSizes;
+  List<TestCategoryModel>? availableCategories;
   String? name;
   String? shortName;
   bool? isHnh;
@@ -151,55 +149,47 @@ class RecipeDetailsModel {
   int? id;
   bool? stockAvailable;
   bool? isActive;
-  Dietary? dietary;
+  TestDietary? dietary;
 
-  RecipeDetailsModel(
+  TestRecipeDetailsModel(
       {this.recipes,
-      this.availableSizes,
-      this.availableCategories,
-      this.name,
-      this.shortName,
-      this.isHnh,
-      this.isNew,
-      this.image,
-      this.ingredients,
-      this.id,
-      this.stockAvailable,
-      this.isActive,
-      this.dietary});
+        this.availableSizes,
+        this.availableCategories,
+        this.name,
+        this.shortName,
+        this.isHnh,
+        this.isNew,
+        this.image,
+        this.ingredients,
+        this.id,
+        this.stockAvailable,
+        this.isActive,
+        this.dietary});
 
-  factory RecipeDetailsModel.fromJson(Map<String, dynamic> json) {
-    return RecipeDetailsModel(
+  factory TestRecipeDetailsModel.fromJson(Map<String, dynamic> json) {
+    return TestRecipeDetailsModel(
         recipes: json['recipes'] != null
             ? (json['recipes'] as List<dynamic>).map(
-                (item) {
-                  if (item.keys.length == 1) {
-                    //log("jjsonModel recipes if----: ${item.keys.first} | ${item.values.first}");
-                    final Map<String, dynamic> recipeMap = item.values.first;
-                    recipeMap['name'] = item.keys.first;
-                    return RecipeModel.fromJson(recipeMap);
-                  } else {
-                    // final Map<String, dynamic> recipeMap = item.values.first;
-                    // recipeMap['name'] = item.keys.first;
-                   // log("jjsonModel recipes elsse----:${item}");
-                    return RecipeModel.fromJson(item);
-                  }
-                },
-              ).toList()
+              (item) {
+           // final Map<String, dynamic> recipeMap = item.values.first;
+            //recipeMap['name'] = item.keys.first;
+            return TestRecipeModel.fromJson(item);
+          },
+        ).toList()
             : null,
         availableSizes: json['availableSizes'] != null
-            ? List<AvailableSizesModel>.from(
-                (json['availableSizes'] as List<dynamic>).map(
-                  (item) => AvailableSizesModel.fromJson(item),
-                ),
-              )
+            ? List<TestAvailableSizesModel>.from(
+          (json['availableSizes'] as List<dynamic>).map(
+                (item) => TestAvailableSizesModel.fromJson(item),
+          ),
+        )
             : null,
         availableCategories: json['availableCategories'] != null
-            ? List<CategoryModel>.from(
-                (json['availableCategories'] as List<dynamic>).map(
-                  (item) => CategoryModel.fromJson(item),
-                ),
-              )
+            ? List<TestCategoryModel>.from(
+          (json['availableCategories'] as List<dynamic>).map(
+                (item) => TestCategoryModel.fromJson(item),
+          ),
+        )
             : null,
         name: json['name'],
         shortName: json['shortName'],
@@ -211,7 +201,7 @@ class RecipeDetailsModel {
         stockAvailable: json['stockAvailable'],
         isActive: json['isActive'],
         dietary:
-            json["dietary"] != null ? Dietary.fromJson(json["dietary"]) : null);
+        json["dietary"] != null ? TestDietary.fromJson(json["dietary"]) : null);
   }
 
   Map<String, dynamic> toJson() {
@@ -219,7 +209,7 @@ class RecipeDetailsModel {
       'recipes': recipes?.map((recipe) => recipe.toJson()).toList(),
       'availableSizes': availableSizes?.map((size) => size.toJson()).toList(),
       'availableCategories':
-          availableCategories?.map((category) => category.toJson()).toList(),
+      availableCategories?.map((category) => category.toJson()).toList(),
       'name': name,
       'shortName': shortName,
       'isHnh': isHnh,
@@ -234,12 +224,12 @@ class RecipeDetailsModel {
   }
 }
 
-class RecipeModel {
-  AvailableSizesModel? size;
-  List<SauceModel>? sauce;
-  List<BaseModel>? base;
-  List<ToppingsModel>? toppings;
-  ToppingsInfoModel? toppingsInfo;
+class TestRecipeModel {
+  TestAvailableSizesModel? size;
+  List<TestSauceModel>? sauce;
+  List<TestBaseModel>? base;
+  List<TestToppingsModel>? toppings;
+  TestToppingsInfoModel? toppingsInfo;
   double? basePrice;
   String? description;
   int? id;
@@ -247,7 +237,7 @@ class RecipeModel {
   bool? stockAvailable;
   double? tax;
 
-  RecipeModel({
+  TestRecipeModel({
     this.size,
     this.sauce,
     this.base,
@@ -261,34 +251,34 @@ class RecipeModel {
     this.tax,
   });
 
-  factory RecipeModel.fromJson(Map<String, dynamic> json) {
-    return RecipeModel(
+  factory TestRecipeModel.fromJson(Map<String, dynamic> json) {
+    return TestRecipeModel(
       size: json['Size'] != null
-          ? AvailableSizesModel.fromJson(json['Size'])
+          ? TestAvailableSizesModel.fromJson(json['Size'])
           : null,
       sauce: json['Sauce'] != null
-          ? List<SauceModel>.from(
-              (json['Sauce'] as List<dynamic>).map(
-                (item) => SauceModel.fromJson(item),
-              ),
-            )
+          ? List<TestSauceModel>.from(
+        (json['Sauce'] as List<dynamic>).map(
+              (item) => TestSauceModel.fromJson(item),
+        ),
+      )
           : null,
       base: json['Base'] != null
-          ? List<BaseModel>.from(
-              (json['Base'] as List<dynamic>).map(
-                (item) => BaseModel.fromJson(item),
-              ),
-            )
+          ? List<TestBaseModel>.from(
+        (json['Base'] as List<dynamic>).map(
+              (item) => TestBaseModel.fromJson(item),
+        ),
+      )
           : null,
       toppings: json['Toppings'] != null
-          ? List<ToppingsModel>.from(
-              (json['Toppings'] as List<dynamic>).map(
-                (item) => ToppingsModel.fromJson(item),
-              ),
-            )
+          ? List<TestToppingsModel>.from(
+        (json['Toppings'] as List<dynamic>).map(
+              (item) => TestToppingsModel.fromJson(item),
+        ),
+      )
           : null,
       toppingsInfo: json['toppingsInfo'] != null
-          ? ToppingsInfoModel.fromJson(json['toppingsInfo'])
+          ? TestToppingsInfoModel.fromJson(json['toppingsInfo'])
           : null,
       id: json['id'],
       description: json['description'],
@@ -316,7 +306,7 @@ class RecipeModel {
   }
 }
 
-class BaseModel {
+class TestBaseModel {
   String? name;
   int? sortOrder;
   String? image;
@@ -328,7 +318,7 @@ class BaseModel {
   double? minimumQuantity;
   double? maximumQuantity;
 
-  BaseModel({
+  TestBaseModel({
     this.name,
     this.sortOrder,
     this.image,
@@ -341,8 +331,8 @@ class BaseModel {
     this.maximumQuantity,
   });
 
-  factory BaseModel.fromJson(Map<String, dynamic> json) {
-    return BaseModel(
+  factory TestBaseModel.fromJson(Map<String, dynamic> json) {
+    return TestBaseModel(
       name: json['name'],
       sortOrder: json['sortOrder'],
       image: json['image'],
@@ -372,15 +362,15 @@ class BaseModel {
   }
 }
 
-class AvailableSizesModel {
+class TestAvailableSizesModel {
   int? sortOrder;
   String? name;
   int? id;
 
-  AvailableSizesModel({this.sortOrder, this.name, this.id});
+  TestAvailableSizesModel({this.sortOrder, this.name, this.id});
 
-  factory AvailableSizesModel.fromJson(Map<String, dynamic> json) {
-    return AvailableSizesModel(
+  factory TestAvailableSizesModel.fromJson(Map<String, dynamic> json) {
+    return TestAvailableSizesModel(
       sortOrder: json['sortOrder'],
       name: json['name'],
       id: json['id'],
@@ -396,15 +386,15 @@ class AvailableSizesModel {
   }
 }
 
-class CategoryModel {
+class TestCategoryModel {
   int? sortOrder;
   String? name;
   int? id;
 
-  CategoryModel({this.sortOrder, this.name, this.id});
+  TestCategoryModel({this.sortOrder, this.name, this.id});
 
-  factory CategoryModel.fromJson(Map<String, dynamic> json) {
-    return CategoryModel(
+  factory TestCategoryModel.fromJson(Map<String, dynamic> json) {
+    return TestCategoryModel(
       sortOrder: json['sortOrder'],
       name: json['name'],
       id: json['id'],
@@ -420,7 +410,7 @@ class CategoryModel {
   }
 }
 
-class ToppingsModel {
+class TestToppingsModel {
   String? name;
   bool? stockAvailable;
   String? image;
@@ -431,7 +421,7 @@ class ToppingsModel {
   double? minimumQuantity;
   double? maximumQuantity;
 
-  ToppingsModel({
+  TestToppingsModel({
     this.name,
     this.stockAvailable,
     this.image,
@@ -443,8 +433,8 @@ class ToppingsModel {
     this.maximumQuantity,
   });
 
-  factory ToppingsModel.fromJson(Map<String, dynamic> json) {
-    return ToppingsModel(
+  factory TestToppingsModel.fromJson(Map<String, dynamic> json) {
+    return TestToppingsModel(
       name: json['name'],
       stockAvailable: json['stockAvailable'],
       image: json['image'],
@@ -472,19 +462,19 @@ class ToppingsModel {
   }
 }
 
-class ToppingsInfoModel {
-  QuantityInfoModel? sauce;
-  QuantityInfoModel? toppings;
+class TestToppingsInfoModel {
+  TestQuantityInfoModel? sauce;
+  TestQuantityInfoModel? toppings;
 
-  ToppingsInfoModel({this.sauce, this.toppings});
+  TestToppingsInfoModel({this.sauce, this.toppings});
 
-  factory ToppingsInfoModel.fromJson(Map<String, dynamic> json) {
-    return ToppingsInfoModel(
+  factory TestToppingsInfoModel.fromJson(Map<String, dynamic> json) {
+    return TestToppingsInfoModel(
       sauce: json['Sauce'] != null
-          ? QuantityInfoModel.fromJson(json['Sauce'])
+          ? TestQuantityInfoModel.fromJson(json['Sauce'])
           : null,
       toppings: json['Toppings'] != null
-          ? QuantityInfoModel.fromJson(json['Toppings'])
+          ? TestQuantityInfoModel.fromJson(json['Toppings'])
           : null,
     );
   }
@@ -497,14 +487,14 @@ class ToppingsInfoModel {
   }
 }
 
-class QuantityInfoModel {
+class TestQuantityInfoModel {
   double? maximumQuantity;
   double? minimumQuantity;
 
-  QuantityInfoModel({this.maximumQuantity, this.minimumQuantity});
+  TestQuantityInfoModel({this.maximumQuantity, this.minimumQuantity});
 
-  factory QuantityInfoModel.fromJson(Map<String, dynamic> json) {
-    return QuantityInfoModel(
+  factory TestQuantityInfoModel.fromJson(Map<String, dynamic> json) {
+    return TestQuantityInfoModel(
       maximumQuantity: json['maximumQuantity'],
       minimumQuantity: json['minimumQuantity'],
     );
@@ -518,15 +508,15 @@ class QuantityInfoModel {
   }
 }
 
-class Dietary {
+class TestDietary {
   int? id;
   String? symbol;
   String? name;
 
-  Dietary({this.id, this.name, this.symbol});
+  TestDietary({this.id, this.name, this.symbol});
 
-  factory Dietary.fromJson(Map<String, dynamic> json) {
-    return Dietary(
+  factory TestDietary.fromJson(Map<String, dynamic> json) {
+    return TestDietary(
       id: json['id'],
       symbol: json['symbol'],
       name: json['name'],
@@ -542,7 +532,7 @@ class Dietary {
   }
 }
 
-class SauceModel {
+class TestSauceModel {
   String? name;
   bool? stockAvailable;
   String? image;
@@ -553,7 +543,7 @@ class SauceModel {
   double? minimumQuantity;
   double? maximumQuantity;
 
-  SauceModel({
+  TestSauceModel({
     this.name,
     this.stockAvailable,
     this.image,
@@ -565,8 +555,8 @@ class SauceModel {
     this.maximumQuantity,
   });
 
-  factory SauceModel.fromJson(Map<String, dynamic> json) {
-    return SauceModel(
+  factory TestSauceModel.fromJson(Map<String, dynamic> json) {
+    return TestSauceModel(
       name: json['name'],
       stockAvailable: json['stockAvailable'],
       image: json['image'],

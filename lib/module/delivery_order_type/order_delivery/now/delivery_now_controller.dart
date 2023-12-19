@@ -8,7 +8,6 @@ import '../../../geography/all_active_controller.dart';
 import '../../../geography/byType/street_name_model.dart';
 import '../../../outlet_details/shift/outlet_shift_details_controller.dart';
 import '../../../outlet_details/shift/outlet_shift_details_model.dart';
-import '../../../user/logged_in_user/logged_in_user_model.dart';
 import '../../utils/calculate_shift_time.dart';
 import '../../utils/date_model.dart';
 import '../../utils/order_mst_create.dart';

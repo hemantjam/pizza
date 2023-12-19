@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:pizza/constants/route_names.dart';
-import 'package:pizza/module/cart/cart_controller.dart';
 
-Container cartDetailsBottomBar(
-    CartController cartController, bool index, bool inCart, Function() onTap) {
+cartDetailsBottomBar(
+    bool index, bool inCart, Function() onTap, cartLength, cartTotal) {
   return Container(
     padding: const EdgeInsets.symmetric(vertical: 2),
     height: 75,
@@ -19,15 +18,13 @@ Container cartDetailsBottomBar(
             },
             child: Row(
               children: [
-                Obx(() {
-                  return Text(
-                    "${cartController.cartItems.length.toString()} items",
-                    style: buildButtonTextStyle(),
-                  );
-                }),
+                Text(
+                  "${cartLength} items",
+                  style: buildButtonTextStyle(),
+                ),
                 const Spacer(),
                 Text(
-                  " \$${cartController.cartTotal}",
+                  " \$${cartTotal}",
                   style: buildButtonTextStyle(),
                 ),
               ],

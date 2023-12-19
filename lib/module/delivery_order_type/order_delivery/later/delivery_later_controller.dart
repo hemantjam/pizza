@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:pizza/api/api_services.dart';
-import 'package:pizza/module/user/logged_in_user/logged_in_user_model.dart';
 
 import '../../../../local_storage/shared_pref.dart';
 import '../../../cart/model/order_master/order_master_create_model.dart';

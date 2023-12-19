@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -7,17 +6,10 @@ import 'package:pizza/api/api_response.dart';
 import 'package:pizza/api/api_services.dart';
 import 'package:pizza/api/end_point.dart';
 import 'package:pizza/local_storage/entity/menu_details_entity.dart';
-import 'package:pizza/module/cart/cart_controller.dart';
-import 'package:pizza/module/cart/model/order_create/add_to_cart_model.dart';
-import 'package:pizza/module/cart/model/order_create/add_to_cart_payload.dart'
-    as cart_payload;
-import 'package:pizza/module/user/widgets/loader.dart';
 
 import '../../../local_storage/app_database.dart';
-import '../../../local_storage/entity/cart_items_entity.dart';
 import '../../../widgets/common_dialog.dart';
 import '../by_group_code/menu_by_group_code_model.dart';
-import '../customize/local_toppings_module.dart';
 import '../menu_model.dart';
 
 class MenuDetailsController extends GetxController {
@@ -161,7 +153,6 @@ class MenuDetailsController extends GetxController {
         }
       });
     }
-
     return filterNewCategoryList(categories, model);
   }
 

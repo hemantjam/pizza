@@ -22,7 +22,8 @@ import 'menu_details_controller.dart';
 
 class AllMenuPage extends GetView<MenuDetailsController> {
   AllMenuPage({Key? key}) : super(key: key);
-  CartController cartController = Get.put(CartController());
+  CartController cartController =
+      Get.find<CartController>(tag: "cartController");
 
   @override
   Widget build(BuildContext context) {
@@ -31,12 +32,13 @@ class AllMenuPage extends GetView<MenuDetailsController> {
         appBar: buildAppBar(),
         body: const MenuList(),
         bottomNavigationBar: cartDetailsBottomBar(
-            cartController,
             controller.selectedItemIndex.value ==
                 controller.menuListModel.where((p0) => p0.webDisplay!).length -
                     1,
             false,
-            () {}),
+            () {},
+            cartController.cartItemsLength,
+            cartController.cartTotal),
       ),
     );
   }
@@ -346,7 +348,7 @@ class _MenuItemDetailsState extends State<MenuItemDetails> {
     setState(() {});
   }
 
-  CartController cartController = Get.put(CartController());
+  // CartController cartController = Get.put(CartController());
 
   @override
   void initState() {
@@ -631,18 +633,19 @@ class _MenuItemDetailsState extends State<MenuItemDetails> {
                         RecipeDetailsModel model = widget.value;
                         log("=====${orderMasterCreateModel?.data?.id.toString()}");
                         if (orderMasterCreateModel?.data?.id! != null) {
-                          bool success = await orderDetailsCreate(
+                          await orderDetailsCreate(
                               model,
                               defaultQuantity,
                               selectedBase,
                               selectedSize,
                               orderMasterCreateModel?.data?.id,
-                              cartController,
+                              //  cartController,
                               ((calculateTotalPrice(basePrice, tax) + addOn) *
                                       defaultQuantity)
-                                  .ceil());
-                          if (success) {
-                            /*await controller.addToLocalDb(
+                                  .ceil(),
+                              null);
+                          /* if (success) {
+                            */ /*await controller.addToLocalDb(
                                 recipeValue: model.recipes
                                     ?.where((element) =>
                                         element.size?.name == selectedSize)
@@ -656,13 +659,12 @@ class _MenuItemDetailsState extends State<MenuItemDetails> {
                                         defaultQuantity)
                                     .ceil(),
                                 selectedBase: selectedBase ?? "",
-                                selectedSize: selectedSize ?? "");*/
-                          }
+                                selectedSize: selectedSize ?? "");*/ /*
+                          }*/
                         } else {
                           showCoomonErrorDialog(
                               title: "Error", message: "Something went wrong");
                         }
-                        ;
                       },
                       child: const Text("Add To Cart"),
                     ),

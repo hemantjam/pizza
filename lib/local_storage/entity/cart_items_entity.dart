@@ -4,14 +4,14 @@ import 'package:floor/floor.dart';
 class CartItemsEntity {
   @PrimaryKey(autoGenerate: true)
   int? id;
-  final String itemName;
-  final int itemQuantity;
-  final String selectedBase;
-  final String selectedSize;
-  final int addon;
-  final int total;
-  final String itemModel;
-  final String toppings;
+   String itemName;
+   int itemQuantity;
+   String selectedBase;
+   String selectedSize;
+   int addon;
+   int total;
+   String itemModel;
+   String toppings;
 
   CartItemsEntity({
     required this.toppings,

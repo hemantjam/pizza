@@ -102,7 +102,7 @@ class RouteGenerator {
     /// cart
     GetPage(
       name: RouteNames.cartPage,
-      page: () =>  CartPage(),
+      page: () =>   CartPage(),
       binding: CartBinding(),
     ),
 
@@ -117,6 +117,7 @@ class RouteGenerator {
         OutletShiftDetailsBinding(),
         AllActiveBinding(),
         OutletBinding(),
+        CartBinding()
       ],
     ),
 

@@ -1,23 +1,16 @@
-import 'dart:convert';
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:intl/date_symbol_data_local.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import '../../../../api/api_response.dart';
 import '../../../../api/api_services.dart';
-import '../../../../api/end_point.dart';
 import '../../../cart/model/order_master/order_master_create_model.dart';
-import '../../../cart/model/order_master/order_master_create_payload.dart';
 import '../../../geography/all_active_controller.dart';
 import '../../../outlet_details/outlet/outlet_controller.dart';
 import '../../../outlet_details/outlet/outlet_model.dart';
 import '../../../outlet_details/shift/outlet_shift_details_controller.dart';
 import '../../../outlet_details/shift/outlet_shift_details_model.dart';
-import '../../../user/logged_in_user/logged_in_user_model.dart';
-import '../../../user/widgets/loader.dart';
 import '../../utils/calculate_shift_time.dart';
 import '../../utils/date_model.dart';
 import '../../utils/order_mst_create.dart';
@@ -79,8 +72,8 @@ class PickUpNowController extends GetxController {
     try {
       final query = Uri.encodeComponent(address);
       final url = 'https://www.google.com/maps/search/?api=1&query=$query';
-      if (await canLaunch(url)) {
-        await launch(url);
+      if (await canLaunchUrl(Uri.parse(url))) {
+        await launchUrl(Uri.parse(url));
       } else {
         throw 'Could not launch $url';
       }

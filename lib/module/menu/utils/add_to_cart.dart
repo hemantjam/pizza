@@ -18,15 +18,14 @@ import '../customize/local_toppings_module.dart';
 
 ApiServices _apiServices = ApiServices();
 
-Future<bool> orderDetailsCreate(
-  RecipeDetailsModel model,
-  int quantity,
-  String? selectedBase,
-  String? selectedSize,
-  String? orderMSTId,
-  CartController cartController,
-  int total,
-) async {
+orderDetailsCreate(
+    RecipeDetailsModel model,
+    int quantity,
+    String? selectedBase,
+    String? selectedSize,
+    String? orderMSTId,
+    int total,
+    List<ToppingsSelection>? toppingsSelection) async {
   showCommonLoading(true);
   RecipeModel? recipeModel = model.recipes
       ?.where((element) => element.size?.name == selectedSize)
@@ -62,13 +61,14 @@ Future<bool> orderDetailsCreate(
   if (baseModel != null) {
     itemSet.add(cart_payload.OrderRecipeItemWebRequestSet(
       qty: 1,
-      recipeItemDTLId: baseModel?.id,
-      defaultQty: baseModel?.defaultQuantity?.ceil(),
-      sortOrder: baseModel?.sortOrder,
+      recipeItemDTLId: baseModel.id,
+      defaultQty: baseModel.defaultQuantity?.ceil(),
+      sortOrder: baseModel.sortOrder,
       base: true,
       active: true,
     ));
   }
+
   payload.active = model.isActive;
   payload.displayName = model.name;
   payload.itemMSTId = model.id;
@@ -81,6 +81,7 @@ Future<bool> orderDetailsCreate(
   payload.sortOrder = 1;
   payload.orderMSTId = orderMSTId;
   payload.orderDTLRefId = "1";
+  log("----->payload--->${payload.toMap()}");
   ApiResponse? res = await _apiServices.postRequest(
       ApiEndPoints.orderDetailsCreate,
       data: jsonEncode(payload.toMap()));
@@ -88,29 +89,29 @@ Future<bool> orderDetailsCreate(
     AddToCartResponseModel addToCartResponseModel =
         AddToCartResponseModel.fromMap(res.toJson());
     Get.put<AddToCartResponseModel>(addToCartResponseModel, permanent: true);
-    await notifySSE();
-    addToLocalDb(
-        recipeDetailsModel: jsonEncode(model.toJson()),
-        name: model.name ?? "",
-        quantity: quantity,
-        addon: 0,
-        total: total,
-        selectedBase: selectedBase ?? "",
-        selectedSize: selectedSize ?? "",
-        recipeValue: recipeModel);
-    cartController.checkForOfflineData();
+    bool? notified = await notifySSE();
+    if (notified != null && notified) {
+      addToLocalDb(
+          alltopings: toppingsSelection,
+          recipeDetailsModel: jsonEncode(model.toJson()),
+          name: model.name ?? "",
+          quantity: quantity,
+          addon: 0,
+          total: total,
+          selectedBase: selectedBase ?? "",
+          selectedSize: selectedSize ?? "",
+          recipeValue: recipeModel);
+    }
   }
-  Get.put<RecipeDetailsModel>(model,tag: "recipeDetailsModel",permanent: true);
+  Get.put<RecipeDetailsModel>(model,
+      tag: "recipeDetailsModel", permanent: true);
   Get.back();
   return res?.status ?? false;
 }
 
-notifySSE() async {
+Future<bool?> notifySSE() async {
   ApiResponse? res = await _apiServices.getRequest(ApiEndPoints.notifySSE);
-  if (res != null && res.status) {
-    log("---> notified");
-  }
-  return;
+  return res?.status;
 }
 
 addToLocalDb(
@@ -121,13 +122,15 @@ addToLocalDb(
     required int total,
     required String selectedBase,
     required String selectedSize,
-    required RecipeModel? recipeValue}) async {
+    required RecipeModel? recipeValue,
+    required List<ToppingsSelection>? alltopings}) async {
   final database =
       await $FloorAppDatabase.databaseBuilder('app_database.db').build();
 
   final cartItemsDoa = database.cartItemsDoa;
   List<ToppingsSelection> allToppings =
-      getAllToppingList(recipeValue ?? RecipeModel());
+      alltopings ?? getAllToppingList(recipeValue ?? RecipeModel());
+/*      getAllToppingList(recipeValue ?? RecipeModel());*/
   List<ToppingsSelection> selectedToppings =
       allToppings.where((p0) => p0.isSelected!).toList();
   List<Map<String, dynamic>> toppingsJsonList =
@@ -144,8 +147,8 @@ addToLocalDb(
     total: total,
   );
   await cartItemsDoa.insertCartItem(entity);
-   CartController controller=CartController();
-    controller.checkForOfflineData();
+  CartController controller = CartController();
+  controller.checkForOfflineData();
   showCoomonErrorDialog(
       title: "Success", message: "Successfully added to cart");
 }

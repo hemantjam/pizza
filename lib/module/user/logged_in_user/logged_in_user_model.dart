@@ -1,5 +1,3 @@
-import 'package:get/get.dart';
-
 import '../login/login_model.dart';
 
 class LoggedInUserModel {

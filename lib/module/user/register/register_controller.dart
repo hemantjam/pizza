@@ -1,5 +1,4 @@
 
-import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -7,7 +6,6 @@ import 'package:pizza/constants/route_names.dart';
 import 'package:pizza/local_storage/shared_pref.dart';
 import 'package:pizza/module/user/login/login_controller.dart';
 import 'package:pizza/module/user/register/register_model.dart';
-import 'package:pizza/widgets/common_dialog.dart';
 
 import '../../../api/api_response.dart';
 import '../../../api/api_services.dart';

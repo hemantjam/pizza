@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_blurhash/flutter_blurhash.dart';
@@ -8,7 +6,6 @@ import 'package:pizza/widgets/common_dialog.dart';
 import 'package:sizer/sizer.dart';
 
 import '../../../constants/assets.dart';
-import '../../cart/cart_controller.dart';
 import '../../cart/model/order_master/order_master_create_model.dart';
 import '../../delivery_order_type/delivery_order_type_options.dart';
 import '../by_group_code/menu_by_group_code_model.dart';
@@ -24,7 +21,7 @@ class CustomizePizzaPage extends GetView<CustomizePizzaController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      /*  floatingActionButton: FloatingActionButton(
+      /*floatingActionButton: FloatingActionButton(
         onPressed: () {
           controller.calculateToppingsPrice();
         },
@@ -43,6 +40,7 @@ class CustomizePizzaPage extends GetView<CustomizePizzaController> {
         }),
       ),
       body: SingleChildScrollView(
+        key: UniqueKey(),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -173,7 +171,8 @@ class _ItemDetailsState extends State<ItemDetails> {
   int defaultQuantity = 1;
   int simpleIntInput = 0;
   String? selectedSauce;
-  CartController cartController = Get.find<CartController>();
+
+  // CartController cartController = Get.find<CartController>();
 
   onTap(int newQuantity) {
     setState(() {
@@ -190,8 +189,9 @@ class _ItemDetailsState extends State<ItemDetails> {
     selectedSauce =
         controller.recipeDetailsModel?.recipes?.first.sauce?.first.name;
     RecipeModel? recipeModel = controller.recipeDetailsModel?.recipes
-        ?.where((element) => element.size?.name == "$selectedSize")
-        .first??RecipeModel();
+            ?.where((element) => element.size?.name == "$selectedSize")
+            .firstOrNull ??
+        RecipeModel();
 
     controller.toggleRecipeModel(recipeModel);
     addOn =
@@ -387,76 +387,77 @@ class _ItemDetailsState extends State<ItemDetails> {
 
               SizedBox(height: controller.isBuildYourOwnPizza.value ? 10 : 0),
 
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Column(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text("Sauce", style: titleStyle()),
-                      const SizedBox(height: 5),
-                      Container(
-                        decoration: BoxDecoration(
-                            border:
-                                Border.all(width: 0.5, color: Colors.black)),
-                        child: DropdownButton<String>(
-                          underline: const SizedBox(),
-                          elevation: 0,
-                          borderRadius: BorderRadius.zero,
-                          padding: const EdgeInsets.all(5),
-                          isDense: true,
-                          value: selectedSauce,
-                          onChanged: (String? newValue) {
-                            if (newValue != null) {
-                              setState(() {
-                                selectedSauce = newValue;
-                                selectedBase = null;
-                                controller.toggleRecipeModel(controller
-                                    .recipeDetailsModel?.recipes
-                                    ?.where((element) =>
-                                        element.size?.name == "$selectedSize")
-                                    .first);
-                              });
-                            }
-                          },
-                          items: controller
-                              .recipeDetailsModel?.recipes?.first.sauce!
-                              .map((e) => DropdownMenuItem<String>(
-                                    value: e.name ?? "",
-                                    child: SizedBox(
-                                      width: 35.w,
-                                      child: Text(
-                                        e.name ?? "",
-                                        overflow: TextOverflow.ellipsis,
-                                        maxLines: 1,
-                                      ),
-                                    ),
-                                  ))
-                              .toList(),
-                        ),
-                      )
-                    ],
-                  ),
-                  SizedBox(
-                    width: 45.w,
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      crossAxisAlignment: CrossAxisAlignment.start,
+              controller.recipeDetailsModel?.recipes != null
+                  ? Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text("Quantity", style: titleStyle()),
-                        const SizedBox(
-                          height: 5,
+                        Column(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text("Sauce", style: titleStyle()),
+                            const SizedBox(height: 5),
+                            Container(
+                              decoration: BoxDecoration(
+                                  border: Border.all(
+                                      width: 0.5, color: Colors.black)),
+                              child: DropdownButton<String>(
+                                underline: const SizedBox(),
+                                elevation: 0,
+                                borderRadius: BorderRadius.zero,
+                                padding: const EdgeInsets.all(5),
+                                isDense: true,
+                                value: selectedSauce,
+                                onChanged: (String? newValue) {
+                                  if (newValue != null) {
+                                    setState(() {
+                                      selectedSauce = newValue;
+                                      selectedBase = null;
+                                      controller.toggleRecipeModel(controller
+                                          .recipeDetailsModel?.recipes
+                                          ?.where((element) =>
+                                              element.size?.name ==
+                                              "$selectedSize")
+                                          .first);
+                                    });
+                                  }
+                                },
+                                items: controller
+                                    .recipeDetailsModel?.recipes?.first.sauce!
+                                    .map((e) => DropdownMenuItem<String>(
+                                          value: e.name ?? "",
+                                          child: SizedBox(
+                                            width: 35.w,
+                                            child: Text(
+                                              e.name ?? "",
+                                              overflow: TextOverflow.ellipsis,
+                                              maxLines: 1,
+                                            ),
+                                          ),
+                                        ))
+                                    .toList(),
+                              ),
+                            )
+                          ],
                         ),
-                        QuantitySelector(onTap: onTap),
+                        SizedBox(
+                          width: 45.w,
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text("Quantity", style: titleStyle()),
+                              const SizedBox(
+                                height: 5,
+                              ),
+                              QuantitySelector(onTap: onTap),
+                            ],
+                          ),
+                        ),
                       ],
-                    ),
-                  ),
-                ],
-              ),
-
+                    )
+                  : const SizedBox(),
               const SizedBox(height: 5),
-
               Obx(() {
                 return SizedBox(
                   child: buildElevatedButton(
@@ -506,46 +507,40 @@ class _ItemDetailsState extends State<ItemDetails> {
                   ),
                 );
               });
-          //  Get.back();
-          /*BaseModel? baseModel = recipeModel.recipes
+
+          List<ToppingsModel> toppings = [];
+          for (var element in controller.allToppings) {
+            ToppingsModel toppingsModel = ToppingsModel(
+              name: element.toppingName,
+              id: element.toppingId,
+              addCost: element.addCost,
+              defaultQuantity: element.defaultQuantity?.toDouble(),
+              itemQuantity: element.values
+                  ?.where((element) => element!)
+                  .length
+                  .toDouble(),
+              maximumQuantity: element.maximumQuantity?.toDouble(),
+            );
+            toppings.add(toppingsModel);
+          }
+          controller.recipeDetailsModel?.recipes
               ?.where((element) => element.size?.name == selectedSize)
               .first
-              .base
-              ?.where((element) => element.name == selectedBase)
-              .first;*/
-          log("----$selectedSize");
-          log("----$selectedBase");
-          // log("----${selectedSize}");
+              .toppings = toppings;
           OrderMasterCreateModel? orderMasterCreateModel =
               GetInstance().isRegistered<OrderMasterCreateModel>()
                   ? Get.find<OrderMasterCreateModel>()
                   : null;
 
-          bool success = await orderDetailsCreate(
+          await orderDetailsCreate(
               recipeModel,
               defaultQuantity,
               selectedBase,
               selectedSize,
               orderMasterCreateModel?.data?.id,
-              cartController,
               ((calculateTotalPrice(basePrice, tax) + addOn) * defaultQuantity)
-                  .ceil());
-          /* if (success) {
-
-            List<ToppingsSelection> toppings =
-                controller.allToppings.where((p0) => p0.isSelected!).toList();
-           */ /* controller.addToLocalDb(
-              cartItemData: jsonEncode(recipeModel.toJson()),
-              name: name,
-              quantity: defaultQuantity,
-              addon: addOn.ceil(),
-              total: ((calculateTotalPrice(basePrice, tax) + addOn) *
-                      defaultQuantity)
                   .ceil(),
-              selectedBase: selectedBase ?? "",
-              selectedSize: selectedSize ?? "",
-            );*/ /*
-          }*/
+              controller.allToppings);
         }
       },
       child: const Text("Add To Cart"),

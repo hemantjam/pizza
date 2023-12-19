@@ -10,7 +10,6 @@ import '../../../cart/model/order_master/order_master_create_model.dart';
 import '../../../outlet_details/outlet/outlet_controller.dart';
 import '../../../outlet_details/shift/outlet_shift_details_controller.dart';
 import '../../../outlet_details/shift/outlet_shift_details_model.dart';
-import '../../../user/logged_in_user/logged_in_user_model.dart';
 import '../../utils/calculate_shift_time.dart';
 import '../../utils/date_model.dart';
 import '../../utils/get_time_interval.dart';

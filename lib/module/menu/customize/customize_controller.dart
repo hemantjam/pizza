@@ -1,5 +1,4 @@
 import 'package:get/get.dart';
-import 'package:pizza/api/api_services.dart';
 
 import '../by_group_code/menu_by_group_code_model.dart';
 import 'local_toppings_module.dart';
@@ -9,8 +8,6 @@ class CustomizePizzaController extends GetxController {
   RecipeDetailsModel? recipeDetailsModel;
 
   CustomizePizzaController(this.arguments);
-
-  final ApiServices _apiServices = ApiServices();
 
   RxList<ToppingsSelection> allToppings = <ToppingsSelection>[].obs;
   Rx<RecipeModel?> recipeModel = RecipeModel().obs;
@@ -42,7 +39,7 @@ class CustomizePizzaController extends GetxController {
       if (topping.isSelected!) {
         int quantity = topping.values!.where((value) => value!).length;
 
-        if (topping!.isDefault! && quantity > 1) {
+        if (topping.isDefault! && quantity > 1) {
           // If default topping and quantity > 1, calculate addon price for additional quantities
           int additionalQuantity = quantity - 1;
           toppingPrice += topping.addCost! * additionalQuantity;
@@ -52,7 +49,6 @@ class CustomizePizzaController extends GetxController {
         }
       }
     }
-
     return toppingPrice;
   }
 
@@ -92,105 +88,4 @@ class CustomizePizzaController extends GetxController {
     recipeModel.value != null ? getAllToppingList(recipeValue!) : null;
     update();
   }
-
-/* Future<bool> orderDetailsCreate(RecipeDetailsModel model, int quantity,
-      String? selectedBase, String? selectedSize, String? orderMSTId) async {
-    RecipeModel? a = model.recipes
-        ?.where((element) => element.size?.name == selectedSize)
-        .first;
-    BaseModel? baseModel = model.recipes
-        ?.where((element) => element.size?.name == selectedSize)
-        .first
-        .base
-        ?.where((element) => element.name == selectedBase)
-        .first;
-    cart_payload.AddToCartPayload payload = cart_payload.AddToCartPayload();
-
-    */ /*List<ToppingsModel>? toppings = model.recipes
-            ?.where((element) => element.size?.name == selectedSize)
-            .first
-            .toppings ??
-        [];*/ /*
-    List<ToppingsSelection>? toppings =
-        allToppings.where((p0) => p0.isSelected!).toList();
-    List<cart_payload.OrderRecipeItemWebRequestSet> itemSet =
-        <cart_payload.OrderRecipeItemWebRequestSet>[];
-    if (toppings.isNotEmpty) {
-      for (var element in toppings) {
-        cart_payload.OrderRecipeItemWebRequestSet orderRecipeItemWebRequestSet =
-            cart_payload.OrderRecipeItemWebRequestSet(
-          recipeItemDTLId: element.toppingId,
-          qty: element.itemQuantity?.ceil(),
-          defaultQty: element.defaultQuantity?.ceil(),
-          sortOrder: 1,
-          base: false,
-          active: model.isActive,
-        );
-        itemSet.add(orderRecipeItemWebRequestSet);
-      }
-    }
-    itemSet.add(cart_payload.OrderRecipeItemWebRequestSet(
-      qty: 1,
-      recipeItemDTLId: baseModel?.id,
-      defaultQty: baseModel?.defaultQuantity?.ceil(),
-      sortOrder: baseModel?.sortOrder,
-      base: true,
-      active: true,
-    ));
-    payload.active = model.isActive;
-    payload.displayName = model.name;
-    payload.itemMSTId = model.id;
-    payload.recipeMSTId = a?.id;
-    payload.qty = quantity;
-    payload.orderRecipeItemWebRequestSet = itemSet;
-    payload.orderStage = "DS01";
-    payload.hnhSurcharge = 0;
-    payload.additionalValue = 0;
-    payload.sortOrder = 1;
-    payload.orderMSTId = orderMSTId;
-    payload.orderDTLRefId = "1";
-    ApiResponse? res = await _apiServices.postRequest(
-        ApiEndPoints.orderDetailsCreate,
-        data: jsonEncode(payload.toMap()));
-    if (res != null && res.status) {
-      log("data---->${res!.toJson()}");
-      AddToCartResponseModel addToCartResponseModel =
-          AddToCartResponseModel.fromMap(res.toJson());
-      Get.put(addToCartResponseModel,permanent: true);
-      showCoomonErrorDialog(
-          title: "Success", message: "Successfully added to cart");
-    }
-    return res?.status ?? false;
-  }
-*/
-/* addToLocalDb({
-    required String cartItemData,
-    required String name,
-    required int quantity,
-    required int addon,
-    required int total,
-    required String selectedBase,
-    required String selectedSize,
-  }) async {
-    final database =
-        await $FloorAppDatabase.databaseBuilder('app_database.db').build();
-
-    final cartItemsDoa = database.cartItemsDoa;
-    List<ToppingsSelection> selectedToppings =
-        allToppings.where((p0) => p0.isSelected!).toList();
-    List<Map<String, dynamic>> toppingsJsonList =
-        selectedToppings.map((topping) => topping.toJson()).toList();
-    String toppingsJsonString = jsonEncode(toppingsJsonList);
-    CartItemsEntity entity = CartItemsEntity(
-        toppings: toppingsJsonString,
-        itemModel: cartItemData,
-        itemName: name,
-        itemQuantity: quantity,
-        selectedBase: selectedBase,
-        selectedSize: selectedSize,
-        addon: addon,
-        total: total);
-
-    await cartItemsDoa.insertCartItem(entity);
-  }*/
 }
