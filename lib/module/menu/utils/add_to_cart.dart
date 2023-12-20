@@ -147,8 +147,8 @@ addToLocalDb(
     total: total,
   );
   await cartItemsDoa.insertCartItem(entity);
-  CartController controller = CartController();
-  controller.checkForOfflineData();
+ /* CartController controller = CartController();
+  controller.checkForOfflineData();*/
   showCoomonErrorDialog(
       title: "Success", message: "Successfully added to cart");
 }

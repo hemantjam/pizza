@@ -93,16 +93,15 @@ class RouteGenerator {
 
     /// customize pizza
     GetPage(
-      name: RouteNames.customizePizza,
-      page: () => const CustomizePizzaPage(),
-      binding: CustomizePizzaBinding(),
-        arguments: Get.arguments
-    ),
+        name: RouteNames.customizePizza,
+        page: () => const CustomizePizzaPage(),
+        binding: CustomizePizzaBinding(),
+        arguments: Get.arguments),
 
     /// cart
     GetPage(
       name: RouteNames.cartPage,
-      page: () =>   CartPage(),
+      page: () => CartPage(),
       binding: CartBinding(),
     ),
 
@@ -111,20 +110,20 @@ class RouteGenerator {
       name: RouteNames.homePage,
       page: () => const MainPage(),
       bindings: [
+
         HomePageBinding(),
         MenuBiding(),
         OfferBinding(),
         OutletShiftDetailsBinding(),
         AllActiveBinding(),
-        OutletBinding(),
-        CartBinding()
+        OutletBinding(), CartBinding(),
       ],
     ),
 
     /// pizza menu page
     GetPage(
         name: RouteNames.pizzaMenuPage,
-        page: () =>  AllMenuPage(),
+        page: () => AllMenuPage(),
         binding: MenuDetailsBinding(),
         arguments: Get.arguments)
   ];

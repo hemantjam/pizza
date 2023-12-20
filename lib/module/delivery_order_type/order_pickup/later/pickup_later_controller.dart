@@ -22,6 +22,7 @@ class PickUpLaterController extends GetxController {
   Rx<OutletShiftDetailsController> outletShiftDetailsController =
       Get.find<OutletShiftDetailsController>().obs;
   ApiServices apiServices = ApiServices();
+
 /*
   LoggedInUserModel loggedInUserModel =
       Get.find<LoggedInUserModel>(tag: "loggedInModel");*/
@@ -176,9 +177,8 @@ class PickUpLaterController extends GetxController {
 
   orderCreateApi() {
     orderMasterCreateApi(
-      orderTypeCode: "OT02",
-      time: timeController.text,
-      date: dateController.text
-    );
+        orderTypeCode: "OT02",
+        time: timeController.text,
+        date: dateController.text);
   }
 }

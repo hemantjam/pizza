@@ -23,7 +23,7 @@ import 'menu_details_controller.dart';
 class AllMenuPage extends GetView<MenuDetailsController> {
   AllMenuPage({Key? key}) : super(key: key);
   CartController cartController =
-      Get.find<CartController>(tag: "cartController");
+      Get.find<CartController>();
 
   @override
   Widget build(BuildContext context) {
@@ -63,7 +63,7 @@ class AllMenuPage extends GetView<MenuDetailsController> {
           child: Padding(
             padding: const EdgeInsets.only(right: 10, top: 10),
             child: GetBuilder<CartController>(
-                init: CartController(),
+               // init: CartController(),
                 builder: (logic) {
                   return Badge(
                     label: Obx(() {

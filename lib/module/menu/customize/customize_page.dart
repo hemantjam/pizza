@@ -538,7 +538,7 @@ class _ItemDetailsState extends State<ItemDetails> {
               selectedBase,
               selectedSize,
               orderMasterCreateModel?.data?.id,
-              ((calculateTotalPrice(basePrice, tax) + addOn) * defaultQuantity)
+              (calculateTotalPrice(basePrice, tax))
                   .ceil(),
               controller.allToppings);
         }

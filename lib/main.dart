@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:get/get.dart';
+import 'package:pizza/module/cart/cart_controller.dart';
 import 'package:pizza/pizza_app.dart';
 import 'package:uuid/uuid.dart';
+
 Uuid uuid = const Uuid();
 
-void main()async {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  //GlobalBindings().dependencies();
+ /* Get.put<CartController>(CartController(),
+      tag: "cartController", permanent: true);*/
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
- // Store store = await Object;
-
   runApp(const PizzaApp());
 }

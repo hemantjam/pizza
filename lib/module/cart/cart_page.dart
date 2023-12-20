@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -6,7 +7,6 @@ import 'package:get/get.dart';
 import 'package:pizza/constants/assets.dart';
 import 'package:pizza/local_storage/entity/cart_items_entity.dart';
 import 'package:pizza/module/cart/cart_controller.dart';
-import 'package:pizza/module/cart/model/order_master/order_master_create_model.dart';
 import 'package:pizza/module/cart/utils/handle_checkout.dart';
 import 'package:pizza/module/cart/widget/cart_details_bottom_bar.dart';
 import 'package:pizza/module/menu/customize/local_toppings_module.dart';
@@ -16,78 +16,69 @@ import 'package:sizer/sizer.dart';
 import '../../constants/route_names.dart';
 import '../menu/by_group_code/menu_by_group_code_model.dart';
 
-class CartPage extends StatelessWidget {
+class CartPage extends GetView<CartController> {
   const CartPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return GetBuilder<CartController>(
-        init: Get.put(CartController()),
-        builder: (controller) {
-          return SafeArea(
-            child: Scaffold(
-                bottomNavigationBar: cartDetailsBottomBar(true, true, () {
-                  final orderMasterCreateModel =
-                      Get.find<OrderMasterCreateModel>(
-                          tag: "orderMasterCreateModel");
-                  CheckOut.cartUpdate(orderMasterCreateModel);
-                }, controller.cartItemsLength, controller.cartTotal),
-                appBar: AppBar(
-                  elevation: 0,
-                  title: const Text(
-                    'Cart',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-                body: Obx(() {
-                  return controller.cartItems.isNotEmpty
-                      ? SingleChildScrollView(
-                          key: UniqueKey(),
-                          child: Column(
-                              children:
-                                  controller.cartItems.asMap().entries.map((e) {
-                            String toppingsJsonString = e.value.toppings;
-                            List<dynamic> toppingsJsonList =
-                                jsonDecode(toppingsJsonString);
-                            List<ToppingsSelection> selectedToppingsList =
+    return SafeArea(
+      child: Scaffold(
+          bottomNavigationBar: cartDetailsBottomBar(true, true, () async {
+            List<CartItemsEntity> modelList = await controller.getModelsList();
+            CheckOut.cartUpdate(modelList);
+          }, controller.cartItemsLength, controller.cartTotal),
+          appBar: AppBar(
+            elevation: 0,
+            title: const Text(
+              'Cart',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+          body: Obx(() {
+            return controller.cartItems.isNotEmpty
+                ? SingleChildScrollView(
+                    key: UniqueKey(),
+                    child: Column(
+                        children: controller.cartItems.asMap().entries.map((e) {
+                      String toppingsJsonString = e.value.toppings;
+                      /*  List<dynamic> toppingsJsonList =
+                                jsonDecode(toppingsJsonString);*/
+                      /*List<ToppingsSelection> selectedToppingsList =
                                 toppingsJsonList
                                     .map((toppingJson) =>
                                         ToppingsSelection.fromJson(toppingJson))
-                                    .toList();
-                            /*TestRecipeDetailsModel? model =
+                                    .toList();*/
+                      /*TestRecipeDetailsModel? model =
                               TestRecipeDetailsModel.fromJson(
                                   jsonDecode(e.value.itemModel));*/
-                            RecipeDetailsModel? modell =
-                                RecipeDetailsModel.fromJson(
-                                    jsonDecode(e.value.itemModel));
-                            return modell != null
-                                ? CartItemDetails(
-                                    entity: e.value,
-                                    recipeDetailsModel: modell,
-                                    toppings: selectedToppingsList,
-                                    image: modell.image ?? "",
-                                    selectedSize: e.value.selectedSize,
-                                    selectedBase: e.value.selectedBase,
-                                    total: e.value.total,
-                                    quantity: e.value.itemQuantity,
-                                    name: e.value.itemName,
-                                    onDelete: (value) {
-                                      value
-                                          ? controller.deleteData(e.value)
-                                          : null;
-                                    })
-                                : const SizedBox();
-                          }).toList()),
-                        )
-                      : const Center(
-                          child: Text("Cart is empty"),
-                        );
-                })),
-          );
-        });
+                      List<ToppingsSelection> list = [];
+                      RecipeDetailsModel? modell = RecipeDetailsModel.fromJson(
+                          jsonDecode(e.value.itemModel));
+                      return modell != null
+                          ? CartItemDetails(
+                              entity: e.value,
+                              recipeDetailsModel: modell,
+                              toppings: list,
+                              image: modell.image ?? "",
+                              selectedSize: e.value.selectedSize,
+                              selectedBase: e.value.selectedBase,
+                              total: e.value.total,
+                              quantity: e.value.itemQuantity,
+                              name: e.value.itemName,
+                              onDelete: (value) {
+                                value ? controller.deleteData(e.value) : null;
+                              })
+                          : const SizedBox();
+                    }).toList()),
+                  )
+                : const Center(
+                    child: Text("Cart is empty"),
+                  );
+          })),
+    );
   }
 }
 
@@ -151,6 +142,26 @@ class _CartItemDetailsState extends State<CartItemDetails> {
     );
   }
 
+  updateCartItem() {
+    RecipeDetailsModel? recipeDetailsModel = widget.recipeDetailsModel;
+    recipeDetailsModel?.recipes
+        ?.where((element) => element.size?.name == widget.selectedSize)
+        .firstOrNull
+        ?.toppings = toppingList;
+    log("${recipeDetailsModel?.recipes?.where((element) => element.size?.name == widget.selectedSize).firstOrNull?.id!}");
+    CartItemsEntity cartItemsEntity = CartItemsEntity(
+        id: widget.entity.id,
+        toppings: "toppingsJsonString",
+        itemModel: jsonEncode(recipeDetailsModel?.toJson()),
+        itemName: widget.name,
+        itemQuantity: defaultQuantity,
+        selectedBase: widget.selectedBase,
+        selectedSize: widget.selectedSize,
+        addon: toppingsT?.ceil() ?? 0,
+        total: (widget.total + (toppingsT?.ceil() ?? 0)) * defaultQuantity);
+    cartController.updateLocalCartItem(cartItemsEntity);
+  }
+
   getToppings() {
     toppingList = widget.selectedSize.isNotEmpty
         ? widget.recipeDetailsModel?.recipes
@@ -164,8 +175,8 @@ class _CartItemDetailsState extends State<CartItemDetails> {
   @override
   void initState() {
     super.initState();
-    toppingsTotal = widget.toppings
-        .fold(0.0, (sum, topping) => sum + (topping.addCost ?? 0.0));
+    /* toppingsTotal = widget.toppings
+        .fold(0.0, (sum, topping) => sum + (topping.addCost ?? 0.0));*/
     defaultQuantity = widget.quantity;
     getToppings();
   }
@@ -229,6 +240,7 @@ class _CartItemDetailsState extends State<CartItemDetails> {
                                     //log("------${cartController.cartItems.where((p0) => p0.id==widget.entity.id).first.total}");
                                     defaultQuantity = quantity;
                                   });
+                                  updateCartItem();
                                 },
                                 defaultQuantity: widget.quantity,
                               ),
@@ -243,7 +255,7 @@ class _CartItemDetailsState extends State<CartItemDetails> {
                 ),
               ],
             ),
-            widget.toppings.isNotEmpty
+            toppingList != null && toppingList!.isNotEmpty
                 ? GestureDetector(
                     onTap: () {
                       setState(() {
@@ -260,7 +272,7 @@ class _CartItemDetailsState extends State<CartItemDetails> {
                         ),
                         Expanded(
                             child: Text(
-                          "Toppings (${widget.toppings.length})",
+                          "Toppings (${toppingList != null && toppingList!.isNotEmpty ? toppingList?.where((element) => element.itemQuantity != 0).length : 0})",
                           style: TextStyle(fontSize: 14.sp),
                         )),
                         Text(toppingsT.toString())
@@ -288,15 +300,7 @@ class _CartItemDetailsState extends State<CartItemDetails> {
                                           e.value.itemQuantity?.ceil() ?? 0,
                                       onTap: (quantity) {
                                         setState(() {
-                                          if (quantity == 0 &&
-                                              toppingList![e.key]
-                                                      .defaultQuantity! >
-                                                  0.0) {
-                                            showCoomonErrorDialog(
-                                                title: "Toppings",
-                                                message:
-                                                    "Can not delete default toppings");
-                                          } else if (toppingList!
+                                          if (toppingList!
                                                   .where((element) =>
                                                       element.itemQuantity! >=
                                                       1)
@@ -311,6 +315,7 @@ class _CartItemDetailsState extends State<CartItemDetails> {
                                                 quantity.toDouble();
                                           }
                                         });
+                                        updateCartItem();
                                       },
                                     ),
                                   )
@@ -347,7 +352,7 @@ class _CartItemDetailsState extends State<CartItemDetails> {
               padding: const EdgeInsets.all(8.0),
               child: Row(
                 children: [
-                  widget.toppings.isNotEmpty
+                  toppingList != null && toppingList!.isNotEmpty
                       ? GestureDetector(
                           onTap: () {
                             Map<String, dynamic> arguments = {

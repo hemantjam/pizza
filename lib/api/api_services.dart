@@ -54,6 +54,49 @@ class ApiServices {
     return null;
   }
 
+  Future<ApiResponse?> putRequest<T>(
+      String endpoint, {
+        dynamic data,
+        Map<String, dynamic>? queryParameters,
+        String? token,
+      }) async {
+    Map<String, dynamic> logField = {
+      "endpoint": endpoint,
+      "queryParameters": queryParameters,
+      "data": data
+    };
+    try {
+      _dio.options.headers['Authorization'] =
+      'Bearer ${ApiEndPoints.authToken}';
+
+      final response = await _dio.put(endpoint,
+          data: data ?? '"' + data + '"', queryParameters: queryParameters);
+      if (response.statusCode == 200) {
+        ApiResponse apiResponse = ApiResponse<T>.fromJson(response.data);
+        if (apiResponse.status) {
+          return apiResponse;
+        } else if (!apiResponse.status) {
+          showCoomonErrorDialog(
+              title: "Something went wrong", message: apiResponse.message);
+        }
+        logField.addAll({"response": response.toString()});
+        AppLogs.add(logField.toString());
+      } else {
+        handleError({"status": "Error", "message": response.data["message"]});
+        logField.addAll({"error": "error in response code"});
+        AppLogs.add(logField.toString());
+      }
+    } catch (e) {
+      logField.addAll({"error": e.toString()});
+      AppLogs.add(logField.toString());
+      handleError(e);
+    }
+    return null;
+  }
+
+
+
+
   Future<ApiResponse?> postRequest<T>(
     String endpoint, {
     dynamic data,

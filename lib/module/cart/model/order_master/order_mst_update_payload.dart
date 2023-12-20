@@ -1,84 +1,89 @@
 // To parse this JSON data, do
 //
-//     final cartTrackingMstCreateModel = cartTrackingMstCreateModelFromJson(jsonString);
+//     final cartTrackingMstCreateModel = cartTrackingMstCreateModelFromJson(jsonString?);
 
 import 'dart:convert';
 
-OrderMstUpdatePayload cartTrackingMstCreateModelFromJson(String str) => OrderMstUpdatePayload.fromJson(json.decode(str));
+OrderMstUpdatePayload cartTrackingMstCreateModelFromJson(String? str) => OrderMstUpdatePayload.fromJson(json.decode(str!));
 
-String cartTrackingMstCreateModelToJson(OrderMstUpdatePayload data) => json.encode(data.toJson());
+String? cartTrackingMstCreateModelToJson(OrderMstUpdatePayload data) => json.encode(data.toJson());
 
 class OrderMstUpdatePayload {
   dynamic orderMst;
   OrderMstWebRequest? orderMstWebRequest;
 
   OrderMstUpdatePayload({
-     this.orderMst,
-     this.orderMstWebRequest,
-  });
+    this.orderMst,
+    this.orderMstWebRequest,
+  }) {
+    orderMstWebRequest ??= OrderMstWebRequest(); // Set a default value if null
+  }
 
-  factory OrderMstUpdatePayload.fromJson(Map<String, dynamic> json) => OrderMstUpdatePayload(
-    orderMst: json["orderMST"],
-    orderMstWebRequest: OrderMstWebRequest.fromJson(json["orderMSTWebRequest"]),
-  );
+  factory OrderMstUpdatePayload.fromJson(Map<String?, dynamic> json) =>
+      OrderMstUpdatePayload(
+        orderMst: json["orderMST"],
+        orderMstWebRequest:
+        OrderMstWebRequest.fromJson(json["orderMSTWebRequest"]),
+      );
 
-  Map<String, dynamic> toJson() => {
+  Map<String?, dynamic> toJson() => {
     "orderMST": orderMst,
     "orderMSTWebRequest": orderMstWebRequest?.toJson(),
   };
 }
 
+
 class OrderMstWebRequest {
-  String id;
-  int userId;
-  String orderType;
+  String? id;
+   int? userId;
+  String? orderType;
   dynamic timedOrder;
-  DateTime orderDate;
+  String? orderDate;
   dynamic orderTime;
-  bool expressOrder;
-  String otherInstrucation;
-  String deliveyInstrucation;
-  CustomerAddressDtl customerAddressDtl;
-  String customerName;
-  int surcharge;
-  int appliedAmount;
+  bool? expressOrder;
+  String? otherInstrucation;
+  String? deliveyInstrucation;
+  CustomerAddressDtl? customerAddressDtl;
+  String? customerName;
+   int? surcharge;
+   int? appliedAmount;
   dynamic paymentModeDiscount;
   dynamic paymentModeCharges;
   dynamic promoCodeDiscount;
-  String orderStageCode;
-  bool active;
-  List<OrderDtlWebRequestSet> orderDtlWebRequestSet;
-  List<dynamic> paymentModeWebRequestSet;
+  String? orderStageCode;
+  bool? active;
+  List<OrderDtlWebRequestSet>? orderDtlWebRequestSet;
+  List<dynamic>? paymentModeWebRequestSet;
 
   OrderMstWebRequest({
-    required this.id,
-    required this.userId,
-    required this.orderType,
-    required this.timedOrder,
-    required this.orderDate,
-    required this.orderTime,
-    required this.expressOrder,
-    required this.otherInstrucation,
-    required this.deliveyInstrucation,
-    required this.customerAddressDtl,
-    required this.customerName,
-    required this.surcharge,
-    required this.appliedAmount,
-    required this.paymentModeDiscount,
-    required this.paymentModeCharges,
-    required this.promoCodeDiscount,
-    required this.orderStageCode,
-    required this.active,
-    required this.orderDtlWebRequestSet,
-    required this.paymentModeWebRequestSet,
+      this.id,
+      this.userId,
+      this.orderType,
+      this.timedOrder,
+      this.orderDate,
+      this.orderTime,
+      this.expressOrder,
+      this.otherInstrucation,
+      this.deliveyInstrucation,
+      this.customerAddressDtl,
+      this.customerName,
+      this.surcharge,
+      this.appliedAmount,
+      this.paymentModeDiscount,
+      this.paymentModeCharges,
+      this.promoCodeDiscount,
+      this.orderStageCode,
+      this.active,
+      this.orderDtlWebRequestSet,
+      this.paymentModeWebRequestSet,
   });
 
-  factory OrderMstWebRequest.fromJson(Map<String, dynamic> json) => OrderMstWebRequest(
+  factory OrderMstWebRequest.fromJson(Map<String?, dynamic> json) => OrderMstWebRequest(
     id: json["id"],
     userId: json["userId"],
     orderType: json["orderType"],
     timedOrder: json["timedOrder"],
-    orderDate: DateTime.parse(json["orderDate"]),
+    orderDate: json["orderDate"],
     orderTime: json["orderTime"],
     expressOrder: json["expressOrder"],
     otherInstrucation: json["otherInstrucation"],
@@ -96,17 +101,17 @@ class OrderMstWebRequest {
     paymentModeWebRequestSet: List<dynamic>.from(json["paymentModeWebRequestSet"].map((x) => x)),
   );
 
-  Map<String, dynamic> toJson() => {
+  Map<String?, dynamic> toJson() => {
     "id": id,
     "userId": userId,
     "orderType": orderType,
     "timedOrder": timedOrder,
-    "orderDate": "${orderDate.year.toString().padLeft(4, '0')}-${orderDate.month.toString().padLeft(2, '0')}-${orderDate.day.toString().padLeft(2, '0')}",
+    "orderDate": orderDate,
     "orderTime": orderTime,
     "expressOrder": expressOrder,
     "otherInstrucation": otherInstrucation,
     "deliveyInstrucation": deliveyInstrucation,
-    "customerAddressDTL": customerAddressDtl.toJson(),
+    "customerAddressDTL": customerAddressDtl?.toJson(),
     "customerName": customerName,
     "surcharge": surcharge,
     "appliedAmount": appliedAmount,
@@ -115,49 +120,49 @@ class OrderMstWebRequest {
     "promoCodeDiscount": promoCodeDiscount,
     "orderStageCode": orderStageCode,
     "active": active,
-    "orderDTLWebRequestSet": List<dynamic>.from(orderDtlWebRequestSet.map((x) => x.toJson())),
-    "paymentModeWebRequestSet": List<dynamic>.from(paymentModeWebRequestSet.map((x) => x)),
+    "orderDTLWebRequestSet": List<dynamic>.from(orderDtlWebRequestSet?.map((x) => x.toJson())??[]),
+    "paymentModeWebRequestSet": List<dynamic>.from(paymentModeWebRequestSet?.map((x) => x)??[]),
   };
 }
 
 class CustomerAddressDtl {
-  bool active;
+  bool? active;
   dynamic address1;
   dynamic address2;
   dynamic customerAddressDtlId;
   dynamic customerAddressTitle;
   dynamic customerMst;
   dynamic customerMstId;
-  bool customerAddressDtlDefault;
+  bool? customerAddressDtlDefault;
   dynamic geoLocation;
-  int geographyMstId3;
-  int geographyMstId4;
-  int geographyMstId5;
-  String streetNumber;
+   int? geographyMstId3;
+   int? geographyMstId4;
+   int? geographyMstId5;
+  String? streetNumber;
   dynamic unitNumber;
   dynamic location;
-  String pincode;
+  String? pincode;
 
   CustomerAddressDtl({
-    required this.active,
-    required this.address1,
-    required this.address2,
-    required this.customerAddressDtlId,
-    required this.customerAddressTitle,
-    required this.customerMst,
-    required this.customerMstId,
-    required this.customerAddressDtlDefault,
-    required this.geoLocation,
-    required this.geographyMstId3,
-    required this.geographyMstId4,
-    required this.geographyMstId5,
-    required this.streetNumber,
-    required this.unitNumber,
-    required this.location,
-    required this.pincode,
+      this.active,
+      this.address1,
+      this.address2,
+      this.customerAddressDtlId,
+      this.customerAddressTitle,
+      this.customerMst,
+      this.customerMstId,
+      this.customerAddressDtlDefault,
+      this.geoLocation,
+      this.geographyMstId3,
+      this.geographyMstId4,
+      this.geographyMstId5,
+      this.streetNumber,
+      this.unitNumber,
+      this.location,
+      this.pincode,
   });
 
-  factory CustomerAddressDtl.fromJson(Map<String, dynamic> json) => CustomerAddressDtl(
+  factory CustomerAddressDtl.fromJson(Map<String?, dynamic> json) => CustomerAddressDtl(
     active: json["active"],
     address1: json["address1"],
     address2: json["address2"],
@@ -176,7 +181,7 @@ class CustomerAddressDtl {
     pincode: json["pincode"],
   );
 
-  Map<String, dynamic> toJson() => {
+  Map<String?, dynamic> toJson() => {
     "active": active,
     "address1": address1,
     "address2": address2,
@@ -197,43 +202,43 @@ class CustomerAddressDtl {
 }
 
 class OrderDtlWebRequestSet {
-  String id;
-  int itemMstId;
-  int recipeMstId;
-  int itemSide;
-  int qty;
-  String sortOrder;
-  String displayName;
+  String? id;
+   int? itemMstId;
+   int? recipeMstId;
+   int? itemSide;
+   int? qty;
+  String? sortOrder;
+  String? displayName;
   dynamic cookingInstruction;
-  int additionalValue;
-  int hnhSurcharge;
-  String orderDtlRefId;
+   int? additionalValue;
+   int? hnhSurcharge;
+  String? orderDtlRefId;
   dynamic comboRefId;
-  String orderStage;
-  bool active;
-  List<OrderRecipeItemWebRequestSet> orderRecipeItemWebRequestSet;
+  String? orderStage;
+  bool? active;
+  List<OrderRecipeItemWebRequestSet>? orderRecipeItemWebRequestSet;
   dynamic combSeq;
 
   OrderDtlWebRequestSet({
-    required this.id,
-    required this.itemMstId,
-    required this.recipeMstId,
-    required this.itemSide,
-    required this.qty,
-    required this.sortOrder,
-    required this.displayName,
-    required this.cookingInstruction,
-    required this.additionalValue,
-    required this.hnhSurcharge,
-    required this.orderDtlRefId,
-    required this.comboRefId,
-    required this.orderStage,
-    required this.active,
-    required this.orderRecipeItemWebRequestSet,
-    required this.combSeq,
+      this.id,
+      this.itemMstId,
+      this.recipeMstId,
+      this.itemSide,
+      this.qty,
+      this.sortOrder,
+      this.displayName,
+      this.cookingInstruction,
+      this.additionalValue,
+      this.hnhSurcharge,
+      this.orderDtlRefId,
+      this.comboRefId,
+      this.orderStage,
+      this.active,
+      this.orderRecipeItemWebRequestSet,
+      this.combSeq,
   });
 
-  factory OrderDtlWebRequestSet.fromJson(Map<String, dynamic> json) => OrderDtlWebRequestSet(
+  factory OrderDtlWebRequestSet.fromJson(Map<String?, dynamic> json) => OrderDtlWebRequestSet(
     id: json["id"],
     itemMstId: json["itemMSTId"],
     recipeMstId: json["recipeMSTId"],
@@ -252,7 +257,7 @@ class OrderDtlWebRequestSet {
     combSeq: json["combSeq"],
   );
 
-  Map<String, dynamic> toJson() => {
+  Map<String?, dynamic> toJson() => {
     "id": id,
     "itemMSTId": itemMstId,
     "recipeMSTId": recipeMstId,
@@ -267,46 +272,47 @@ class OrderDtlWebRequestSet {
     "comboRefId": comboRefId,
     "orderStage": orderStage,
     "active": active,
-    "orderRecipeItemWebRequestSet": List<dynamic>.from(orderRecipeItemWebRequestSet.map((x) => x.toJson())),
+    "orderRecipeItemWebRequestSet": List<dynamic>.from(orderRecipeItemWebRequestSet!.map((x) => x.toJson())),
     "combSeq": combSeq,
   };
 }
 
 class OrderRecipeItemWebRequestSet {
   dynamic id;
-  int recipeItemDtlId;
-  int qty;
-  int defaultQty;
-  int itemSide;
-  int sortOrder;
-  bool base;
-  bool active;
+  int? recipeItemDtlId;
+  int? qty;
+  int? defaultQty;
+  int? itemSide;
+  int? sortOrder;
+  bool? base;
+  bool? active;
 
   OrderRecipeItemWebRequestSet({
-    required this.id,
-    required this.recipeItemDtlId,
-    required this.qty,
-    required this.defaultQty,
-    required this.itemSide,
-    required this.sortOrder,
-    required this.base,
-    required this.active,
+    this.id,
+    this.recipeItemDtlId,
+    this.qty,
+    this.defaultQty,
+    this.itemSide,
+    this.sortOrder,
+    this.base,
+    this.active,
   });
 
-  factory OrderRecipeItemWebRequestSet.fromJson(Map<String, dynamic> json) => OrderRecipeItemWebRequestSet(
-    id: json["id"],
-    recipeItemDtlId: json["recipeItemDTLId"],
-    qty: json["qty"],
-    defaultQty: json["defaultQty"],
-    itemSide: json["itemSide"],
-    sortOrder: json["sortOrder"],
-    base: json["base"],
-    active: json["active"],
-  );
+  factory OrderRecipeItemWebRequestSet.fromJson(Map<String?, dynamic> json) =>
+      OrderRecipeItemWebRequestSet(
+        id: json["id"],
+        recipeItemDtlId: json["recipeItemDtlId"], // Corrected key here
+        qty: json["qty"],
+        defaultQty: json["defaultQty"],
+        itemSide: json["itemSide"],
+        sortOrder: json["sortOrder"],
+        base: json["base"],
+        active: json["active"],
+      );
 
-  Map<String, dynamic> toJson() => {
+  Map<String?, dynamic> toJson() => {
     "id": id,
-    "recipeItemDTLId": recipeItemDtlId,
+    "recipeItemDtlId": recipeItemDtlId, // Corrected key here
     "qty": qty,
     "defaultQty": defaultQty,
     "itemSide": itemSide,
@@ -315,3 +321,4 @@ class OrderRecipeItemWebRequestSet {
     "active": active,
   };
 }
+

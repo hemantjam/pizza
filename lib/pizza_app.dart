@@ -17,6 +17,7 @@ class PizzaApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return Sizer(builder: (context, orientation, deviceType) {
       return GetMaterialApp(
+       // smartManagement: SmartManagement.,
         title: AppStrings.appTitle,
         theme: ThemeData(
             primarySwatch: AppColors.primaryColor,

@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:get/get.dart';
 import 'package:pizza/module/menu/by_group_code/menu_by_group_code_model.dart';
 
@@ -7,7 +9,6 @@ import '../../local_storage/entity/cart_items_entity.dart';
 class CartController extends GetxController {
   RxList<CartItemsEntity> cartItems = <CartItemsEntity>[].obs;
 
-  //RxList<RecipeDetailsModel?> cartItemsList = <RecipeDetailsModel?>[].obs;
   int get cartItemsLength => cartItems.length;
 
   int get cartTotal => cartItems.fold(
@@ -22,6 +23,15 @@ class CartController extends GetxController {
     update();
   }
 
+  updateLocalCartItem(CartItemsEntity cartItemsEntity) async {
+    AppDatabase? database =
+        await $FloorAppDatabase.databaseBuilder('app_database.db').build();
+    if (!database.isBlank!) {
+      final cartItemsDao = database.cartItemsDoa;
+      cartItemsDao.updateCartItem(cartItemsEntity);
+    }
+  }
+
   @override
   onInit() {
     recipeDetailsModel = GetInstance()
@@ -32,14 +42,6 @@ class CartController extends GetxController {
     super.onInit();
     checkForOfflineData();
   }
-
- /* getModel() {
-    recipeDetailsModel = GetInstance()
-            .isRegistered<RecipeDetailsModel>(tag: "recipeDetailsModel")
-        ? Get.find<RecipeDetailsModel>(tag: "recipeDetailsModel")
-        : null;
-    update();
-  }*/
 
   @override
   onReady() {
@@ -59,7 +61,6 @@ class CartController extends GetxController {
   }
 
   checkForOfflineData() async {
-    // cartItemsList.clear();
     AppDatabase? database =
         await $FloorAppDatabase.databaseBuilder('app_database.db').build();
 
@@ -69,25 +70,23 @@ class CartController extends GetxController {
       List<CartItemsEntity> result = await cartItemsDao.findAllCartItems();
       if (result.isNotEmpty) {
         cartItems.value = result;
-        /* for (var element in cartItems) {
-          log("${element.id}");
-          log(element.itemName);
-          try {
-            cartItemsList.add(
-                RecipeDetailsModel.fromJson(jsonDecode(element.itemModel)));
-          } catch (e) {}
-        }*/
       }
     }
     update();
   }
 
-/*databaseToModel(List<CartItemsEntity> result) {
-    */ /*for (var element in result) {
-      String res = element.groupData;
-      Map<String, dynamic> resultMap = json.decode(res);
-      groupModelList[element.groupName] = GroupModel.fromJson(resultMap);
-    }*/ /*
-    update();
-  }*/
+  Future<List<CartItemsEntity>> getModelsList() async {
+    final database =
+        await $FloorAppDatabase.databaseBuilder('app_database.db').build();
+
+    if (!database.isBlank!) {
+      final cartItemsDao = database.cartItemsDoa;
+      final result = await cartItemsDao.findAllCartItems();
+
+      if (result.isNotEmpty) {
+       return result;
+      }
+    }
+    return [];
+  }
 }
