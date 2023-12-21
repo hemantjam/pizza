@@ -65,6 +65,8 @@ class _$AppDatabase extends AppDatabase {
 
   CartItemsDao? _cartItemsDoaInstance;
 
+  OrderCreateResponseDoa? _orderCreateResponseDoaInstance;
+
   Future<sqflite.Database> open(
     String path,
     List<Migration> migrations, [
@@ -90,6 +92,8 @@ class _$AppDatabase extends AppDatabase {
             'CREATE TABLE IF NOT EXISTS `MenuDetailsEntity` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `groupName` TEXT NOT NULL, `groupData` TEXT NOT NULL)');
         await database.execute(
             'CREATE TABLE IF NOT EXISTS `CartItemsEntity` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `itemName` TEXT NOT NULL, `itemQuantity` INTEGER NOT NULL, `selectedBase` TEXT NOT NULL, `selectedSize` TEXT NOT NULL, `addon` INTEGER NOT NULL, `total` INTEGER NOT NULL, `itemModel` TEXT NOT NULL, `toppings` TEXT NOT NULL)');
+        await database.execute(
+            'CREATE TABLE IF NOT EXISTS `OrderCreateResponseEntity` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `resData` TEXT NOT NULL, `resId` TEXT NOT NULL)');
 
         await callback?.onCreate?.call(database, version);
       },
@@ -106,6 +110,12 @@ class _$AppDatabase extends AppDatabase {
   @override
   CartItemsDao get cartItemsDoa {
     return _cartItemsDoaInstance ??= _$CartItemsDao(database, changeListener);
+  }
+
+  @override
+  OrderCreateResponseDoa get orderCreateResponseDoa {
+    return _orderCreateResponseDoaInstance ??=
+        _$OrderCreateResponseDoa(database, changeListener);
   }
 }
 
@@ -295,5 +305,101 @@ class _$CartItemsDao extends CartItemsDao {
   Future<int> deleteAllCart(List<CartItemsEntity> cartItemsEntity) {
     return _cartItemsEntityDeletionAdapter
         .deleteListAndReturnChangedRows(cartItemsEntity);
+  }
+}
+
+class _$OrderCreateResponseDoa extends OrderCreateResponseDoa {
+  _$OrderCreateResponseDoa(
+    this.database,
+    this.changeListener,
+  )   : _queryAdapter = QueryAdapter(database),
+        _orderCreateResponseEntityInsertionAdapter = InsertionAdapter(
+            database,
+            'OrderCreateResponseEntity',
+            (OrderCreateResponseEntity item) => <String, Object?>{
+                  'id': item.id,
+                  'resData': item.resData,
+                  'resId': item.resId
+                }),
+        _orderCreateResponseEntityUpdateAdapter = UpdateAdapter(
+            database,
+            'OrderCreateResponseEntity',
+            ['id'],
+            (OrderCreateResponseEntity item) => <String, Object?>{
+                  'id': item.id,
+                  'resData': item.resData,
+                  'resId': item.resId
+                }),
+        _orderCreateResponseEntityDeletionAdapter = DeletionAdapter(
+            database,
+            'OrderCreateResponseEntity',
+            ['id'],
+            (OrderCreateResponseEntity item) => <String, Object?>{
+                  'id': item.id,
+                  'resData': item.resData,
+                  'resId': item.resId
+                });
+
+  final sqflite.DatabaseExecutor database;
+
+  final StreamController<String> changeListener;
+
+  final QueryAdapter _queryAdapter;
+
+  final InsertionAdapter<OrderCreateResponseEntity>
+      _orderCreateResponseEntityInsertionAdapter;
+
+  final UpdateAdapter<OrderCreateResponseEntity>
+      _orderCreateResponseEntityUpdateAdapter;
+
+  final DeletionAdapter<OrderCreateResponseEntity>
+      _orderCreateResponseEntityDeletionAdapter;
+
+  @override
+  Future<OrderCreateResponseEntity?> findById(String id) async {
+    return _queryAdapter.query(
+        'SELECT * FROM OrderCreateResponseEntity WHERE resId = ?1',
+        mapper: (Map<String, Object?> row) => OrderCreateResponseEntity(
+            resData: row['resData'] as String,
+            resId: row['resId'] as String,
+            id: row['id'] as int?),
+        arguments: [id]);
+  }
+
+  @override
+  Future<List<OrderCreateResponseEntity>> findAll() async {
+    return _queryAdapter.queryList('SELECT * FROM OrderCreateResponseEntity',
+        mapper: (Map<String, Object?> row) => OrderCreateResponseEntity(
+            resData: row['resData'] as String,
+            resId: row['resId'] as String,
+            id: row['id'] as int?));
+  }
+
+  @override
+  Future<void> insertResData(
+      OrderCreateResponseEntity orderCreateResponseEntity) async {
+    await _orderCreateResponseEntityInsertionAdapter.insert(
+        orderCreateResponseEntity, OnConflictStrategy.abort);
+  }
+
+  @override
+  Future<void> updateResData(
+      OrderCreateResponseEntity orderCreateResponseEntity) async {
+    await _orderCreateResponseEntityUpdateAdapter.update(
+        orderCreateResponseEntity, OnConflictStrategy.replace);
+  }
+
+  @override
+  Future<void> deleteSingleResData(
+      OrderCreateResponseEntity orderCreateResponseEntity) async {
+    await _orderCreateResponseEntityDeletionAdapter
+        .delete(orderCreateResponseEntity);
+  }
+
+  @override
+  Future<int> deleteAllResData(
+      List<OrderCreateResponseEntity> orderCreateResponseEntities) {
+    return _orderCreateResponseEntityDeletionAdapter
+        .deleteListAndReturnChangedRows(orderCreateResponseEntities);
   }
 }

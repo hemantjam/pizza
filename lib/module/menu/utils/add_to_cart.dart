@@ -81,7 +81,7 @@ orderDetailsCreate(
   payload.sortOrder = 1;
   payload.orderMSTId = orderMSTId;
   payload.orderDTLRefId = "1";
-  log("----->payload--->${payload.toMap()}");
+  //log("----->payload--->${payload.toMap()}");
   ApiResponse? res = await _apiServices.postRequest(
       ApiEndPoints.orderDetailsCreate,
       data: jsonEncode(payload.toMap()));
@@ -89,6 +89,7 @@ orderDetailsCreate(
     AddToCartResponseModel addToCartResponseModel =
         AddToCartResponseModel.fromMap(res.toJson());
     Get.put<AddToCartResponseModel>(addToCartResponseModel, permanent: true);
+    log("order detail create response--->${addToCartResponseModel.toMap()}");
     bool? notified = await notifySSE();
     if (notified != null && notified) {
       addToLocalDb(
@@ -147,8 +148,8 @@ addToLocalDb(
     total: total,
   );
   await cartItemsDoa.insertCartItem(entity);
- /* CartController controller = CartController();
-  controller.checkForOfflineData();*/
+  CartController controller = Get.find();
+  controller.checkForOfflineData();
   showCoomonErrorDialog(
       title: "Success", message: "Successfully added to cart");
 }

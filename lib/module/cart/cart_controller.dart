@@ -1,4 +1,4 @@
-import 'dart:convert';
+import 'dart:developer';
 
 import 'package:get/get.dart';
 import 'package:pizza/module/menu/by_group_code/menu_by_group_code_model.dart';
@@ -61,6 +61,7 @@ class CartController extends GetxController {
   }
 
   checkForOfflineData() async {
+    log("checking for offline database------->");
     AppDatabase? database =
         await $FloorAppDatabase.databaseBuilder('app_database.db').build();
 
@@ -72,6 +73,7 @@ class CartController extends GetxController {
         cartItems.value = result;
       }
     }
+
     update();
   }
 
@@ -84,7 +86,7 @@ class CartController extends GetxController {
       final result = await cartItemsDao.findAllCartItems();
 
       if (result.isNotEmpty) {
-       return result;
+        return result;
       }
     }
     return [];

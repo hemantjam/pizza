@@ -9,9 +9,9 @@ import 'package:pizza/module/user/logged_in_user/logged_in_user_model.dart';
 
 import '../../../api/api_response.dart';
 import '../../../api/end_point.dart';
-import '../../cart/utils/cart_tracking_model.dart';
 import '../../cart/model/order_master/order_master_create_model.dart';
 import '../../cart/model/order_master/order_master_create_payload.dart';
+import '../../cart/utils/cart_tracking_model.dart';
 import '../../user/widgets/loader.dart';
 
 ApiServices apiServices = ApiServices();
@@ -87,6 +87,8 @@ orderMasterCreateApi({
       data: jsonEncode(payload.toMap()));
 
   if (res != null) {
+    log("order master create success------->");
+    log("order master create response-${res.toJson()}------>");
     if (res.status) {
       final orderMasterCreateModel =
           OrderMasterCreateModel.fromMap(res.toJson());
@@ -96,6 +98,7 @@ orderMasterCreateApi({
       await cartMasterTracking(orderMasterCreateModel.data?.id ?? "");
       showCommonLoading(false);
       log("order master create success------->");
+      log("order mst create model --->${orderMasterCreateModel.toMap()}");
       Get.back();
     }
   } else {

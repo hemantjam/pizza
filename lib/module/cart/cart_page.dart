@@ -21,8 +21,12 @@ class CartPage extends GetView<CartController> {
 
   @override
   Widget build(BuildContext context) {
+    controller.checkForOfflineData();
     return SafeArea(
       child: Scaffold(
+         /* floatingActionButton: FloatingActionButton(
+            onPressed: controller.checkForOfflineData,
+          ),*/
           bottomNavigationBar: cartDetailsBottomBar(true, true, () async {
             List<CartItemsEntity> modelList = await controller.getModelsList();
             CheckOut.cartUpdate(modelList);
@@ -39,40 +43,36 @@ class CartPage extends GetView<CartController> {
           ),
           body: Obx(() {
             return controller.cartItems.isNotEmpty
-                ? SingleChildScrollView(
-                    key: UniqueKey(),
-                    child: Column(
-                        children: controller.cartItems.asMap().entries.map((e) {
-                      String toppingsJsonString = e.value.toppings;
-                      /*  List<dynamic> toppingsJsonList =
-                                jsonDecode(toppingsJsonString);*/
-                      /*List<ToppingsSelection> selectedToppingsList =
-                                toppingsJsonList
-                                    .map((toppingJson) =>
-                                        ToppingsSelection.fromJson(toppingJson))
-                                    .toList();*/
-                      /*TestRecipeDetailsModel? model =
-                              TestRecipeDetailsModel.fromJson(
-                                  jsonDecode(e.value.itemModel));*/
-                      List<ToppingsSelection> list = [];
-                      RecipeDetailsModel? modell = RecipeDetailsModel.fromJson(
-                          jsonDecode(e.value.itemModel));
-                      return modell != null
-                          ? CartItemDetails(
-                              entity: e.value,
-                              recipeDetailsModel: modell,
-                              toppings: list,
-                              image: modell.image ?? "",
-                              selectedSize: e.value.selectedSize,
-                              selectedBase: e.value.selectedBase,
-                              total: e.value.total,
-                              quantity: e.value.itemQuantity,
-                              name: e.value.itemName,
-                              onDelete: (value) {
-                                value ? controller.deleteData(e.value) : null;
-                              })
-                          : const SizedBox();
-                    }).toList()),
+                ? RefreshIndicator(
+                    onRefresh: () async {},
+                    child: SingleChildScrollView(
+                      physics: BouncingScrollPhysics(),
+                      primary: true,
+                      key: UniqueKey(),
+                      child: Column(
+                          children:
+                              controller.cartItems.asMap().entries.map((e) {
+                        List<ToppingsSelection> list = [];
+                        RecipeDetailsModel? modell =
+                            RecipeDetailsModel.fromJson(
+                                jsonDecode(e.value.itemModel));
+                        return modell != null
+                            ? CartItemDetails(
+                                entity: e.value,
+                                recipeDetailsModel: modell,
+                                toppings: list,
+                                image: modell.image ?? "",
+                                selectedSize: e.value.selectedSize,
+                                selectedBase: e.value.selectedBase,
+                                total: e.value.total,
+                                quantity: e.value.itemQuantity,
+                                name: e.value.itemName,
+                                onDelete: (value) {
+                                  value ? controller.deleteData(e.value) : null;
+                                })
+                            : const SizedBox();
+                      }).toList()),
+                    ),
                   )
                 : const Center(
                     child: Text("Cart is empty"),
