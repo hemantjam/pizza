@@ -16,7 +16,7 @@ class DeliveryNowPage extends GetView<DeliveryNowController> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 2,horizontal: 5),
+        padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 5),
         child: Form(
           key: controller.formKey,
           child: SingleChildScrollView(
@@ -94,13 +94,11 @@ class DeliveryNowPage extends GetView<DeliveryNowController> {
                           ),
                         );
                         if (item != null) {
-                          controller.streetNameGeoId =
-                              item.geographyMstId;
+                          controller.streetNameGeoId = item.geographyMstId;
                           controller.subUrbGeoId =
                               item.parentGeographyMst!.geographyMstId;
                           controller.postCodeGeoId = item.parentGeographyMst
-                              ?.parentGeographyMst?.geographyMstId
-                          ;
+                              ?.parentGeographyMst?.geographyMstId;
                           controller.streetNameController.text =
                               "${item.geographyName ?? ""} - ${item.parentGeographyMst != null ? item.parentGeographyMst!.geographyName : ""}";
                           controller.postCodeController.text = item
@@ -156,7 +154,7 @@ class DeliveryNowPage extends GetView<DeliveryNowController> {
       bottomNavigationBar: Obx(() {
         return OrderButton(
           enable: !controller.storeOff.value,
-          onTap: ()async {
+          onTap: () async {
             if (controller.formKey.currentState!.validate()) {
               if (controller.rememberAddress.value) {
                 List<String> address = [
@@ -169,10 +167,8 @@ class DeliveryNowPage extends GetView<DeliveryNowController> {
               } else if (!controller.rememberAddress.value) {
                 SharedPref.deleteData("now");
               }
-             await controller.orderCreateApi();
-              //showCoomonErrorDialog(title: "Success", message: "Order Successful");
-             Get.back();
-             // controller.formKey.currentState?.reset();
+               controller.saveOrderType();
+             // Get.back();
             }
           },
         );

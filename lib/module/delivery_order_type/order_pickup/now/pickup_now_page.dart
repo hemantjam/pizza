@@ -70,8 +70,8 @@ class PickUpNowPage extends GetView<PickUpNowController> {
           enable: !controller.storeOff.value,
           onTap: () async{
             if (controller.formKey.currentState!.validate()) {
-            await  controller.orderCreateApi();
-            Get.back();
+              controller.orderCreateApi();
+            //Get.back();
             }
 
             // showCoomonErrorDialog(title: "Success", message: "Order Successful");

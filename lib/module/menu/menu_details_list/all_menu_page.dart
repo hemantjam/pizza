@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_blurhash/flutter_blurhash.dart';
@@ -7,23 +5,21 @@ import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:pizza/constants/route_names.dart';
 import 'package:pizza/module/cart/cart_controller.dart';
-import 'package:pizza/widgets/common_dialog.dart';
 import 'package:sizer/sizer.dart';
 
 import '../../../constants/assets.dart';
 import '../../cart/model/order_master/order_master_create_model.dart';
+import '../../cart/utils/add_to_cart.dart';
 import '../../cart/widget/cart_details_bottom_bar.dart';
 import '../../delivery_order_type/delivery_order_type_options.dart';
 import '../by_group_code/menu_by_group_code_model.dart';
 import '../menu_model.dart';
-import '../utils/add_to_cart.dart';
 import '../utils/calculate_tax.dart';
 import 'menu_details_controller.dart';
 
 class AllMenuPage extends GetView<MenuDetailsController> {
   AllMenuPage({Key? key}) : super(key: key);
-  CartController cartController =
-      Get.find<CartController>();
+  CartController cartController = Get.find<CartController>();
 
   @override
   Widget build(BuildContext context) {
@@ -63,18 +59,18 @@ class AllMenuPage extends GetView<MenuDetailsController> {
           child: Padding(
             padding: const EdgeInsets.only(right: 10, top: 10),
             child: GetBuilder<CartController>(
-               // init: CartController(),
+                // init: CartController(),
                 builder: (logic) {
-                  return Badge(
-                    label: Obx(() {
-                      return Text(logic.cartItems.length.toString());
-                    }),
-                    child: SvgPicture.asset(
-                      Assets.bottomCart,
-                      color: Colors.black,
-                    ),
-                  );
+              return Badge(
+                label: Obx(() {
+                  return Text(logic.cartItems.length.toString());
                 }),
+                child: SvgPicture.asset(
+                  Assets.bottomCart,
+                  color: Colors.black,
+                ),
+              );
+            }),
           ),
         )
       ],
@@ -605,25 +601,6 @@ class _MenuItemDetailsState extends State<MenuItemDetails> {
                         padding: const EdgeInsets.symmetric(horizontal: 50),
                       ),
                       onPressed: () async {
-                        await showModalBottomSheet(
-                            useSafeArea: true,
-                            shape: const RoundedRectangleBorder(
-                              borderRadius: BorderRadius.only(
-                                topLeft: Radius.circular(20),
-                                topRight: Radius.circular(20),
-                              ),
-                            ),
-                            showDragHandle: true,
-                            context: context,
-                            builder: (context) {
-                              return const Padding(
-                                padding: EdgeInsets.only(bottom: 10),
-                                child: OrderDeliveryTypeOption(
-                                  navigationBack: true,
-                                  elevation: 0,
-                                ),
-                              );
-                            });
                         OrderMasterCreateModel? orderMasterCreateModel =
                             GetInstance().isRegistered<OrderMasterCreateModel>(
                                     tag: "orderMasterCreateModel")
@@ -631,39 +608,44 @@ class _MenuItemDetailsState extends State<MenuItemDetails> {
                                     tag: "orderMasterCreateModel")
                                 : null;
                         RecipeDetailsModel model = widget.value;
-                        log("=====${orderMasterCreateModel?.data?.id.toString()}");
-                        if (orderMasterCreateModel?.data?.id! != null) {
+                        if (orderMasterCreateModel != null &&
+                            orderMasterCreateModel.data?.orderType != null) {
                           await orderDetailsCreate(
-                              model,
-                              defaultQuantity,
-                              selectedBase,
-                              selectedSize,
-                              orderMasterCreateModel?.data?.id,
-                              //  cartController,
-                              ((calculateTotalPrice(basePrice, tax) + addOn) *
-                                      defaultQuantity)
-                                  .ceil(),
-                              null);
-                          /* if (success) {
-                            */ /*await controller.addToLocalDb(
-                                recipeValue: model.recipes
-                                    ?.where((element) =>
-                                        element.size?.name == selectedSize)
-                                    .first,
-                                name: model.name ?? "",
-                                quantity: defaultQuantity,
-                                recipeDetailsModel: jsonEncode(model.toJson()),
-                                addon: addOn.toInt(),
-                                total: ((calculateTotalPrice(basePrice, tax) +
-                                            addOn) *
-                                        defaultQuantity)
-                                    .ceil(),
-                                selectedBase: selectedBase ?? "",
-                                selectedSize: selectedSize ?? "");*/ /*
-                          }*/
+                            model,
+                            defaultQuantity,
+                            selectedBase,
+                            selectedSize,
+                            orderMasterCreateModel.data?.id,
+                            calculateTotalPrice(basePrice, tax),
+                          );
                         } else {
-                          showCoomonErrorDialog(
-                              title: "Error", message: "Something went wrong");
+                          await showModalBottomSheet(
+                              useSafeArea: true,
+                              shape: const RoundedRectangleBorder(
+                                borderRadius: BorderRadius.only(
+                                  topLeft: Radius.circular(20),
+                                  topRight: Radius.circular(20),
+                                ),
+                              ),
+                              showDragHandle: true,
+                              context: context,
+                              builder: (context) {
+                                return const Padding(
+                                  padding: EdgeInsets.only(bottom: 10),
+                                  child: OrderDeliveryTypeOption(
+                                    navigationBack: true,
+                                    elevation: 0,
+                                  ),
+                                );
+                              });
+                          await orderDetailsCreate(
+                            model,
+                            defaultQuantity,
+                            selectedBase,
+                            selectedSize,
+                            orderMasterCreateModel?.data?.id,
+                            calculateTotalPrice(basePrice, tax),
+                          );
                         }
                       },
                       child: const Text("Add To Cart"),

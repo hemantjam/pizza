@@ -91,7 +91,7 @@ class _$AppDatabase extends AppDatabase {
         await database.execute(
             'CREATE TABLE IF NOT EXISTS `MenuDetailsEntity` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `groupName` TEXT NOT NULL, `groupData` TEXT NOT NULL)');
         await database.execute(
-            'CREATE TABLE IF NOT EXISTS `CartItemsEntity` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `itemName` TEXT NOT NULL, `itemQuantity` INTEGER NOT NULL, `selectedBase` TEXT NOT NULL, `selectedSize` TEXT NOT NULL, `addon` INTEGER NOT NULL, `total` INTEGER NOT NULL, `itemModel` TEXT NOT NULL, `toppings` TEXT NOT NULL)');
+            'CREATE TABLE IF NOT EXISTS `CartItemsEntity` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `itemName` TEXT NOT NULL, `itemQuantity` INTEGER NOT NULL, `selectedBase` TEXT NOT NULL, `selectedSize` TEXT NOT NULL, `addon` INTEGER NOT NULL, `basePrice` INTEGER NOT NULL, `itemModel` TEXT NOT NULL, `orderCreateResponse` TEXT NOT NULL, `isOffer` INTEGER NOT NULL)');
         await database.execute(
             'CREATE TABLE IF NOT EXISTS `OrderCreateResponseEntity` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `resData` TEXT NOT NULL, `resId` TEXT NOT NULL)');
 
@@ -221,9 +221,10 @@ class _$CartItemsDao extends CartItemsDao {
                   'selectedBase': item.selectedBase,
                   'selectedSize': item.selectedSize,
                   'addon': item.addon,
-                  'total': item.total,
+                  'basePrice': item.basePrice,
                   'itemModel': item.itemModel,
-                  'toppings': item.toppings
+                  'orderCreateResponse': item.orderCreateResponse,
+                  'isOffer': item.isOffer ? 1 : 0
                 }),
         _cartItemsEntityUpdateAdapter = UpdateAdapter(
             database,
@@ -236,9 +237,10 @@ class _$CartItemsDao extends CartItemsDao {
                   'selectedBase': item.selectedBase,
                   'selectedSize': item.selectedSize,
                   'addon': item.addon,
-                  'total': item.total,
+                  'basePrice': item.basePrice,
                   'itemModel': item.itemModel,
-                  'toppings': item.toppings
+                  'orderCreateResponse': item.orderCreateResponse,
+                  'isOffer': item.isOffer ? 1 : 0
                 }),
         _cartItemsEntityDeletionAdapter = DeletionAdapter(
             database,
@@ -251,9 +253,10 @@ class _$CartItemsDao extends CartItemsDao {
                   'selectedBase': item.selectedBase,
                   'selectedSize': item.selectedSize,
                   'addon': item.addon,
-                  'total': item.total,
+                  'basePrice': item.basePrice,
                   'itemModel': item.itemModel,
-                  'toppings': item.toppings
+                  'orderCreateResponse': item.orderCreateResponse,
+                  'isOffer': item.isOffer ? 1 : 0
                 });
 
   final sqflite.DatabaseExecutor database;
@@ -272,14 +275,15 @@ class _$CartItemsDao extends CartItemsDao {
   Future<List<CartItemsEntity>> findAllCartItems() async {
     return _queryAdapter.queryList('SELECT * FROM CartItemsEntity',
         mapper: (Map<String, Object?> row) => CartItemsEntity(
-            toppings: row['toppings'] as String,
+            orderCreateResponse: row['orderCreateResponse'] as String,
             itemModel: row['itemModel'] as String,
             itemName: row['itemName'] as String,
             itemQuantity: row['itemQuantity'] as int,
             selectedBase: row['selectedBase'] as String,
             selectedSize: row['selectedSize'] as String,
             addon: row['addon'] as int,
-            total: row['total'] as int,
+            basePrice: row['basePrice'] as int,
+            isOffer: (row['isOffer'] as int) != 0,
             id: row['id'] as int?));
   }
 

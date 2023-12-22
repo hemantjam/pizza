@@ -179,3 +179,99 @@ class Data {
         "active": active,
       };
 }
+
+CustomerAddressDtl customerAddressDtlFromJson(String str) => CustomerAddressDtl.fromJson(json.decode(str));
+
+String customerAddressDtlToJson(CustomerAddressDtl data) => json.encode(data.toJson());
+
+class CustomerAddressDtl {
+  CustomerAddressDtlClass? customerAddressDtl;
+
+  CustomerAddressDtl({
+    this.customerAddressDtl,
+  });
+
+  factory CustomerAddressDtl.fromJson(Map<String, dynamic> json) => CustomerAddressDtl(
+    customerAddressDtl: json["customerAddressDTL"] == null ? null : CustomerAddressDtlClass.fromJson(json["customerAddressDTL"]),
+  );
+
+  Map<String, dynamic> toJson() => {
+    "customerAddressDTL": customerAddressDtl?.toJson(),
+  };
+}
+
+class CustomerAddressDtlClass {
+  bool? active;
+  dynamic address1;
+  dynamic address2;
+  dynamic customerAddressDtlId;
+  dynamic customerAddressTitle;
+  dynamic customerMst;
+  dynamic customerMstId;
+  bool? customerAddressDtlDefault;
+  dynamic geoLocation;
+  int? geographyMstId3;
+  int? geographyMstId4;
+  int? geographyMstId5;
+  String? streetNumber;
+  dynamic unitNumber;
+  dynamic location;
+  String? pincode;
+
+  CustomerAddressDtlClass({
+    this.active,
+    this.address1,
+    this.address2,
+    this.customerAddressDtlId,
+    this.customerAddressTitle,
+    this.customerMst,
+    this.customerMstId,
+    this.customerAddressDtlDefault,
+    this.geoLocation,
+    this.geographyMstId3,
+    this.geographyMstId4,
+    this.geographyMstId5,
+    this.streetNumber,
+    this.unitNumber,
+    this.location,
+    this.pincode,
+  });
+
+  factory CustomerAddressDtlClass.fromJson(Map<String, dynamic> json) => CustomerAddressDtlClass(
+    active: json["active"],
+    address1: json["address1"],
+    address2: json["address2"],
+    customerAddressDtlId: json["customerAddressDTLId"],
+    customerAddressTitle: json["customerAddressTitle"],
+    customerMst: json["customerMST"],
+    customerMstId: json["customerMSTId"],
+    customerAddressDtlDefault: json["default"],
+    geoLocation: json["geoLocation"],
+    geographyMstId3: json["geographyMSTId3"],
+    geographyMstId4: json["geographyMSTId4"],
+    geographyMstId5: json["geographyMSTId5"],
+    streetNumber: json["streetNumber"],
+    unitNumber: json["unitNumber"],
+    location: json["location"],
+    pincode: json["pincode"],
+  );
+
+  Map<String, dynamic> toJson() => {
+    "active": active,
+    "address1": address1,
+    "address2": address2,
+    "customerAddressDTLId": customerAddressDtlId,
+    "customerAddressTitle": customerAddressTitle,
+    "customerMST": customerMst,
+    "customerMSTId": customerMstId,
+    "default": customerAddressDtlDefault,
+    "geoLocation": geoLocation,
+    "geographyMSTId3": geographyMstId3,
+    "geographyMSTId4": geographyMstId4,
+    "geographyMSTId5": geographyMstId5,
+    "streetNumber": streetNumber,
+    "unitNumber": unitNumber,
+    "location": location,
+    "pincode": pincode,
+  };
+}

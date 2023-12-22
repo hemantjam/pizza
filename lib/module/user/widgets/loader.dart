@@ -8,14 +8,13 @@ Widget loader(bool loading) {
     child: const CommonLoading(),
   );
 }
-showCommonLoading(bool show){
-  return show?Get.dialog(const CommonLoading()):null;
+
+showCommonLoading(bool show) {
+  return show ? Get.dialog(const CommonLoading()) : null;
 }
 
 class CommonLoading extends StatelessWidget {
-  const CommonLoading({
-    super.key,
-  });
+  const CommonLoading({super.key});
 
   @override
   Widget build(BuildContext context) {

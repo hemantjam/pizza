@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
+import 'package:pizza/module/user/widgets/loader.dart';
 
 import '../../../../api/api_services.dart';
 import '../../../../local_storage/shared_pref.dart';
@@ -150,18 +151,19 @@ class DeliveryNowController extends GetxController {
     }
   }
 
-  orderCreateApi() {
+  saveOrderType() {
+    showCommonLoading(true);
     orderMasterCreateApi(
-
-        orderTypeCode: "OT01",
-        streetNumber: streetNumberController.text,
-        unitNUmber: unitController.text,
-        pinCode: int.parse(postCodeController.text),
-        gt1: streetNameGeoId,
-        gt2: subUrbGeoId,
-        gt3: postCodeGeoId
-
-        );
+      timedOrder: false,
+      orderTypeCode: "OT02",
+      streetNumber: streetNumberController.text,
+      unitNUmber: unitController.text,
+      pinCode: int.parse(postCodeController.text),
+      gt1: streetNameGeoId,
+      gt2: subUrbGeoId,
+      gt3: postCodeGeoId,
+    );
+    Get.isDialogOpen ?? false ? Get.back() : null;
   }
 /*orderMasterCreateApi() async {
     showCommonLoading(true);

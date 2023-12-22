@@ -14,7 +14,7 @@ class CartController extends GetxController {
   int get cartTotal => cartItems.fold(
       0,
       (previousValue, element) =>
-          previousValue + (element.total * element.itemQuantity));
+          previousValue + (element.basePrice * element.itemQuantity));
   RecipeDetailsModel? recipeDetailsModel;
 
   updateTotal(int id, int quantity) {

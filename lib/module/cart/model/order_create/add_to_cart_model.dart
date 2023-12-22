@@ -11,7 +11,7 @@ String addToCartResponseModelToMap(AddToCartResponseModel data) => json.encode(d
 class AddToCartResponseModel {
   String? message;
   bool? status;
-  Data? data;
+  AddToCartResponseData? data;
 
   AddToCartResponseModel({
     this.message,
@@ -22,7 +22,7 @@ class AddToCartResponseModel {
   factory AddToCartResponseModel.fromMap(Map<String, dynamic> json) => AddToCartResponseModel(
     message: json["message"],
     status: json["status"],
-    data: json["data"] == null ? null : Data.fromMap(json["data"]),
+    data: json["data"] == null ? null : AddToCartResponseData.fromMap(json["data"]),
   );
 
   Map<String, dynamic> toMap() => {
@@ -32,7 +32,7 @@ class AddToCartResponseModel {
   };
 }
 
-class Data {
+class AddToCartResponseData {
   dynamic endTime;
   String? orderAddress;
   dynamic deliveyInstrucation;
@@ -63,7 +63,7 @@ class Data {
   dynamic remarks;
   bool? active;
 
-  Data({
+  AddToCartResponseData({
     this.endTime,
     this.orderAddress,
     this.deliveyInstrucation,
@@ -95,7 +95,7 @@ class Data {
     this.active,
   });
 
-  factory Data.fromMap(Map<String, dynamic> json) => Data(
+  factory AddToCartResponseData.fromMap(Map<String, dynamic> json) => AddToCartResponseData(
     endTime: json["endTime"],
     orderAddress: json["orderAddress"],
     deliveyInstrucation: json["deliveyInstrucation"],

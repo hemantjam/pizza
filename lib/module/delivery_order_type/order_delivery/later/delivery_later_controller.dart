@@ -171,7 +171,8 @@ class DeliveryLaterController extends GetxController {
 
   orderCreateApi() {
     orderMasterCreateApi(
-        orderTypeCode: "OT01",
+      timedOrder: true,
+        orderTypeCode: "OT02",
         streetNumber: streetNumberController.text,
         unitNUmber: unitController.text,
         pinCode: int.parse(postCodeController.text),

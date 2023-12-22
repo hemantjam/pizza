@@ -177,7 +177,8 @@ class PickUpLaterController extends GetxController {
 
   orderCreateApi() {
     orderMasterCreateApi(
-        orderTypeCode: "OT02",
+        timedOrder: true,
+        orderTypeCode: "OT01",
         time: timeController.text,
         date: dateController.text);
   }

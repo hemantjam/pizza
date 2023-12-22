@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:developer';
 
 import 'package:get/get.dart';
 import 'package:intl/date_symbol_data_local.dart';
@@ -19,6 +18,7 @@ ApiServices apiServices = ApiServices();
 orderMasterCreateApi({
   String? date,
   required String orderTypeCode,
+  required bool timedOrder,
   String? time,
   String? streetNumber,
   String? unitNUmber,
@@ -47,72 +47,56 @@ orderMasterCreateApi({
     formattedTime = DateFormat('HH:mm:ss').format(parsedTime);
   }
   payload.orderMstWebRequest = OrderMstWebRequest();
-  payload.orderMstWebRequest!.orderDate = date == null
+  payload.orderMstWebRequest?.orderDate = date == null
       ? ""
       : "${dateTime?.year}-${dateTime?.month}-${dateTime?.day}";
-  payload.orderMstWebRequest!.orderTime = time == null ? "" : formattedTime;
-  payload.orderMstWebRequest!.timedOrder = true;
-  payload.orderMstWebRequest!.active = true;
-  payload.orderMstWebRequest!.customerAddressDtl = CustomerAddressDtl();
-  payload.orderMstWebRequest!.customerAddressDtl!.active =
+  payload.orderMstWebRequest?.orderTime = time == null ? "" : formattedTime;
+  payload.orderMstWebRequest?.timedOrder = timedOrder;
+  payload.orderMstWebRequest?.active = true;
+  payload.orderMstWebRequest?.customerAddressDtl =null;
+  payload.orderMstWebRequest?.customerAddressDtl?.active =
       loggedInUserModel.data?.userMST?.active;
-  payload.orderMstWebRequest!.customerAddressDtl!.streetNumber = streetNumber;
-  payload.orderMstWebRequest!.customerAddressDtl!.unitNumber = unitNUmber;
-  payload.orderMstWebRequest!.expressOrder = false;
-  payload.orderMstWebRequest!.orderType = orderTypeCode;
-  payload.orderMstWebRequest!.userId =
+  payload.orderMstWebRequest?.customerAddressDtl?.streetNumber = streetNumber;
+  payload.orderMstWebRequest?.customerAddressDtl?.unitNumber = unitNUmber;
+  payload.orderMstWebRequest?.expressOrder = false;
+  payload.orderMstWebRequest?.orderType = orderTypeCode;
+  payload.orderMstWebRequest?.userId =
       loggedInUserModel.data?.customerMST?.userMSTId ??
           loggedInUserModel.data?.userMST?.userMSTId;
-  payload.orderMstWebRequest!.deliveyInstrucation = "";
-  payload.orderMstWebRequest!.otherInstrucation = "";
-  payload.orderMstWebRequest!.orderStageCode = "DS01";
-  payload.orderMstWebRequest!.customerAddressDtl!.customerMst
+  payload.orderMstWebRequest?.deliveyInstrucation = "";
+  payload.orderMstWebRequest?.otherInstrucation = "";
+  payload.orderMstWebRequest?.orderStageCode = "DS01";
+  payload.orderMstWebRequest?.customerAddressDtl?.customerMst
           ?.customerFirstName =
       loggedInUserModel.data?.customerMST?.customerFirstName;
-  payload.orderMstWebRequest!.customerAddressDtl!.customerMst
+  payload.orderMstWebRequest?.customerAddressDtl?.customerMst
           ?.customerLastName =
       loggedInUserModel.data?.customerMST?.customerLastName;
 
-  payload.orderMstWebRequest!.customerAddressDtl!.address1 = unitNUmber;
-  payload.orderMstWebRequest!.customerAddressDtl!.address2 = streetNumber;
-  payload.orderMstWebRequest!.customerAddressDtl!.pincode = pinCode;
-  payload.orderMstWebRequest!.customerAddressDtl!.streetNumber = streetNumber;
-  payload.orderMstWebRequest!.customerAddressDtl!.unitNumber = unitNUmber;
-  payload.orderMstWebRequest!.customerAddressDtl!.geographyMstId1 = gt1;
-  payload.orderMstWebRequest!.customerAddressDtl!.geographyMstId2 = gt2;
-  payload.orderMstWebRequest!.customerAddressDtl!.geographyMstId3 = gt3;
+  payload.orderMstWebRequest?.customerAddressDtl?.address1 = unitNUmber;
+  payload.orderMstWebRequest?.customerAddressDtl?.address2 = streetNumber;
+  payload.orderMstWebRequest?.customerAddressDtl?.pincode = pinCode;
+  payload.orderMstWebRequest?.customerAddressDtl?.streetNumber = streetNumber;
+  payload.orderMstWebRequest?.customerAddressDtl?.unitNumber = unitNUmber;
+  payload.orderMstWebRequest?.customerAddressDtl?.geographyMstId1 = gt1;
+  payload.orderMstWebRequest?.customerAddressDtl?.geographyMstId2 = gt2;
+  payload.orderMstWebRequest?.customerAddressDtl?.geographyMstId3 = gt3;
 
   ApiResponse? res = await apiServices.postRequest(
       ApiEndPoints.orderMasterCreate,
       data: jsonEncode(payload.toMap()));
 
   if (res != null) {
-    log("order master create success------->");
-    log("order master create response-${res.toJson()}------>");
     if (res.status) {
       final orderMasterCreateModel =
           OrderMasterCreateModel.fromMap(res.toJson());
-      log("data${orderMasterCreateModel.data?.id}");
       Get.put<OrderMasterCreateModel>(orderMasterCreateModel,
           permanent: true, tag: "orderMasterCreateModel");
       await cartMasterTracking(orderMasterCreateModel.data?.id ?? "");
-      showCommonLoading(false);
-      log("order master create success------->");
-      log("order mst create model --->${orderMasterCreateModel.toMap()}");
-      Get.back();
     }
-  } else {
-    // showCoomonErrorDialog(title: "error", message: "something went wrong");
-    // showCoomonErrorDialog(title: "error", message: "something went wrong");
-    Get.delete<OrderMasterCreateModel>();
-    OrderMasterCreateModel? orderMasterCreateModel = OrderMasterCreateModel();
-    Get.put(orderMasterCreateModel,
-        permanent: true, tag: "orderMasterCreateModel");
-    Get.isDialogOpen != null && Get.isDialogOpen!
-        ? Get.back(closeOverlays: true)
-        : null;
   }
-//showCommonLoading(false);
+  Get.isDialogOpen ?? false ? Get.back() : null;
+  Get.back();
 }
 
 cartMasterTracking(String id) async {
@@ -128,5 +112,5 @@ cartMasterTracking(String id) async {
     Get.put<CartTrackingModel>(cartTrackingModel,
         permanent: true, tag: "cartTrackingModel");
   }
-  showCommonLoading(false);
+  return;
 }

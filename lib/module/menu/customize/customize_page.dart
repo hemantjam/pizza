@@ -7,10 +7,10 @@ import 'package:sizer/sizer.dart';
 
 import '../../../constants/assets.dart';
 import '../../cart/model/order_master/order_master_create_model.dart';
+import '../../cart/utils/add_to_cart.dart';
 import '../../delivery_order_type/delivery_order_type_options.dart';
 import '../by_group_code/menu_by_group_code_model.dart';
 import '../menu_details_list/all_menu_page.dart';
-import '../utils/add_to_cart.dart';
 import '../utils/calculate_tax.dart';
 import 'customize_controller.dart';
 import 'local_toppings_module.dart';
@@ -489,25 +489,6 @@ class _ItemDetailsState extends State<ItemDetails> {
       ),
       onPressed: () async {
         if (controller.allToppings.any((element) => element.isSelected!)) {
-          RecipeDetailsModel recipeModel = controller.recipeDetailsModel!;
-          await showModalBottomSheet(
-              useSafeArea: true,
-              shape: const RoundedRectangleBorder(
-                  borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(20),
-                      topRight: Radius.circular(20))),
-              showDragHandle: true,
-              context: context,
-              builder: (context) {
-                return const Padding(
-                  padding: EdgeInsets.only(bottom: 10),
-                  child: OrderDeliveryTypeOption(
-                    elevation: 0,
-                    navigationBack: true,
-                  ),
-                );
-              });
-
           List<ToppingsModel> toppings = [];
           for (var element in controller.allToppings) {
             ToppingsModel toppingsModel = ToppingsModel(
@@ -527,20 +508,49 @@ class _ItemDetailsState extends State<ItemDetails> {
               ?.where((element) => element.size?.name == selectedSize)
               .first
               .toppings = toppings;
-          OrderMasterCreateModel? orderMasterCreateModel =
-              GetInstance().isRegistered<OrderMasterCreateModel>()
-                  ? Get.find<OrderMasterCreateModel>()
-                  : null;
+          RecipeDetailsModel recipeModel = controller.recipeDetailsModel!;
 
-          await orderDetailsCreate(
-              recipeModel,
-              defaultQuantity,
-              selectedBase,
-              selectedSize,
-              orderMasterCreateModel?.data?.id,
-              (calculateTotalPrice(basePrice, tax))
-                  .ceil(),
-              controller.allToppings);
+          OrderMasterCreateModel? orderMasterCreateModel = GetInstance()
+                  .isRegistered<OrderMasterCreateModel>(
+                      tag: "orderMasterCreateModel")
+              ? Get.find<OrderMasterCreateModel>(tag: "orderMasterCreateModel")
+              : null;
+
+          if (orderMasterCreateModel != null &&
+              orderMasterCreateModel.data?.id != null) {
+            await orderDetailsCreate(
+                recipeModel,
+                defaultQuantity,
+                selectedBase,
+                selectedSize,
+                orderMasterCreateModel.data?.id,
+                calculateTotalPrice(basePrice, tax));
+          } else {
+            await showModalBottomSheet(
+                useSafeArea: true,
+                shape: const RoundedRectangleBorder(
+                    borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(20),
+                        topRight: Radius.circular(20))),
+                showDragHandle: true,
+                context: context,
+                builder: (context) {
+                  return const Padding(
+                    padding: EdgeInsets.only(bottom: 10),
+                    child: OrderDeliveryTypeOption(
+                      elevation: 0,
+                      navigationBack: true,
+                    ),
+                  );
+                });
+            await orderDetailsCreate(
+                recipeModel,
+                defaultQuantity,
+                selectedBase,
+                selectedSize,
+                orderMasterCreateModel?.data?.id,
+                calculateTotalPrice(basePrice, tax));
+          }
         }
       },
       child: const Text("Add To Cart"),

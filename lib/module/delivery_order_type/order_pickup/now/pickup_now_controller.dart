@@ -137,9 +137,9 @@ class PickUpNowController extends GetxController {
   }
   orderCreateApi() {
     orderMasterCreateApi(
-        orderTypeCode: "OT02",
-       // time: timeController.text,
-       // date: dateController.text
+      timedOrder: false,
+        orderTypeCode: "OT01",
+
     );
   }
  /* orderMasterCreateApi() async {

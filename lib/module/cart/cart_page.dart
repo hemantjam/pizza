@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -7,6 +6,7 @@ import 'package:get/get.dart';
 import 'package:pizza/constants/assets.dart';
 import 'package:pizza/local_storage/entity/cart_items_entity.dart';
 import 'package:pizza/module/cart/cart_controller.dart';
+import 'package:pizza/module/cart/model/order_create/add_to_cart_model.dart';
 import 'package:pizza/module/cart/utils/handle_checkout.dart';
 import 'package:pizza/module/cart/widget/cart_details_bottom_bar.dart';
 import 'package:pizza/module/menu/customize/local_toppings_module.dart';
@@ -24,9 +24,12 @@ class CartPage extends GetView<CartController> {
     controller.checkForOfflineData();
     return SafeArea(
       child: Scaffold(
-         /* floatingActionButton: FloatingActionButton(
-            onPressed: controller.checkForOfflineData,
-          ),*/
+          floatingActionButton: FloatingActionButton(
+            onPressed: () {
+              // CheckOut checkOut = CheckOut();
+              // checkOut.getCartResponseList();
+            },
+          ),
           bottomNavigationBar: cartDetailsBottomBar(true, true, () async {
             List<CartItemsEntity> modelList = await controller.getModelsList();
             CheckOut.cartUpdate(modelList);
@@ -64,7 +67,7 @@ class CartPage extends GetView<CartController> {
                                 image: modell.image ?? "",
                                 selectedSize: e.value.selectedSize,
                                 selectedBase: e.value.selectedBase,
-                                total: e.value.total,
+                                total: e.value.basePrice,
                                 quantity: e.value.itemQuantity,
                                 name: e.value.itemName,
                                 onDelete: (value) {
@@ -143,22 +146,24 @@ class _CartItemDetailsState extends State<CartItemDetails> {
   }
 
   updateCartItem() {
+    AddToCartResponseData data = AddToCartResponseData.fromMap(
+        jsonDecode(widget.entity.orderCreateResponse));
     RecipeDetailsModel? recipeDetailsModel = widget.recipeDetailsModel;
     recipeDetailsModel?.recipes
         ?.where((element) => element.size?.name == widget.selectedSize)
         .firstOrNull
         ?.toppings = toppingList;
-    log("${recipeDetailsModel?.recipes?.where((element) => element.size?.name == widget.selectedSize).firstOrNull?.id!}");
     CartItemsEntity cartItemsEntity = CartItemsEntity(
+        isOffer: false,
         id: widget.entity.id,
-        toppings: "toppingsJsonString",
+        orderCreateResponse: jsonEncode(data.toMap()),
         itemModel: jsonEncode(recipeDetailsModel?.toJson()),
         itemName: widget.name,
         itemQuantity: defaultQuantity,
         selectedBase: widget.selectedBase,
         selectedSize: widget.selectedSize,
         addon: toppingsT?.ceil() ?? 0,
-        total: (widget.total + (toppingsT?.ceil() ?? 0)) * defaultQuantity);
+        basePrice: (widget.total + (toppingsT?.ceil() ?? 0)) * defaultQuantity);
     cartController.updateLocalCartItem(cartItemsEntity);
   }
 
@@ -175,8 +180,6 @@ class _CartItemDetailsState extends State<CartItemDetails> {
   @override
   void initState() {
     super.initState();
-    /* toppingsTotal = widget.toppings
-        .fold(0.0, (sum, topping) => sum + (topping.addCost ?? 0.0));*/
     defaultQuantity = widget.quantity;
     getToppings();
   }
@@ -236,8 +239,6 @@ class _CartItemDetailsState extends State<CartItemDetails> {
                                   setState(() {
                                     cartController.updateTotal(
                                         widget.entity.id!, quantity);
-                                    //cartController.cartItems.where((p0) => p0.id==).first.total=
-                                    //log("------${cartController.cartItems.where((p0) => p0.id==widget.entity.id).first.total}");
                                     defaultQuantity = quantity;
                                   });
                                   updateCartItem();
@@ -324,30 +325,6 @@ class _CartItemDetailsState extends State<CartItemDetails> {
                           .toList()
                       : [const SizedBox()],
                 )),
-            /* Visibility(
-                visible: !visibility,
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: widget.toppings.isNotEmpty
-                      ? widget.toppings
-                          .asMap()
-                          .entries
-                          .map(
-                            (e) => ListTile(
-                              title: Text(e.value.toppingName ?? ""),
-                              trailing: QuantitySelector(
-                                maxQuantity: e.value.maximumQuantity,
-                                defaultQuantity: e.value.values
-                                        ?.where((element) => element!)
-                                        .length ??
-                                    0,
-                                onTap: (quantity) {},
-                              ),
-                            ),
-                          )
-                          .toList()
-                      : [const SizedBox()],
-                )),*/
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: Row(
@@ -380,8 +357,6 @@ class _CartItemDetailsState extends State<CartItemDetails> {
                         height: 20.sp,
                         width: 20.sp,
                       )),
-                  //IconButton(onPressed: () {}, icon: Icon(Icons.edit)),
-                  //IconButton(onPressed: () {}, icon: Icon(Icons.delete_outline)),
                 ],
               ),
             ),

@@ -44,11 +44,7 @@ class PickUpLaterPage extends GetView<PickUpLaterController> {
                   elevation: 0,
                   child: TextFormField(
                     onTap: () async {
-                      // List<DateModel> dateList = getNext15DaysWithWeekdays();
-                      /*List<String> dateFormattedList = controller.dateList
-                          .map((e) => DateFormat('d MMMM yyyy, EEEE')
-                              .format(e))
-                          .toList();*/
+
                       String date = await Get.dialog(CommonSearchableList(
                         title: "Date",
                         streetList: controller.dateList,
@@ -144,8 +140,8 @@ class PickUpLaterPage extends GetView<PickUpLaterController> {
           enable: !controller.isStoreOff.value,
           onTap: () async{
             if (controller.formKey.currentState!.validate()) {
-             await controller.orderCreateApi();
-              Get.back();
+              controller.orderCreateApi();
+             // Get.back();
               //showCoomonErrorDialog(title: "Success", message: "Order Successful");
              // controller.formKey.currentState?.reset();
             }
