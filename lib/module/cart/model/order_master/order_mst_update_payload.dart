@@ -44,7 +44,7 @@ class OrderMstWebRequest {
   bool? expressOrder;
   String? otherInstrucation;
   String? deliveyInstrucation;
-  CustomerAddressDtl? customerAddressDtl;
+  OrderMSTUpdatePayloadCustomerAddressDtl? customerAddressDtl;
   String? customerName;
   int? surcharge;
   int? appliedAmount;
@@ -91,7 +91,7 @@ class OrderMstWebRequest {
         otherInstrucation: json["otherInstrucation"],
         deliveyInstrucation: json["deliveyInstrucation"],
         customerAddressDtl:
-            CustomerAddressDtl.fromJson(json["customerAddressDTL"]),
+            OrderMSTUpdatePayloadCustomerAddressDtl.fromJson(json["customerAddressDTL"]),
         customerName: json["customerName"],
         surcharge: json["surcharge"],
         appliedAmount: json["appliedAmount"],
@@ -133,7 +133,7 @@ class OrderMstWebRequest {
       };
 }
 
-class CustomerAddressDtl {
+class OrderMSTUpdatePayloadCustomerAddressDtl {
   bool? active;
   dynamic address1;
   dynamic address2;
@@ -151,7 +151,7 @@ class CustomerAddressDtl {
   dynamic location;
   String? pincode;
 
-  CustomerAddressDtl({
+  OrderMSTUpdatePayloadCustomerAddressDtl({
     this.active,
     this.address1,
     this.address2,
@@ -170,8 +170,8 @@ class CustomerAddressDtl {
     this.pincode,
   });
 
-  factory CustomerAddressDtl.fromJson(Map<String?, dynamic> json) =>
-      CustomerAddressDtl(
+  factory OrderMSTUpdatePayloadCustomerAddressDtl.fromJson(Map<String?, dynamic> json) =>
+      OrderMSTUpdatePayloadCustomerAddressDtl(
         active: json["active"],
         address1: json["address1"],
         address2: json["address2"],

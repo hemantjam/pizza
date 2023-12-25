@@ -17,7 +17,7 @@ class ApiServices {
     _dio.options.headers['Accept'] = 'application/json';
 
     _dio.interceptors.add(PrettyDioLogger(
-        responseBody: false, responseHeader: true, requestBody: true));
+        responseBody: true, responseHeader: true, requestBody: true));
   }
 
   /* ApiResponse apiResponse =

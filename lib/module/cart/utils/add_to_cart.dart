@@ -1,4 +1,5 @@
 import 'dart:convert';
+
 import 'package:get/get.dart';
 import 'package:pizza/api/api_services.dart';
 import 'package:pizza/module/cart/cart_controller.dart';
@@ -24,7 +25,7 @@ orderDetailsCreate(
   int basePrice,
 ) async {
   showCommonLoading(true);
- /* final database =
+  /* final database =
       await $FloorAppDatabase.databaseBuilder('app_database.db').build();*/
   RecipeModel? recipeModel = model.recipes
       ?.where((element) => element.size?.name == selectedSize)
@@ -87,7 +88,7 @@ orderDetailsCreate(
     AddToCartResponseModel addToCartResponseModel =
         AddToCartResponseModel.fromMap(res.toJson());
     Get.put<AddToCartResponseModel>(addToCartResponseModel, permanent: true);
-   /* OrderCreateResponseDoa orderCreateResponseDoa =
+    /* OrderCreateResponseDoa orderCreateResponseDoa =
         database.orderCreateResponseDoa;*/
     if (addToCartResponseModel.data != null) {
       /*orderCreateResponseDoa.insertResData(OrderCreateResponseEntity(
@@ -109,7 +110,7 @@ orderDetailsCreate(
       }
     }
   }
-  Get.isDialogOpen??false?Get.back():null;
+  Get.isDialogOpen ?? false ? Get.back() : null;
   /*Get.put<RecipeDetailsModel>(model,
       tag: "recipeDetailsModel", permanent: true);
   Get.back();

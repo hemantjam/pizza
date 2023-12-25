@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:get/get.dart';
 import 'package:intl/date_symbol_data_local.dart';
@@ -9,7 +10,10 @@ import 'package:pizza/module/user/logged_in_user/logged_in_user_model.dart';
 import '../../../api/api_response.dart';
 import '../../../api/end_point.dart';
 import '../../cart/model/order_master/order_master_create_model.dart';
-import '../../cart/model/order_master/order_master_create_payload.dart';
+import '../../cart/model/order_master/order_master_create_payload.dart'
+as OMCP; //// orrder master create model
+//// orrder master create model
+//// orrder master create model
 import '../../cart/utils/cart_tracking_model.dart';
 import '../../user/widgets/loader.dart';
 
@@ -29,11 +33,11 @@ orderMasterCreateApi({
 }) async {
   showCommonLoading(true);
   LoggedInUserModel loggedInUserModel =
-      Get.find<LoggedInUserModel>(tag: "loggedInUserModel");
+  Get.find<LoggedInUserModel>(tag: "loggedInUserModel");
 
   await initializeDateFormatting('en');
-  OrderMasterCreatePayload payload = OrderMasterCreatePayload();
-  payload.orderMstWebRequest = OrderMstWebRequest();
+  OMCP.OrderMasterCreatePayload payload = OMCP.OrderMasterCreatePayload();
+  payload.orderMstWebRequest = OMCP.OrderMstWebRequest();
   DateTime? dateTime;
   if (date != null) {
     DateFormat inputFormat = DateFormat('dd MMMM yyyy, EEEE', 'en');
@@ -46,7 +50,7 @@ orderMasterCreateApi({
     DateTime parsedTime = inputTime.parse(timeString);
     formattedTime = DateFormat('HH:mm:ss').format(parsedTime);
   }
-  payload.orderMstWebRequest = OrderMstWebRequest();
+  payload.orderMstWebRequest = OMCP.OrderMstWebRequest();
   payload.orderMstWebRequest?.orderDate = date == null
       ? ""
       : "${dateTime?.year}-${dateTime?.month}-${dateTime?.day}";
@@ -67,10 +71,10 @@ orderMasterCreateApi({
   payload.orderMstWebRequest?.otherInstrucation = "";
   payload.orderMstWebRequest?.orderStageCode = "DS01";
   payload.orderMstWebRequest?.customerAddressDtl?.customerMst
-          ?.customerFirstName =
+      ?.customerFirstName =
       loggedInUserModel.data?.customerMST?.customerFirstName;
   payload.orderMstWebRequest?.customerAddressDtl?.customerMst
-          ?.customerLastName =
+      ?.customerLastName =
       loggedInUserModel.data?.customerMST?.customerLastName;
 
   payload.orderMstWebRequest?.customerAddressDtl?.address1 = unitNUmber;
@@ -81,6 +85,7 @@ orderMasterCreateApi({
   payload.orderMstWebRequest?.customerAddressDtl?.geographyMstId1 = gt1;
   payload.orderMstWebRequest?.customerAddressDtl?.geographyMstId2 = gt2;
   payload.orderMstWebRequest?.customerAddressDtl?.geographyMstId3 = gt3;
+  log("order master create payload----->${payload.toMap()}");
 
   ApiResponse? res = await apiServices.postRequest(
       ApiEndPoints.orderMasterCreate,
@@ -89,7 +94,9 @@ orderMasterCreateApi({
   if (res != null) {
     if (res.status) {
       final orderMasterCreateModel =
-          OrderMasterCreateModel.fromMap(res.toJson());
+      OrderMasterCreateModel.fromMap(res.toJson());
+      log("order master create response----->${orderMasterCreateModel
+          .toMap()}");
       Get.put<OrderMasterCreateModel>(orderMasterCreateModel,
           permanent: true, tag: "orderMasterCreateModel");
       await cartMasterTracking(orderMasterCreateModel.data?.id ?? "");
@@ -108,9 +115,39 @@ cartMasterTracking(String id) async {
       });
   if (res != null && res.status) {
     CartTrackingModel cartTrackingModel =
-        CartTrackingModel.fromMap(res.toJson());
+    CartTrackingModel.fromMap(res.toJson());
     Get.put<CartTrackingModel>(cartTrackingModel,
         permanent: true, tag: "cartTrackingModel");
   }
   return;
 }
+
+
+
+
+
+/*
+customerMst: OMCP.CustomerMst(
+active: loggedInUserModel.data?.userMST?.active,
+aggregator: loggedInUserModel.data?.customerMST?.aggregator,
+anniversary: loggedInUserModel.data?.customerMST?.anniversary,
+birthDate: loggedInUserModel.data?.customerMST?.birthDate,
+createdBy: loggedInUserModel.data?.userMST?.createdBy,
+createdOn: loggedInUserModel.data?.userMST?.createdOn,
+customerCode: loggedInUserModel.data?.customerMST?.customerCode,
+customerFirstName: loggedInUserModel.data?.customerMST?.customerFirstName,
+customerGroupMstId:
+loggedInUserModel.data?.customerMST?.customerGroupMSTId,
+customerLastName: loggedInUserModel.data?.customerMST?.customerLastName,
+customerMstId: loggedInUserModel.data?.customerMST?.customerMSTId,
+emailSubscription: loggedInUserModel.data?.customerMST?.emailSubscription,
+ledgerBalance:
+int.parse(loggedInUserModel.data?.customerMST?.ledgerBalance ?? "0"),
+modifiedBy: loggedInUserModel.data?.userMST?.modifiedBy,
+modifiedOn: loggedInUserModel.data?.userMST?.modifiedOn,
+primaryContact: loggedInUserModel.data?.customerMST?.primaryContact,
+primaryEmail: loggedInUserModel.data?.customerMST?.primaryEmail,
+smsSubscription: loggedInUserModel.data?.customerMST?.smsSubscription,
+storeInstruction: loggedInUserModel.data?.customerMST?.storeInstruction,
+userMstId: loggedInUserModel.data?.customerMST?.userMSTId,
+),*/

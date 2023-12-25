@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:developer';
 
 import 'package:get/get.dart';
 import 'package:pizza/api/api_response.dart';
@@ -27,69 +26,116 @@ class CheckOut {
     payload.orderMstWebRequest?.active = orderMstCreateModel.data?.active;
     payload.orderMstWebRequest?.id = orderMstCreateModel.data?.id;
     payload.orderMstWebRequest?.customerAddressDtl =
-        orderMstCreateModel.data?.customerAddressDtl;
-    payload.orderMstWebRequest?.orderDate = "2023-12-21";
+        OrderMSTUpdatePayloadCustomerAddressDtl(
+            active: true,
+            address1: null,
+            address2: null,
+            customerAddressDtlId: null,
+            customerAddressTitle: null,
+            customerMst: null,
+            customerMstId: null,
+            customerAddressDtlDefault: true,
+            geoLocation: null,
+            geographyMstId3: 1008,
+            geographyMstId4: 327,
+            geographyMstId5: 328,
+            streetNumber: "00",
+            unitNumber: "00",
+            location: null,
+            pincode: "3040");
+    payload.orderMstWebRequest?.customerName = "";
+    payload.orderMstWebRequest?.surcharge = 0;
+
+    payload.orderMstWebRequest?.orderDate = "2023-12-22";
     payload.orderMstWebRequest?.orderStageCode = "DS01";
     payload.orderMstWebRequest?.otherInstrucation = "";
     payload.orderMstWebRequest?.deliveyInstrucation = "";
     payload.orderMstWebRequest?.userId = orderMstCreateModel.data?.userId;
     payload.orderMstWebRequest?.appliedAmount = 0;
-    payload.orderMstWebRequest?.customerName =
-        orderMstCreateModel.data?.customerName;
+
     List<OrderDtlWebRequestSet>? orderDtlWebRequestList = [];
     if (cartItems != null) {
       RecipeDetailsModel? recipeDTLModel;
       add_to_cart.AddToCartResponseData? addToCartResponseModel;
-      RecipeModel? recipeModel;
-      for (var cartItemEntity in cartItems) {
-        if (cartItemEntity != null && cartItemEntity.itemModel.isNotEmpty) {
-          final decodedModel = jsonDecode(cartItemEntity.itemModel);
+      cartItems.asMap().forEach((key, cItem) {
+        if (cItem != null && cItem.itemModel.isNotEmpty) {
+          final decodedModel = jsonDecode(cItem.itemModel);
           recipeDTLModel = RecipeDetailsModel.fromJson(decodedModel);
           addToCartResponseModel = add_to_cart.AddToCartResponseData.fromMap(
-              jsonDecode(cartItemEntity.orderCreateResponse));
-          recipeModel = recipeDTLModel.recipes
-              ?.where((p0) => p0.size?.name == cartItemEntity.selectedSize)
-              .firstOrNull;
+              jsonDecode(cItem.orderCreateResponse));
+          /* recipeModel = recipeDTLModel?.recipes
+              ?.where((rModel) => rModel.size?.name == cItem.selectedSize)
+              .firstOrNull;*/
+          /* BaseModel? baseModel = recipeDTLModel?.recipes
+              ?.where((bModel) => bModel.size?.name == cItem.selectedSize)
+              .first
+              .base
+              ?.where((elementtt) => elementtt?.name == cItem.selectedBase)
+              .firstOrNull;*/
+          /* if (baseModel != null) {
+            recipeModel?.toppings?.add(ToppingsModel(
+                name: baseModel.name,
+                stockAvailable: baseModel.stockAvailable,
+                image: baseModel.image,
+                id: baseModel.id,
+                addCost: baseModel.addCost,
+                defaultQuantity: baseModel.defaultQuantity,
+                itemQuantity: baseModel.itemQuantity,
+                minimumQuantity: baseModel.minimumQuantity,
+                maximumQuantity: baseModel.maximumQuantity));
+            recipeModel?.toppings?.add(ToppingsModel(
+                name: baseModel.name,
+                stockAvailable: baseModel.stockAvailable,
+                image: baseModel.image,
+                id: baseModel.id,
+                addCost: baseModel.addCost,
+                defaultQuantity: baseModel.defaultQuantity,
+                itemQuantity: baseModel.itemQuantity,
+                minimumQuantity: baseModel.minimumQuantity,
+                maximumQuantity: baseModel.maximumQuantity));
+          }*/
         }
+
         add_to_cart.OrderDtlWebRequestSet? orderDtlWebRequestFirstItem =
             addToCartResponseModel?.orderDtlWebRequestSet?.first;
         OrderDtlWebRequestSet orderDtlWebRequestSet = OrderDtlWebRequestSet(
+          itemMstId: orderDtlWebRequestFirstItem?.itemMstId,
           id: orderDtlWebRequestFirstItem?.id,
+          orderDtlRefId: orderDtlWebRequestFirstItem?.id,
           recipeMstId: orderDtlWebRequestFirstItem?.recipeMstId,
           qty: orderDtlWebRequestFirstItem?.qty?.ceil(),
           sortOrder: orderDtlWebRequestFirstItem?.sortOrder,
-          displayName: orderDtlWebRequestFirstItem?.displayName,
+          itemSide: 0,
+          displayName: recipeDTLModel?.name,
           cookingInstruction: orderDtlWebRequestFirstItem?.cookingInstruction,
           hnhSurcharge: orderDtlWebRequestFirstItem?.hnhSurcharge?.ceil(),
           orderStage: "DS01",
-          active: orderDtlWebRequestFirstItem?.active,
+          additionalValue: 0,
+          active: true,
           orderRecipeItemWebRequestSet: orderDtlWebRequestFirstItem
                   ?.orderRecipeItemWebRequestSet
-                  ?.map((topping) {
+                  ?.asMap()
+                  .entries
+                  .map((topping) {
                 return OrderRecipeItemWebRequestSet(
-                  id: topping.id,
-                  recipeItemDtlId: recipeModel?.id,
-                  qty: topping.qty?.ceil(),
-                  defaultQty: topping.defaultQty?.ceil(),
-                  sortOrder: topping.sortOrder,
-                  base: topping.base,
-                );
+                    recipeItemDtlId: topping.value.recipeItemDtlId,
+                    qty: topping.value.qty?.ceil(),
+                    defaultQty: topping.value.defaultQty?.ceil(),
+                    sortOrder: topping.key,
+                    base: topping.value.base,
+                    active: topping.value.active,
+                    itemSide: topping.value.itemSide);
               }).toList() ??
               [],
         );
 
         orderDtlWebRequestList.add(orderDtlWebRequestSet);
-      }
+      });
     }
     payload.orderMstWebRequest?.orderDtlWebRequestSet = orderDtlWebRequestList;
-    log("----------------payload-------------------");
-    log("${jsonEncode(payload.toJson())}");
-    log("----------------payload-------------------");
-
     ApiResponse? res = await _apiServices.putRequest(
         ApiEndPoints.orderMasterUpdate,
         data: jsonEncode(payload.toJson()));
-    // log("response----->${res?.toJson()}");
     if (res != null && res.status) {
     } else {
       showCoomonErrorDialog(title: "error", message: "Something went wrong");

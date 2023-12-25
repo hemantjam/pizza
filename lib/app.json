@@ -1,0 +1,305 @@
+{
+  "orderMST": null,
+  "orderMSTWebRequest": {
+    "id": "0aa31a88-de4e-4a8b-8eef-4d85e10709f4",
+    "userId": 112,
+    "orderType": "OT01",
+    "timedOrder": null,
+    "orderDate": "2023-12-21",
+    "orderTime": null,
+    "expressOrder": false,
+    "otherInstrucation": "",
+    "deliveyInstrucation": "",
+    "customerAddressDTL": null,
+    "customerName": null,
+    "surcharge": null,
+    "appliedAmount": 0,
+    "paymentModeDiscount": null,
+    "paymentModeCharges": null,
+    "promoCodeDiscount": null,
+    "orderStageCode": "DS01",
+    "active": true,
+    "orderDTLWebRequestSet": [
+      {
+        "id": "c3179a76-86ce-4020-a7db-cf3a8e24eb97",
+        "itemMSTId": null,
+        "recipeMSTId": 1,
+        "itemSide": null,
+        "qty": 1,
+        "sortOrder": null,
+        "displayName": null,
+        "cookingInstruction": null,
+        "additionalValue": null,
+        "hnhSurcharge": 0,
+        "orderDTLRefId": null,
+        "comboRefId": null,
+        "orderStage": "DS01",
+        "active": true,
+        "orderRecipeItemWebRequestSet": [
+          {
+            "id": "42936e11-91da-4782-b25c-76ef1afd0452",
+            "recipeItemDtlId": 1,
+            "qty": 0,
+            "defaultQty": 0,
+            "itemSide": null,
+            "sortOrder": 1,
+            "base": false,
+            "active": null
+          },
+          {
+            "id": "56b9dad8-f496-4f93-ac72-f830acc42a93",
+            "recipeItemDtlId": 1,
+            "qty": 0,
+            "defaultQty": 0,
+            "itemSide": null,
+            "sortOrder": 1,
+            "base": false,
+            "active": null
+          },
+          {
+            "id": "ed7fbc01-f053-4056-ada1-24e10cc48027",
+            "recipeItemDtlId": 1,
+            "qty": 1,
+            "defaultQty": 1,
+            "itemSide": null,
+            "sortOrder": 1,
+            "base": false,
+            "active": null
+          },
+          {
+            "id": "59986e28-f995-464b-bf17-3b19da193882",
+            "recipeItemDtlId": 1,
+            "qty": 0,
+            "defaultQty": 0,
+            "itemSide": null,
+            "sortOrder": 1,
+            "base": false,
+            "active": null
+          },
+          {
+            "id": "034cc5f2-40c0-43c2-8483-25c329a81fc4",
+            "recipeItemDtlId": 1,
+            "qty": 0,
+            "defaultQty": 0,
+            "itemSide": null,
+            "sortOrder": 1,
+            "base": false,
+            "active": null
+          },
+          {
+            "id": "a92d9a91-b6dd-4bd6-8632-1a990380b10c",
+            "recipeItemDtlId": 1,
+            "qty": 1,
+            "defaultQty": 1,
+            "itemSide": null,
+            "sortOrder": 1,
+            "base": false,
+            "active": null
+          },
+          {
+            "id": "e726ffc2-719a-4a0e-9237-f96da7d1918f",
+            "recipeItemDtlId": 1,
+            "qty": 1,
+            "defaultQty": 1,
+            "itemSide": null,
+            "sortOrder": 26,
+            "base": false,
+            "active": null
+          },
+          {
+            "id": "9e8938fe-ae7e-461d-b26c-48a3aef74bea",
+            "recipeItemDtlId": 1,
+            "qty": 0,
+            "defaultQty": 0,
+            "itemSide": null,
+            "sortOrder": 1,
+            "base": false,
+            "active": null
+          },
+          {
+            "id": "d8c105a6-b306-4740-9313-9b0fc8eb19db",
+            "recipeItemDtlId": 1,
+            "qty": 0,
+            "defaultQty": 0,
+            "itemSide": null,
+            "sortOrder": 1,
+            "base": false,
+            "active": null
+          },
+          {
+            "id": "09380d90-8221-4181-ae3d-2abb6b2c5ee4",
+            "recipeItemDtlId": 1,
+            "qty": 0,
+            "defaultQty": 0,
+            "itemSide": null,
+            "sortOrder": 1,
+            "base": false,
+            "active": null
+          },
+          {
+            "id": "be5ddfb5-393d-48f1-9fc4-4c5e71051ecb",
+            "recipeItemDtlId": 1,
+            "qty": 0,
+            "defaultQty": 0,
+            "itemSide": null,
+            "sortOrder": 1,
+            "base": false,
+            "active": null
+          },
+          {
+            "id": "e4edec90-f805-4162-bf8f-811478734871",
+            "recipeItemDtlId": 1,
+            "qty": 0,
+            "defaultQty": 0,
+            "itemSide": null,
+            "sortOrder": 1,
+            "base": false,
+            "active": null
+          },
+          {
+            "id": "0732ba6e-b0ae-47a5-8047-26da1658f02a",
+            "recipeItemDtlId": 1,
+            "qty": 0,
+            "defaultQty": 0,
+            "itemSide": null,
+            "sortOrder": 1,
+            "base": false,
+            "active": null
+          },
+          {
+            "id": "57dd4ba7-bb80-4bed-8ca4-4eab9e372096",
+            "recipeItemDtlId": 1,
+            "qty": 0,
+            "defaultQty": 0,
+            "itemSide": null,
+            "sortOrder": 1,
+            "base": false,
+            "active": null
+          },
+          {
+            "id": "b467c53d-8f3f-45e9-9da5-d1447c98ad87",
+            "recipeItemDtlId": 1,
+            "qty": 1,
+            "defaultQty": 1,
+            "itemSide": null,
+            "sortOrder": 1,
+            "base": false,
+            "active": null
+          },
+          {
+            "id": "eb2c5ce7-dd8f-4ac1-bb70-15cafbffb0f6",
+            "recipeItemDtlId": 1,
+            "qty": 0,
+            "defaultQty": 0,
+            "itemSide": null,
+            "sortOrder": 1,
+            "base": false,
+            "active": null
+          },
+          {
+            "id": "b65e0c99-6eda-4133-9ed1-8915cc901db4",
+            "recipeItemDtlId": 1,
+            "qty": 1,
+            "defaultQty": 1,
+            "itemSide": null,
+            "sortOrder": 1,
+            "base": false,
+            "active": null
+          },
+          {
+            "id": "6ffd77a7-9a86-4011-a0a8-3ce47fa36640",
+            "recipeItemDtlId": 1,
+            "qty": 0,
+            "defaultQty": 0,
+            "itemSide": null,
+            "sortOrder": 1,
+            "base": false,
+            "active": null
+          },
+          {
+            "id": "12f97e96-5284-4f07-947a-6f8b222146b5",
+            "recipeItemDtlId": 1,
+            "qty": 0,
+            "defaultQty": 0,
+            "itemSide": null,
+            "sortOrder": 1,
+            "base": false,
+            "active": null
+          },
+          {
+            "id": "f3f7a0e2-78e0-4c81-83d9-3d5fe1174b3b",
+            "recipeItemDtlId": 1,
+            "qty": 1,
+            "defaultQty": 1,
+            "itemSide": null,
+            "sortOrder": 1,
+            "base": false,
+            "active": null
+          },
+          {
+            "id": "a3aaa3e7-61fd-4d3b-ae6a-5cdd4d5c1991",
+            "recipeItemDtlId": 1,
+            "qty": 0,
+            "defaultQty": 0,
+            "itemSide": null,
+            "sortOrder": 1,
+            "base": false,
+            "active": null
+          },
+          {
+            "id": "f6556a6d-cd8d-49c3-a7cc-c3baf9391abf",
+            "recipeItemDtlId": 1,
+            "qty": 1,
+            "defaultQty": 1,
+            "itemSide": null,
+            "sortOrder": 1,
+            "base": false,
+            "active": null
+          },
+          {
+            "id": "079d5c17-209b-40b4-a2a4-18793c1251df",
+            "recipeItemDtlId": 1,
+            "qty": 1,
+            "defaultQty": 1,
+            "itemSide": null,
+            "sortOrder": 0,
+            "base": true,
+            "active": null
+          },
+          {
+            "id": "b3d8c2fd-4e78-4225-9e99-d0fb46a468b9",
+            "recipeItemDtlId": 1,
+            "qty": 0,
+            "defaultQty": 0,
+            "itemSide": null,
+            "sortOrder": 1,
+            "base": false,
+            "active": null
+          },
+          {
+            "id": "df8277d3-9bc8-4a57-a099-f79ee88fcb47",
+            "recipeItemDtlId": 1,
+            "qty": 0,
+            "defaultQty": 0,
+            "itemSide": null,
+            "sortOrder": 1,
+            "base": false,
+            "active": null
+          },
+          {
+            "id": "784539ec-827d-4943-86dc-71473fcdcde9",
+            "recipeItemDtlId": 1,
+            "qty": 1,
+            "defaultQty": 1,
+            "itemSide": null,
+            "sortOrder": 1,
+            "base": false,
+            "active": null
+          }
+        ],
+        "combSeq": null
+      }
+    ],
+    "paymentModeWebRequestSet": []
+  }
+}
