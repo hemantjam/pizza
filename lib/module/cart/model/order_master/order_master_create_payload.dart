@@ -157,7 +157,7 @@ class CustomerAddressDtl {
   String? address1;
   String? address2;
   String? createdBy;
-  DateTime? createdOn;
+  String? createdOn;
   String? customerAddressDtlId;
   String? customerAddressTitle;
   CustomerMst? customerMst;
@@ -175,7 +175,7 @@ class CustomerAddressDtl {
   int? geographyMstId8;
   String? location;
   String? modifiedBy;
-  DateTime? modifiedOn;
+  String? modifiedOn;
   int? pincode;
   String? streetNumber;
   String? unitNumber;
@@ -214,7 +214,7 @@ class CustomerAddressDtl {
     address1: json["address1"],
     address2: json["address2"],
     createdBy: json["createdBy"],
-    createdOn: json["createdOn"] == null ? null : DateTime.parse(json["createdOn"]),
+    createdOn: json["createdOn"] ,
     customerAddressDtlId: json["customerAddressDTLId"],
     customerAddressTitle: json["customerAddressTitle"],
     customerMst: json["customerMST"] == null ? null : CustomerMst.fromMap(json["customerMST"]),
@@ -232,7 +232,7 @@ class CustomerAddressDtl {
     geographyMstId8: json["geographyMSTId8"],
     location: json["location"],
     modifiedBy: json["modifiedBy"],
-    modifiedOn: json["modifiedOn"] == null ? null : DateTime.parse(json["modifiedOn"]),
+    modifiedOn: json["modifiedOn"],
     pincode: json["pincode"],
     streetNumber: json["streetNumber"],
     unitNumber: json["unitNumber"],
@@ -243,7 +243,7 @@ class CustomerAddressDtl {
     "address1": address1,
     "address2": address2,
     "createdBy": createdBy,
-    "createdOn": createdOn?.toIso8601String(),
+    "createdOn": createdOn,
     "customerAddressDTLId": customerAddressDtlId,
     "customerAddressTitle": customerAddressTitle,
     "customerMST": customerMst?.toMap(),
@@ -261,7 +261,7 @@ class CustomerAddressDtl {
     "geographyMSTId8": geographyMstId8,
     "location": location,
     "modifiedBy": modifiedBy,
-    "modifiedOn": modifiedOn?.toIso8601String(),
+    "modifiedOn": modifiedOn,
     "pincode": pincode,
     "streetNumber": streetNumber,
     "unitNumber": unitNumber,
@@ -271,10 +271,10 @@ class CustomerAddressDtl {
 class CustomerMst {
   bool? active;
   bool? aggregator;
-  DateTime? anniversary;
-  DateTime? birthDate;
+  String? anniversary;
+  String? birthDate;
   String? createdBy;
-  DateTime? createdOn;
+  String? createdOn;
   List<CustomerAddressDtlList>? customerAddressDtlList;
   String? customerCode;
   String? customerFirstName;
@@ -285,7 +285,7 @@ class CustomerMst {
   int? gender;
   int? ledgerBalance;
   String? modifiedBy;
-  DateTime? modifiedOn;
+  String? modifiedOn;
   String? primaryContact;
   String? primaryEmail;
   bool? smsSubscription;
@@ -320,10 +320,10 @@ class CustomerMst {
   factory CustomerMst.fromMap(Map<String, dynamic> json) => CustomerMst(
     active: json["active"],
     aggregator: json["aggregator"],
-    anniversary: json["anniversary"] == null ? null : DateTime.parse(json["anniversary"]),
-    birthDate: json["birthDate"] == null ? null : DateTime.parse(json["birthDate"]),
+    anniversary: json["anniversary"] ,
+    birthDate: json["birthDate"],
     createdBy: json["createdBy"],
-    createdOn: json["createdOn"] == null ? null : DateTime.parse(json["createdOn"]),
+    createdOn: json["createdOn"],
     customerAddressDtlList: json["customerAddressDTLList"] == null ? [] : List<CustomerAddressDtlList>.from(json["customerAddressDTLList"]!.map((x) => CustomerAddressDtlList.fromMap(x))),
     customerCode: json["customerCode"],
     customerFirstName: json["customerFirstName"],
@@ -334,7 +334,7 @@ class CustomerMst {
     gender: json["gender"],
     ledgerBalance: json["ledgerBalance"],
     modifiedBy: json["modifiedBy"],
-    modifiedOn: json["modifiedOn"] == null ? null : DateTime.parse(json["modifiedOn"]),
+    modifiedOn: json["modifiedOn"],
     primaryContact: json["primaryContact"],
     primaryEmail: json["primaryEmail"],
     smsSubscription: json["smsSubscription"],
@@ -345,10 +345,10 @@ class CustomerMst {
   Map<String, dynamic> toMap() => {
     "active": active,
     "aggregator": aggregator,
-    "anniversary": "${anniversary!.year.toString().padLeft(4, '0')}-${anniversary!.month.toString().padLeft(2, '0')}-${anniversary!.day.toString().padLeft(2, '0')}",
-    "birthDate": "${birthDate!.year.toString().padLeft(4, '0')}-${birthDate!.month.toString().padLeft(2, '0')}-${birthDate!.day.toString().padLeft(2, '0')}",
+    "anniversary":anniversary,
+    "birthDate": birthDate,
     "createdBy": createdBy,
-    "createdOn": createdOn?.toIso8601String(),
+    "createdOn": createdOn,
     "customerAddressDTLList": customerAddressDtlList == null ? [] : List<dynamic>.from(customerAddressDtlList!.map((x) => x.toMap())),
     "customerCode": customerCode,
     "customerFirstName": customerFirstName,
@@ -359,7 +359,7 @@ class CustomerMst {
     "gender": gender,
     "ledgerBalance": ledgerBalance,
     "modifiedBy": modifiedBy,
-    "modifiedOn": modifiedOn?.toIso8601String(),
+    "modifiedOn": modifiedOn,
     "primaryContact": primaryContact,
     "primaryEmail": primaryEmail,
     "smsSubscription": smsSubscription,

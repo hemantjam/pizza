@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:get/get.dart';
 import 'package:pizza/api/api_response.dart';
@@ -6,16 +7,18 @@ import 'package:pizza/api/api_services.dart';
 import 'package:pizza/api/end_point.dart';
 import 'package:pizza/widgets/common_dialog.dart';
 
-import '../../../local_storage/entity/cart_items_entity.dart';
-import '../../menu/by_group_code/menu_by_group_code_model.dart';
-import '../model/order_create/add_to_cart_model.dart' as add_to_cart;
-import '../model/order_master/order_master_create_model.dart';
-import '../model/order_master/order_mst_update_payload.dart';
+import '../../local_storage/entity/cart_items_entity.dart';
+import '../cart/model/order_create/add_to_cart_model.dart' as add_to_cart;
+import '../cart/model/order_master/order_master_create_model.dart';
+import '../cart/model/order_master/order_mst_update_payload.dart';
+import '../delivery_order_type/utils/order_mst_create.dart';
+import '../menu/by_group_code/menu_by_group_code_model.dart';
+import 'order_mst_update_res.dart' as order_mst_res;
 
 class CheckOut {
-  static final ApiServices _apiServices = ApiServices();
+  final ApiServices _apiServices = ApiServices();
 
-  static cartUpdate(List<CartItemsEntity?>? cartItems) async {
+  cartUpdate(List<CartItemsEntity?>? cartItems) async {
     OrderMstUpdatePayload payload = OrderMstUpdatePayload();
 
     final orderMstCreateModel =
@@ -118,7 +121,7 @@ class CheckOut {
                   .entries
                   .map((topping) {
                 return OrderRecipeItemWebRequestSet(
-                    recipeItemDtlId: topping.value.recipeItemDtlId,
+                    recipeItemDTLId: topping.value.recipeItemDtlId,
                     qty: topping.value.qty?.ceil(),
                     defaultQty: topping.value.defaultQty?.ceil(),
                     sortOrder: topping.key,
@@ -132,13 +135,36 @@ class CheckOut {
         orderDtlWebRequestList.add(orderDtlWebRequestSet);
       });
     }
+    log("payload for order update --->${payload.toJson()}");
     payload.orderMstWebRequest?.orderDtlWebRequestSet = orderDtlWebRequestList;
     ApiResponse? res = await _apiServices.putRequest(
         ApiEndPoints.orderMasterUpdate,
         data: jsonEncode(payload.toJson()));
     if (res != null && res.status) {
+      order_mst_res.OrderMstUpdateRes orderMstUpdateRes =
+          order_mst_res.OrderMstUpdateRes.fromJson(res.toJson());
+      log("res--->${jsonEncode(res.toJson())}");
+      cartTrackingMstUpdate(1321, orderMstUpdateRes.data?.id ?? "");
     } else {
       showCoomonErrorDialog(title: "error", message: "Something went wrong");
     }
+  }
+
+  cartTrackingMstUpdate(int cartTrackingMSTId, String orderMSTId) async {
+    ApiResponse? res =
+        await apiServices.putRequest(ApiEndPoints.cartTrackingMSTUpdate, data: {
+      {
+        "cartTrackingMSTId": cartTrackingMSTId,
+        "cartTrackingPage": "CHECKOUT_PAGE",
+        "orderMSTId": orderMSTId
+      }
+    });
+    if (res != null && res.status) {
+      /*  CartTrackingModel cartTrackingModel =
+        CartTrackingModel.fromMap(res.toJson());
+        Get.put<CartTrackingModel>(cartTrackingModel,
+            permanent: true, tag: "cartTrackingModel");*/
+    }
+    return;
   }
 }

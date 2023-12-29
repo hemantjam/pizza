@@ -11,7 +11,6 @@ class AppLogs {
   static add(String appLog) {
     logs.add("$appLog\n\n");
   }
-
   static Future<File> createLogFile() async {
     var pdf = pw.Document();
     pdf.addPage(pw.Page(

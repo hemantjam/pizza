@@ -11,7 +11,11 @@ import '../../../api/api_response.dart';
 import '../../../api/end_point.dart';
 import '../../cart/model/order_master/order_master_create_model.dart';
 import '../../cart/model/order_master/order_master_create_payload.dart'
-as OMCP; //// orrder master create model
+    as OMCP; //// orrder master create model
+//// orrder master create model
+//// orrder master create model
+//// orrder master create model
+//// orrder master create model
 //// orrder master create model
 //// orrder master create model
 import '../../cart/utils/cart_tracking_model.dart';
@@ -33,7 +37,7 @@ orderMasterCreateApi({
 }) async {
   showCommonLoading(true);
   LoggedInUserModel loggedInUserModel =
-  Get.find<LoggedInUserModel>(tag: "loggedInUserModel");
+      Get.find<LoggedInUserModel>(tag: "loggedInUserModel");
 
   await initializeDateFormatting('en');
   OMCP.OrderMasterCreatePayload payload = OMCP.OrderMasterCreatePayload();
@@ -57,9 +61,47 @@ orderMasterCreateApi({
   payload.orderMstWebRequest?.orderTime = time == null ? "" : formattedTime;
   payload.orderMstWebRequest?.timedOrder = timedOrder;
   payload.orderMstWebRequest?.active = true;
-  payload.orderMstWebRequest?.customerAddressDtl =null;
-  payload.orderMstWebRequest?.customerAddressDtl?.active =
-      loggedInUserModel.data?.userMST?.active;
+  payload.orderMstWebRequest?.customerAddressDtl = OMCP.CustomerAddressDtl(
+      active: loggedInUserModel.data?.userMST?.active,
+
+      //customerAddressDtlId: loggedInUserModel.data?.customerMST.id,
+      //customerAddressTitle: loggedInUserModel.data?.userMST.tit,
+      customerMst: OMCP.CustomerMst(
+        active: loggedInUserModel.data?.userMST?.active,
+        anniversary: loggedInUserModel.data?.customerMST?.anniversary,
+        aggregator: loggedInUserModel.data?.customerMST?.aggregator,
+        birthDate: loggedInUserModel.data?.customerMST?.birthDate,
+        customerMstId: loggedInUserModel.data?.customerMST?.customerMSTId,
+        customerLastName: loggedInUserModel.data?.customerMST?.customerLastName,
+        customerGroupMstId:
+            loggedInUserModel.data?.customerMST?.customerGroupMSTId,
+        customerFirstName:
+            loggedInUserModel.data?.customerMST?.customerFirstName,
+        customerCode: loggedInUserModel.data?.customerMST?.customerCode,
+        //   customerAddressDtlList:
+        //      loggedInUserModel.data?.customerMST?.customerAddressDTLList as,
+        createdOn: loggedInUserModel.data?.userMST?.createdOn,
+        createdBy: loggedInUserModel.data?.customerMST?.userMST?.createdBy,
+        emailSubscription:
+            loggedInUserModel.data?.customerMST?.emailSubscription,
+        // gender: loggedInUserModel.data?.customerMST?.gender,
+        //ledgerBalance: loggedInUserModel.data?.customerMST?.ledgerBalance,
+        modifiedBy: loggedInUserModel.data?.userMST?.modifiedBy,
+        modifiedOn: loggedInUserModel.data?.userMST?.modifiedOn,
+        primaryContact: loggedInUserModel.data?.customerMST?.primaryContact,
+        primaryEmail: loggedInUserModel.data?.customerMST?.primaryEmail,
+        storeInstruction: loggedInUserModel.data?.customerMST?.storeInstruction,
+        smsSubscription: loggedInUserModel.data?.customerMST?.smsSubscription,
+        userMstId: loggedInUserModel.data?.customerMST?.userMSTId,
+      ),
+      customerMstId: loggedInUserModel.data?.customerMST?.customerMSTId,
+      geographyMstId3: gt1,
+      geographyMstId4: gt2,
+      geographyMstId5: gt3,
+      streetNumber: streetNumber,
+      unitNumber: unitNUmber,
+      pincode: pinCode);
+
   payload.orderMstWebRequest?.customerAddressDtl?.streetNumber = streetNumber;
   payload.orderMstWebRequest?.customerAddressDtl?.unitNumber = unitNUmber;
   payload.orderMstWebRequest?.expressOrder = false;
@@ -71,10 +113,10 @@ orderMasterCreateApi({
   payload.orderMstWebRequest?.otherInstrucation = "";
   payload.orderMstWebRequest?.orderStageCode = "DS01";
   payload.orderMstWebRequest?.customerAddressDtl?.customerMst
-      ?.customerFirstName =
+          ?.customerFirstName =
       loggedInUserModel.data?.customerMST?.customerFirstName;
   payload.orderMstWebRequest?.customerAddressDtl?.customerMst
-      ?.customerLastName =
+          ?.customerLastName =
       loggedInUserModel.data?.customerMST?.customerLastName;
 
   payload.orderMstWebRequest?.customerAddressDtl?.address1 = unitNUmber;
@@ -94,9 +136,9 @@ orderMasterCreateApi({
   if (res != null) {
     if (res.status) {
       final orderMasterCreateModel =
-      OrderMasterCreateModel.fromMap(res.toJson());
-      log("order master create response----->${orderMasterCreateModel
-          .toMap()}");
+          OrderMasterCreateModel.fromMap(res.toJson());
+      log("order master create response----->${orderMasterCreateModel.toMap()}");
+      log("------>${res.toJson()}");
       Get.put<OrderMasterCreateModel>(orderMasterCreateModel,
           permanent: true, tag: "orderMasterCreateModel");
       await cartMasterTracking(orderMasterCreateModel.data?.id ?? "");
@@ -107,24 +149,20 @@ orderMasterCreateApi({
 }
 
 cartMasterTracking(String id) async {
-  ApiResponse? res = await apiServices.postRequest(ApiEndPoints.cartTrackingMST,
-      data: {
-        "cartTrackingMSTId": null,
-        "cartTrackingPage": "MENU_PAGE",
-        "orderMSTId": id
-      });
+  ApiResponse? res = await apiServices
+      .postRequest(ApiEndPoints.cartTrackingMSTCreate, data: {
+    "cartTrackingMSTId": null,
+    "cartTrackingPage": "MENU_PAGE",
+    "orderMSTId": id
+  });
   if (res != null && res.status) {
     CartTrackingModel cartTrackingModel =
-    CartTrackingModel.fromMap(res.toJson());
+        CartTrackingModel.fromMap(res.toJson());
     Get.put<CartTrackingModel>(cartTrackingModel,
         permanent: true, tag: "cartTrackingModel");
   }
   return;
 }
-
-
-
-
 
 /*
 customerMst: OMCP.CustomerMst(

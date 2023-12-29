@@ -23,11 +23,13 @@ class ApiEndPoints {
   static const String orderMasterCreate = "orderMST/create/";
   static const String orderDetailsCreate = "orderDTL/create/";
   static const String notifySSE = "orderMST/notifySSE/";
-  static const String cartTrackingMST = "cartTrackingMST/create/";
+  static const String cartTrackingMSTCreate = "cartTrackingMST/create/";
 static const String orderMasterUpdate="orderMST/update/";
+static const String cartTrackingMSTUpdate="cartTrackingMST/update/";
 
   /// menu
   static const String getMenuByCode = "itemMST/byGroupCode/";
+
 }
 
 /* https://tomcat.harvices.com/POSLocalAPI/userMST/addIntoToken/outlet

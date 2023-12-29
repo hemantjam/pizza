@@ -7,7 +7,7 @@ import 'package:pizza/constants/assets.dart';
 import 'package:pizza/local_storage/entity/cart_items_entity.dart';
 import 'package:pizza/module/cart/cart_controller.dart';
 import 'package:pizza/module/cart/model/order_create/add_to_cart_model.dart';
-import 'package:pizza/module/cart/utils/handle_checkout.dart';
+import 'package:pizza/module/checkout/handle_checkout.dart';
 import 'package:pizza/module/cart/widget/cart_details_bottom_bar.dart';
 import 'package:pizza/module/menu/customize/local_toppings_module.dart';
 import 'package:pizza/widgets/common_dialog.dart';
@@ -24,15 +24,9 @@ class CartPage extends GetView<CartController> {
     controller.checkForOfflineData();
     return SafeArea(
       child: Scaffold(
-          floatingActionButton: FloatingActionButton(
-            onPressed: () {
-              // CheckOut checkOut = CheckOut();
-              // checkOut.getCartResponseList();
-            },
-          ),
           bottomNavigationBar: cartDetailsBottomBar(true, true, () async {
             List<CartItemsEntity> modelList = await controller.getModelsList();
-            CheckOut.cartUpdate(modelList);
+            CheckOut().cartUpdate(modelList);
           }, controller.cartItemsLength, controller.cartTotal),
           appBar: AppBar(
             elevation: 0,

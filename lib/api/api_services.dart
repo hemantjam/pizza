@@ -17,12 +17,9 @@ class ApiServices {
     _dio.options.headers['Accept'] = 'application/json';
 
     _dio.interceptors.add(PrettyDioLogger(
-        responseBody: true, responseHeader: true, requestBody: true));
+        responseBody: false, responseHeader: true, requestBody: true));
   }
 
-  /* ApiResponse apiResponse =
-      ApiResponse(message: "Data Not Found", status: false, data: {});
-*/
   Future<ApiResponse?> getRequest<T>(String endpoint,
       {Map<String, dynamic>? queryParameters, String data = ""}) async {
     Map<String, dynamic> logField = {
@@ -55,11 +52,11 @@ class ApiServices {
   }
 
   Future<ApiResponse?> putRequest<T>(
-      String endpoint, {
-        dynamic data,
-        Map<String, dynamic>? queryParameters,
-        String? token,
-      }) async {
+    String endpoint, {
+    dynamic data,
+    Map<String, dynamic>? queryParameters,
+    String? token,
+  }) async {
     Map<String, dynamic> logField = {
       "endpoint": endpoint,
       "queryParameters": queryParameters,
@@ -67,7 +64,7 @@ class ApiServices {
     };
     try {
       _dio.options.headers['Authorization'] =
-      'Bearer ${ApiEndPoints.authToken}';
+          'Bearer ${ApiEndPoints.authToken}';
 
       final response = await _dio.put(endpoint,
           data: data ?? '"' + data + '"', queryParameters: queryParameters);
@@ -93,9 +90,6 @@ class ApiServices {
     }
     return null;
   }
-
-
-
 
   Future<ApiResponse?> postRequest<T>(
     String endpoint, {

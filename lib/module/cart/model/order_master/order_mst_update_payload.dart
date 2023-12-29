@@ -292,7 +292,7 @@ class OrderDtlWebRequestSet {
 
 class OrderRecipeItemWebRequestSet {
   dynamic id;
-  int? recipeItemDtlId;
+  int? recipeItemDTLId;
   int? qty;
   int? defaultQty;
   int? itemSide;
@@ -302,7 +302,7 @@ class OrderRecipeItemWebRequestSet {
 
   OrderRecipeItemWebRequestSet({
     this.id,
-    this.recipeItemDtlId,
+    this.recipeItemDTLId,
     this.qty,
     this.defaultQty,
     this.itemSide,
@@ -314,7 +314,7 @@ class OrderRecipeItemWebRequestSet {
   factory OrderRecipeItemWebRequestSet.fromJson(Map<String?, dynamic> json) =>
       OrderRecipeItemWebRequestSet(
         id: json["id"],
-        recipeItemDtlId: json["recipeItemDtlId"],
+        recipeItemDTLId: json["recipeItemDtlId"],
         // Corrected key here
         qty: json["qty"],
         defaultQty: json["defaultQty"],
@@ -326,7 +326,7 @@ class OrderRecipeItemWebRequestSet {
 
   Map<String?, dynamic> toJson() => {
         "id": id,
-        "recipeItemDtlId": recipeItemDtlId, // Corrected key here
+        "recipeItemDTLId": recipeItemDTLId, // Corrected key here
         "qty": qty,
         "defaultQty": defaultQty,
         "itemSide": itemSide,
